@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Gamers Arena | Elite Performance Interface</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "error-container": "#93000a",
+                    "on-secondary-fixed-variant": "#74009f",
+                    "on-tertiary-fixed": "#1a1c1c",
+                    "secondary-fixed-dim": "#ebb2ff",
+                    "on-surface": "#e5e2e1",
+                    "surface-container-low": "#1c1b1b",
+                    "outline": "#849495",
+                    "on-primary-container": "#006a71",
+                    "error": "#ffb4ab",
+                    "outline-variant": "#3a494b",
+                    "on-surface-variant": "#b9cacb",
+                    "tertiary": "#f7f8f8",
+                    "surface": "#131313",
+                    "surface-container": "#201f1f",
+                    "on-primary": "#00363a",
+                    "primary": "#e1fdff",
+                    "on-background": "#e5e2e1",
+                    "tertiary-container": "#dbdbdb",
+                    "surface-tint": "#00dbe7",
+                    "secondary-fixed": "#f8d8ff",
+                    "on-tertiary": "#2f3131",
+                    "inverse-surface": "#e5e2e1",
+                    "primary-fixed-dim": "#00dbe7",
+                    "on-error-container": "#ffdad6",
+                    "on-primary-fixed": "#002022",
+                    "on-secondary-fixed": "#320047",
+                    "on-secondary": "#520072",
+                    "primary-container": "#00f2ff",
+                    "primary-fixed": "#74f5ff",
+                    "on-secondary-container": "#fff6fc",
+                    "on-error": "#690005",
+                    "on-tertiary-fixed-variant": "#454747",
+                    "surface-container-lowest": "#0e0e0e",
+                    "inverse-on-surface": "#313030",
+                    "on-primary-fixed-variant": "#004f54",
+                    "secondary-container": "#b600f8",
+                    "surface-container-high": "#2a2a2a",
+                    "surface-dim": "#131313",
+                    "on-tertiary-container": "#5e6060",
+                    "background": "#050505",
+                    "surface-variant": "#353534",
+                    "surface-bright": "#3a3939",
+                    "tertiary-fixed": "#e2e2e2"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "margin-page": "48px",
+                    "stack-xl": "64px",
+                    "gutter": "24px",
+                    "stack-lg": "32px",
+                    "stack-sm": "8px",
+                    "unit": "8px",
+                    "container-max": "1440px",
+                    "stack-md": "16px"
+            },
+            "fontFamily": {
+                    "body-md": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "label-caps": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "display-xl": ["Inter"],
+                    "body-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "body-md": ["16px", {"lineHeight": "1.5", "letterSpacing": "0", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "label-caps": ["12px", {"lineHeight": "1", "letterSpacing": "0.1em", "fontWeight": "700"}],
+                    "headline-lg": ["40px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "display-xl": ["72px", {"lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "800"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "letterSpacing": "0", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { background-color: #050505; color: #e5e2e1; }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .neon-glow-cyan {
+            box-shadow: 0 0 15px rgba(0, 242, 255, 0.3);
+        }
+        .neon-glow-purple {
+            box-shadow: 0 0 15px rgba(182, 0, 248, 0.3);
+        }
+        .inner-light-edge {
+            border-top: 1px solid rgba(0, 242, 255, 0.2);
+            border-left: 1px solid rgba(0, 242, 255, 0.2);
+        }
+        .perspective-1000 { perspective: 1000px; }
+        .flip-card-inner {
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+        .flip-card.flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+        .flip-card-front, .flip-card-back {
+            backface-visibility: hidden;
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+        }
+        .flip-card-back {
+            transform: rotateY(180deg);
+        }
+        /* Samurai Clash Animation CSS */
+        .samurai-clash-container {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 20;
+            display: none;
+        }
+        .flipped .samurai-clash-container {
+            display: block;
+        }
+        .slash {
+            position: absolute;
+            background: #fff;
+            height: 2px;
+            width: 150%;
+            transform-origin: center;
+            opacity: 0;
+        }
+        .slash-1 {
+            top: 50%; left: -25%;
+            box-shadow: 0 0 10px #00f2ff, 0 0 20px #00f2ff;
+            animation: slash1 2s infinite ease-out;
+        }
+        .slash-2 {
+            top: 50%; left: -25%;
+            box-shadow: 0 0 10px #b600f8, 0 0 20px #b600f8;
+            animation: slash2 2s infinite ease-out 0.2s;
+        }
+        @keyframes slash1 {
+            0% { opacity: 0; transform: rotate(35deg) translateX(-150%) scaleX(0.1); }
+            5% { opacity: 1; transform: rotate(35deg) translateX(0) scaleX(1.5); }
+            15% { opacity: 0; transform: rotate(35deg) translateX(150%) scaleX(0.1); }
+            100% { opacity: 0; }
+        }
+        @keyframes slash2 {
+            0% { opacity: 0; transform: rotate(-35deg) translateX(150%) scaleX(0.1); }
+            5% { opacity: 1; transform: rotate(-35deg) translateX(0) scaleX(1.5); }
+            15% { opacity: 0; transform: rotate(-35deg) translateX(-150%) scaleX(0.1); }
+            100% { opacity: 0; }
+        }
+        .clash-spark {
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 4px; height: 4px;
+            background: white;
+            border-radius: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            box-shadow: 0 0 40px 20px white, 0 0 80px 40px #00f2ff, 0 0 120px 60px #b600f8;
+            animation: spark-boom 2s infinite 0.05s;
+        }
+        @keyframes spark-boom {
+            0%, 4% { opacity: 0; transform: translate(-50%, -50%) scale(0); }
+            5% { opacity: 1; transform: translate(-50%, -50%) scale(4); filter: brightness(2); }
+            20% { opacity: 0; transform: translate(-50%, -50%) scale(0); }
+            100% { opacity: 0; }
+        }
+        .shake { animation: screen-shake 0.4s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes screen-shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+        /* Particle Sparks */
+        .particle {
+            position: absolute;
+            width: 2px; height: 2px;
+            background: #00f2ff;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: particle-fly 0.8s ease-out forwards;
+        }
+        @keyframes particle-fly {
+            0% { transform: translate(0,0) scale(1); opacity: 1; }
+            100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+        }
+    </style>
+    <script src="cart-logic.js"></script>
+</head>
+<body class="font-body-md relative">
+<!-- Animated Dragon Waves Background -->
+<canvas id="bg-canvas" class="fixed inset-0 z-[-1] pointer-events-none opacity-40"></canvas>
+<!-- TopNavBar -->
+<header class="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-md border-b border-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.5)]">
+<div class="flex justify-between items-center w-full px-6 py-4 max-w-[1440px] mx-auto">
+<div class="text-2xl font-black uppercase tracking-widest text-cyan-400 drop-shadow-[0_0_10px_rgba(0,242,255,0.5)]">
+                Gamers Arena
+            </div>
+<nav class="hidden md:flex items-center gap-8 font-inter tracking-tight">
+<a class="text-cyan-400 border-b-2 border-cyan-400 pb-1 hover:text-cyan-400 transition-colors duration-300" href="index.html">Store</a>
+<a class="text-white/70 hover:text-white hover:text-cyan-400 transition-colors duration-300" href="#">Free Reveals</a>
+<a class="text-white/70 hover:text-white hover:text-cyan-400 transition-colors duration-300" href="#">Premium</a>
+<a class="text-white/70 hover:text-white hover:text-cyan-400 transition-colors duration-300" href="#">AI Tools</a>
+<a class="text-white/70 hover:text-white hover:text-cyan-400 transition-colors duration-300" href="blog.html">Blogs</a>
+</nav>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-4 text-white/70">
+<a href="cart.html" class="relative group cursor-pointer">
+    <span class="material-symbols-outlined group-hover:text-cyan-400 transition-colors duration-300" data-icon="shopping_cart">shopping_cart</span>
+    <span id="cart-badge" class="absolute -top-2 -right-2 bg-purple-500 text-white text-[10px] font-bold rounded-full w-4 h-4 items-center justify-center hidden shadow-[0_0_10px_purple]">0</span>
+</a>
+<span class="material-symbols-outlined cursor-pointer hover:text-cyan-400 transition-colors duration-300" data-icon="notifications">notifications</span>
+</div>
+<button class="auth-btn bg-primary-container text-on-primary-fixed font-bold px-6 py-2 rounded-lg active:scale-95 transition-transform hover:shadow-[0_0_15px_rgba(0,242,255,0.5)]">
+                    Sign In
+                </button>
+</div>
+</div>
+</header>
+<main class="pt-24 space-y-stack-xl max-w-[1440px] mx-auto px-6">
+<!-- Hero Section -->
+<section class="relative h-[700px] w-full rounded-xl overflow-hidden group">
+<div class="absolute inset-0 bg-cover bg-center" data-alt="cinematic wide shot of a futuristic cyberpunk city with neon blue and pink lighting at night, high detail digital art style" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuC-KHspjz_LSh6zErmvQoZlkvDEkWHkAKI76L9Bb_yjNc9jR70YMd1qGstRvSgaIgwgJ11MbcLgMcsPXGo1U9eovZ_lcpL5aBE4ROS7PPCPWj1ox3HmVMn4xkzu_7crrXUXJyzJDiidtXacFF8xY11ZrQwrde4FDpXaCHMDEpTUqIzUfQr7yeEteTvRVTKR_rhM8-1DWN-5FX9gyTZ-_VWvUjA4Sg0l8Sm177WmFxtTVDnZGKu6ZKK87RxBSl9HUdZOUFfOiz6oXXs')">
+</div>
+<div class="absolute inset-0 bg-gradient-to-r from-black via-black/40 to-transparent"></div>
+<div class="relative h-full flex flex-col justify-center px-12 z-10">
+<div class="glass-card inner-light-edge p-stack-lg max-w-2xl rounded-xl space-y-stack-md">
+<span class="inline-block px-3 py-1 border border-cyan-400 text-cyan-400 text-label-caps rounded-full">TRENDING NOW</span>
+<h1 class="font-display-xl text-display-xl text-white uppercase italic">CYBERPUNK<br/>PHANTOM LIBERTY</h1>
+<p class="font-body-lg text-body-lg text-white/80">Experience the high-stakes world of espionage in a brand new district. Trust no one, hack everything, and survive the Neon Jungle.</p>
+<div class="flex gap-gutter pt-stack-sm">
+<button class="bg-primary-container text-on-primary-fixed font-bold px-10 py-4 text-body-lg rounded-lg hover:shadow-[0_0_20px_rgba(0,242,255,0.6)] transition-all active:scale-95">
+                            Play Now
+                        </button>
+<button class="glass-card text-white border border-white/20 font-bold px-10 py-4 text-body-lg rounded-lg hover:bg-white/10 transition-all">
+                            View Details
+                        </button>
+</div>
+</div>
+</div>
+</section>
+<!-- Free Game Reveals -->
+<section class="space-y-stack-lg">
+<div class="flex items-center justify-between border-l-4 border-cyan-400 pl-4">
+<h2 class="font-headline-lg text-headline-lg uppercase tracking-tight">Free Game Credential Reveals</h2>
+<div class="flex items-center gap-2 text-cyan-400 font-label-caps">
+<span class="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></span>
+                    LIVE DROPS
+                </div>
+</div>
+<div id="free-games-list" class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+    <!-- Free items loaded dynamically -->
+</div>
+</section>
+<!-- Premium Game Section -->
+<section class="space-y-stack-lg">
+<div class="flex items-center justify-between border-l-4 border-secondary-container pl-4">
+<h2 class="font-headline-lg text-headline-lg uppercase tracking-tight">Premium Elite Collection</h2>
+<div class="flex items-center gap-2 text-secondary-fixed font-label-caps">
+<span class="material-symbols-outlined" data-icon="verified" data-weight="fill" style="font-variation-settings: 'FILL' 1;">verified</span>
+                    CURATED PERFORMANCE
+                </div>
+</div>
+<div id="premium-games-list" class="grid grid-cols-1 lg:grid-cols-2 gap-gutter">
+    <!-- Premium items loaded dynamically -->
+</div>
+</section>
+<!-- AI Tools Directory -->
+<section class="space-y-stack-lg">
+<div class="flex items-center justify-between border-l-4 border-white/20 pl-4">
+<h2 class="font-headline-lg text-headline-lg uppercase tracking-tight">AI Tools Directory</h2>
+<span class="text-on-surface-variant font-label-caps">ENHANCE YOUR ENGINE</span>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-gutter">
+<div class="glass-card p-stack-md rounded-xl hover:border-cyan-400/40 transition-colors group">
+<div class="w-12 h-12 bg-surface-container rounded-lg flex items-center justify-center mb-stack-md text-cyan-400 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined" data-icon="psychology">psychology</span>
+</div>
+<h4 class="text-white font-bold mb-1">Bot-Sense AI</h4>
+<p class="text-xs text-white/50">Adaptive NPC behavior analysis for pro-level scouting.</p>
+</div>
+<div class="glass-card p-stack-md rounded-xl hover:border-cyan-400/40 transition-colors group">
+<div class="w-12 h-12 bg-surface-container rounded-lg flex items-center justify-center mb-stack-md text-cyan-400 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined" data-icon="auto_videocam">auto_videocam</span>
+</div>
+<h4 class="text-white font-bold mb-1">Stream-Gen</h4>
+<p class="text-xs text-white/50">Automated highlight reel generator for content creators.</p>
+</div>
+<div class="glass-card p-stack-md rounded-xl hover:border-cyan-400/40 transition-colors group">
+<div class="w-12 h-12 bg-surface-container rounded-lg flex items-center justify-center mb-stack-md text-cyan-400 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined" data-icon="speed">speed</span>
+</div>
+<h4 class="text-white font-bold mb-1">Latency-X</h4>
+<p class="text-xs text-white/50">AI-driven network routing for 0ms ping simulations.</p>
+</div>
+<div class="glass-card p-stack-md rounded-xl hover:border-cyan-400/40 transition-colors group">
+<div class="w-12 h-12 bg-surface-container rounded-lg flex items-center justify-center mb-stack-md text-cyan-400 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined" data-icon="architecture">architecture</span>
+</div>
+<h4 class="text-white font-bold mb-1">Build-Bot</h4>
+<p class="text-xs text-white/50">Strategic loadout optimization based on meta-data.</p>
+</div>
+</div>
+</section>
+        <!-- AI Tools Directory -->
+        <section class="py-20 border-t border-white/5" id="ai-tools">
+            <div class="flex justify-between items-end mb-12">
+                <div>
+                    <h2 class="text-4xl font-black italic tracking-tighter mb-2">AI TOOLS DIRECTORY</h2>
+                    <p class="text-white/40 uppercase tracking-widest text-xs">Curated Database of 500+ Elite AI Solutions</p>
+                </div>
+            </div>
+            <div id="ai-tools-grid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                <!-- AI Tools load here -->
+            </div>
+        </section>
+
+        <!-- Daily Intel News -->
+        <section class="py-20 border-t border-white/5">
+            <div class="flex justify-between items-end mb-12">
+                <div>
+                    <h2 class="text-4xl font-black italic tracking-tighter mb-2">DAILY INTEL FEED</h2>
+                    <p class="text-white/40 uppercase tracking-widest text-xs">Automated Gaming & Tech News</p>
+                </div>
+                <a href="blog.html" class="text-cyan-400 text-sm font-bold flex items-center gap-2">Full Archive <span class="material-symbols-outlined">arrow_forward</span></a>
+            </div>
+            <div id="news-preview" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- News loads here -->
+            </div>
+        </section>
+    </main>
+<!-- Footer -->
+<footer class="bg-neutral-950 mt-stack-xl border-t border-white/5 py-12">
+<div class="max-w-[1440px] mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-8">
+<div class="flex flex-col items-center md:items-start gap-4">
+<div class="text-lg font-bold text-white uppercase tracking-widest">Gamers Arena</div>
+<p class="font-inter text-xs uppercase tracking-widest text-neutral-500">© 2024 GAMERS ARENA. ELITE PERFORMANCE INTERFACE.</p>
+</div>
+<div class="flex flex-wrap justify-center gap-8 font-inter text-xs uppercase tracking-widest">
+<a class="text-cyan-400 border-b border-cyan-400 hover:text-white transition-all cursor-pointer" href="index.html">Store</a>
+<a class="text-neutral-500 hover:text-cyan-400 transition-all cursor-pointer" href="#">Free Reveals</a>
+<a class="text-neutral-500 hover:text-cyan-400 transition-all cursor-pointer" href="#">Premium</a>
+<a class="text-neutral-500 hover:text-cyan-400 transition-all cursor-pointer" href="#">AI Tools</a>
+<a class="text-neutral-500 hover:text-cyan-400 transition-all cursor-pointer" href="blog.html">Blogs</a>
+<a class="text-cyan-400 hover:text-white transition-all cursor-pointer flex items-center gap-1" href="#">
+<span class="material-symbols-outlined text-sm" data-icon="send">send</span>
+                    Support via Telegram
+                </a>
+</div>
+</div>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"></script>
+<script>
+    async function loadGames() {
+        try {
+            // Load Games
+            const rg = await fetch('/api/games/list');
+            const dg = await rg.json();
+            if(dg.success) {
+                const free = dg.games.filter(g => g.type === 'free');
+                const premium = dg.games.filter(g => g.type === 'premium');
+                document.getElementById('free-games-list').innerHTML = free.map(g => `
+                    <div class="flip-card perspective-1000 cursor-pointer" id="game-card-${g.id}">
+                        <div class="flip-card-inner w-full h-[400px] relative">
+                            <div class="flip-card-front glass-card rounded-xl relative overflow-hidden border border-cyan-500/30">
+                                <img class="absolute inset-0 w-full h-full object-cover opacity-60" src="${g.image || 'https://images.unsplash.com/photo-1614583225154-5fc20b64190b?auto=format&fit=crop&w=800&q=80'}"/>
+                                <div class="absolute bottom-0 p-stack-md w-full flex flex-col items-center text-center">
+                                    <h3 class="font-headline-md text-headline-md text-white mb-4">${g.name}</h3>
+                                    <button onclick="revealCred(${g.id})" class="bg-cyan-500 text-black px-6 py-2 rounded font-bold hover:shadow-[0_0_20px_rgba(0,242,255,0.8)] transition-all flex items-center gap-2">
+                                        <span class="material-symbols-outlined">visibility</span> Reveal Account
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="flip-card-back glass-card rounded-xl border border-cyan-400 p-6 flex flex-col justify-center items-center text-center bg-black/95 overflow-hidden">
+                                <div class="samurai-clash-container"><div class="slash slash-1"></div><div class="slash slash-2"></div><div class="clash-spark"></div></div>
+                                <span class="material-symbols-outlined text-cyan-400 text-5xl mb-2 relative z-30">vpn_key</span>
+                                <h3 class="text-white font-bold text-lg mb-4 relative z-30">Account Decrypted</h3>
+                                <div id="cred-box-${g.id}" class="bg-black/60 border border-cyan-500/50 p-4 rounded-lg w-full relative z-30 backdrop-blur-md"><div class="text-white/50 text-sm">Fetching...</div></div>
+                                <button onclick="document.getElementById('game-card-${g.id}').classList.remove('flipped'); event.stopPropagation();" class="mt-4 text-white/50 hover:text-white transition-colors text-sm underline relative z-30">Close Panel</button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+                
+                document.getElementById('premium-games-list').innerHTML = premium.map(g => `
+                    <div class="glass-card rounded-xl p-stack-lg flex flex-col md:flex-row gap-gutter border-secondary-container/20 overflow-hidden relative">
+                        <img class="w-full md:w-64 h-64 object-cover rounded-lg" src="${g.image}" />
+                        <div class="flex-1 flex flex-col justify-between">
+                            <div><h3 class="font-headline-md text-headline-md text-white mb-2">${g.name}</h3><p class="text-on-surface-variant text-body-md line-clamp-3">${g.description}</p></div>
+                            <div class="mt-stack-md flex items-center justify-between">
+                                <span class="text-2xl font-bold text-white">₹${parseFloat(g.price).toLocaleString('en-IN')}</span>
+                                <button onclick="addToCart('${g.name}', '₹${g.price}', '${g.image}')" class="bg-secondary-container text-white px-6 py-3 rounded-lg font-bold hover:neon-glow-purple transition-all">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // Load AI Tools
+            const ra = await fetch('/api/aitools/list');
+            const da = await ra.json();
+            if(da.success) {
+                document.getElementById('ai-tools-grid').innerHTML = da.tools.slice(0, 12).map(t => `
+                    <a href="${t.link}" target="_blank" class="glass-card p-4 rounded-xl text-center group hover:border-cyan-400/50 transition-all cursor-pointer">
+                        <img src="${t.image || 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=200'}" class="w-12 h-12 mx-auto mb-3 rounded-lg object-cover grayscale group-hover:grayscale-0 transition-all" />
+                        <div class="text-xs font-bold text-white group-hover:text-cyan-400">${t.name}</div>
+                        <div class="text-[10px] text-white/40 mt-1 uppercase">${t.category}</div>
+                    </a>
+                `).join('');
+            }
+
+            // Load News
+            const rn = await fetch('/api/blogs/all');
+            const dn = await rn.json();
+            if(dn.success) {
+                document.getElementById('news-preview').innerHTML = dn.blogs.slice(0, 3).map(b => `
+                    <div class="glass-card rounded-xl overflow-hidden group cursor-pointer border border-white/5 hover:border-cyan-400/30 transition-colors">
+                        <div class="h-40 overflow-hidden relative">
+                            <img src="${b.image}" class="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform" />
+                            <div class="absolute top-4 left-4 bg-black/60 backdrop-blur-md px-2 py-1 rounded text-[10px] text-cyan-400 border border-cyan-400/20 uppercase font-bold">${b.category}</div>
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-lg font-bold text-white group-hover:text-cyan-400 transition-colors">${b.title}</h3>
+                            <div class="text-xs text-white/40 mt-2">${b.read_time} Min Read</div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            VanillaTilt.init(document.querySelectorAll(".glass-card"), { max: 5, speed: 400, glare: true, "max-glare": 0.1 });
+        } catch(e) { console.error(e); }
+    }
+
+    async function revealCred(gameId) {
+        const user = getUser();
+        if(!user) { window.location.href = 'login.html'; return; }
+        
+        const card = document.getElementById('game-card-'+gameId);
+        const box = document.getElementById('cred-box-'+gameId);
+        
+        card.classList.add('flipped');
+        box.innerHTML = '<div class="text-cyan-400 animate-pulse">Decrypting...</div>';
+        
+        try {
+            const r = await fetch('/api/games/reveal/'+gameId, { credentials: 'include' });
+            const d = await r.json();
+            
+            // Add Screen Shake on clash
+            setTimeout(() => {
+                card.querySelector('.flip-card-back').classList.add('shake');
+                createSparks(card.querySelector('.samurai-clash-container'));
+                setTimeout(() => card.querySelector('.flip-card-back').classList.remove('shake'), 500);
+            }, 100);
+
+            if(d.success) {
+                box.innerHTML = `
+                    <div class="flex justify-between border-b border-white/10 pb-2 mb-2">
+                        <span class="text-white/50 text-sm">ID:</span>
+                        <span class="text-cyan-400 font-mono tracking-wider">${d.credential.username}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-white/50 text-sm">PASS:</span>
+                        <span class="text-cyan-400 font-mono tracking-wider">${d.credential.password}</span>
+                    </div>
+                `;
+            } else {
+                box.innerHTML = `<div class="text-red-400 text-sm">${d.message}</div>`;
+            }
+        } catch(e) { box.innerHTML = '<div class="text-red-400 text-sm">Server Error</div>'; }
+    }
+
+    // 3D Tilt Initialization
+    VanillaTilt.init(document.querySelectorAll(".glass-card:not(.flip-card-front):not(.flip-card-back)"), {
+        max: 5,
+        speed: 400,
+        glare: true,
+        "max-glare": 0.1,
+    });
+
+    // Dragon/Energy Moving Background
+    const canvas = document.getElementById('bg-canvas');
+    const ctx = canvas.getContext('2d');
+    function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+    window.addEventListener('resize', resize);
+    resize();
+    let time = 0;
+    function animate() {
+        ctx.fillStyle = 'rgba(5, 5, 5, 0.1)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+        
+        ctx.beginPath();
+        for(let i = 0; i < canvas.width; i+=20) {
+            let y = canvas.height/2 + Math.sin(i * 0.005 + time) * 200 * Math.sin(time * 0.4) + Math.cos(i * 0.02 + time * 2) * 50;
+            if (i === 0) ctx.moveTo(i, y); else ctx.lineTo(i, y);
+        }
+        ctx.strokeStyle = `rgba(0, 242, 255, 0.8)`; ctx.lineWidth = 4; ctx.shadowBlur = 30; ctx.shadowColor = '#00f2ff'; ctx.stroke();
+        
+        ctx.beginPath();
+        for(let i = 0; i < canvas.width; i+=20) {
+            let y = canvas.height/2 + Math.cos(i * 0.006 + time * 1.2) * 150 * Math.cos(time * 0.3) + Math.sin(i * 0.015 + time * 1.5) * 80;
+            if (i === 0) ctx.moveTo(i, y); else ctx.lineTo(i, y);
+        }
+        ctx.strokeStyle = `rgba(182, 0, 248, 0.6)`; ctx.lineWidth = 3; ctx.shadowBlur = 20; ctx.shadowColor = '#b600f8'; ctx.stroke();
+        
+        time += 0.015; requestAnimationFrame(animate);
+    }
+    function createSparks(container) {
+        for(let i=0; i<30; i++) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            const angle = Math.random() * Math.PI * 2;
+            const dist = 50 + Math.random() * 100;
+            p.style.setProperty('--tx', Math.cos(angle) * dist + 'px');
+            p.style.setProperty('--ty', Math.sin(angle) * dist + 'px');
+            p.style.left = '50%'; p.style.top = '50%';
+            p.style.backgroundColor = Math.random() > 0.5 ? '#00f2ff' : '#b600f8';
+            container.appendChild(p);
+            setTimeout(() => p.remove(), 800);
+        }
+    }
+
+    animate();
+    
+    document.addEventListener('DOMContentLoaded', loadGames);
+</script>
+</body></html>

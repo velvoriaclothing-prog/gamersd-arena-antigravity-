@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Gamers Arena | Admin Panel</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<style>
+body{background:#050505;color:#e5e2e1;font-family:'Inter',sans-serif}
+.glass{background:rgba(255,255,255,.05);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.08)}
+.ni{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);color:#fff;padding:10px 14px;border-radius:8px;width:100%;font-size:13px}
+.ni:focus{outline:none;border-color:#00f2ff;box-shadow:0 0 10px rgba(0,242,255,.3)}
+.ni::placeholder{color:rgba(255,255,255,.3)}
+.tab-btn{padding:10px 20px;border-radius:8px;font-weight:600;font-size:13px;cursor:pointer;transition:all .3s;border:1px solid transparent}
+.tab-btn.active{background:#00f2ff;color:#000;box-shadow:0 0 15px rgba(0,242,255,.4)}
+.tab-btn:not(.active){color:rgba(255,255,255,.5);border-color:rgba(255,255,255,.1)}
+.tab-btn:not(.active):hover{color:#fff;border-color:rgba(255,255,255,.3)}
+.stat-card{text-align:center;padding:24px}
+.stat-card .num{font-size:32px;font-weight:800;background:linear-gradient(135deg,#00f2ff,#b600f8);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.badge-p{background:rgba(255,165,0,.2);color:orange;padding:2px 8px;border-radius:4px;font-size:11px}
+.badge-c{background:rgba(0,255,0,.15);color:#0f0;padding:2px 8px;border-radius:4px;font-size:11px}
+.badge-x{background:rgba(255,0,0,.15);color:#f55;padding:2px 8px;border-radius:4px;font-size:11px}
+</style>
+</head>
+<body class="min-h-screen">
+<header class="bg-black/80 backdrop-blur-md border-b border-white/10 px-6 py-4 flex justify-between items-center sticky top-0 z-50">
+<div class="flex items-center gap-4">
+<span class="text-xl font-black uppercase tracking-widest text-cyan-400">GA Admin</span>
+<span class="text-xs text-white/30 border border-white/10 px-2 py-1 rounded">v1.0</span>
+</div>
+<div class="flex items-center gap-4">
+<a href="index.html" class="text-white/50 hover:text-cyan-400 text-sm">← View Site</a>
+<button onclick="logout()" class="bg-red-600/20 text-red-400 px-4 py-2 rounded-lg text-sm font-bold hover:bg-red-600/40 transition">Logout</button>
+</div>
+</header>
+
+<div class="max-w-[1400px] mx-auto px-6 py-8">
+<!-- Tabs -->
+<div class="flex gap-2 mb-8 flex-wrap">
+<button class="tab-btn active" onclick="showTab('dashboard')">Dashboard</button>
+<button class="tab-btn" onclick="showTab('games')">Games</button>
+<button class="tab-btn" onclick="showTab('credentials')">Credentials</button>
+<button class="tab-btn" onclick="showTab('orders')">Orders</button>
+<button class="tab-btn" onclick="showTab('blogs')">Blogs</button>
+<button class="tab-btn" onclick="showTab('aitools')">AI Tools</button>
+<button class="tab-btn" onclick="showTab('users')">Users</button>
+</div>
+
+<!-- Dashboard Tab -->
+<div id="tab-dashboard" class="tab-content">
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8" id="stats-grid"></div>
+<h3 class="text-lg font-bold text-white mb-4">Recent Orders (Payment Claimed)</h3>
+<div id="recent-orders" class="space-y-3"></div>
+</div>
+
+<!-- Games Tab -->
+<div id="tab-games" class="tab-content hidden">
+<div class="glass rounded-xl p-6 mb-6">
+<h3 class="text-lg font-bold text-white mb-4">Add New Game</h3>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<input id="g-name" class="ni" placeholder="Game Name"/>
+<select id="g-type" class="ni"><option value="free">Free</option><option value="premium">Premium</option></select>
+<input id="g-price" class="ni" type="number" placeholder="Price in ₹ (0 for free)" value="0"/>
+<input id="g-genre" class="ni" placeholder="Genre (Action, RPG...)"/>
+<input id="g-image" class="ni" placeholder="Image URL"/>
+<input id="g-desc" class="ni" placeholder="Description"/>
+</div>
+<button onclick="addGame()" class="mt-4 bg-cyan-500 text-black px-6 py-2 rounded-lg font-bold text-sm hover:shadow-[0_0_15px_rgba(0,242,255,.5)] transition">Add Game</button>
+</div>
+<div id="games-list" class="space-y-3"></div>
+</div>
+
+<!-- Credentials Tab -->
+<div id="tab-credentials" class="tab-content hidden">
+<div class="glass rounded-xl p-6 mb-6">
+<h3 class="text-lg font-bold text-white mb-4">Add Credential (Free Games)</h3>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<select id="c-game" class="ni"></select>
+<input id="c-user" class="ni" placeholder="Game Username/ID"/>
+<input id="c-pass" class="ni" placeholder="Game Password"/>
+</div>
+<button onclick="addCred()" class="mt-4 bg-purple-600 text-white px-6 py-2 rounded-lg font-bold text-sm hover:shadow-[0_0_15px_rgba(182,0,248,.5)] transition">Add Credential</button>
+</div>
+<div id="creds-list" class="space-y-3"></div>
+</div>
+
+<!-- Orders Tab -->
+<div id="tab-orders" class="tab-content hidden">
+<div class="flex gap-2 mb-4">
+<button onclick="loadOrders()" class="text-xs bg-white/10 text-white px-3 py-1 rounded hover:bg-white/20">All</button>
+<button onclick="loadOrders('payment_claimed')" class="text-xs bg-orange-500/20 text-orange-400 px-3 py-1 rounded hover:bg-orange-500/30">Pending</button>
+<button onclick="loadOrders('confirmed')" class="text-xs bg-green-500/20 text-green-400 px-3 py-1 rounded hover:bg-green-500/30">Confirmed</button>
+</div>
+<div id="orders-list" class="space-y-3"></div>
+</div>
+
+<!-- Blogs Tab -->
+<div id="tab-blogs" class="tab-content hidden">
+<div class="glass rounded-xl p-6 mb-6">
+<h3 class="text-lg font-bold text-white mb-4">Create Blog Post</h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<input id="b-title" class="ni" placeholder="Blog Title"/>
+<input id="b-category" class="ni" placeholder="Category"/>
+<input id="b-image" class="ni" placeholder="Image URL"/>
+<input id="b-readtime" class="ni" type="number" placeholder="Read Time (min)" value="5"/>
+</div>
+<textarea id="b-content" class="ni mt-4" rows="5" placeholder="Blog Content (HTML or plain text)"></textarea>
+<button onclick="addBlog()" class="mt-4 bg-cyan-500 text-black px-6 py-2 rounded-lg font-bold text-sm">Publish Blog</button>
+</div>
+<div id="blogs-list" class="space-y-3"></div>
+</div>
+
+<!-- Users Tab -->
+<div id="tab-users" class="tab-content hidden">
+    <div id="users-list" class="space-y-3"></div>
+</div>
+
+<!-- AI Tools Tab -->
+<div id="tab-aitools" class="tab-content hidden">
+    <div class="glass rounded-xl p-6 mb-6">
+        <h3 class="text-lg font-bold text-white mb-4">Add Permanent AI Tool</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <input id="ai-name" class="ni" placeholder="Tool Name"/>
+            <input id="ai-cat" class="ni" placeholder="Category (e.g. Video, Writing)"/>
+            <input id="ai-link" class="ni" placeholder="Direct URL Link"/>
+            <input id="ai-image" class="ni" placeholder="Image/Icon URL"/>
+            <input id="ai-desc" class="ni md:col-span-2" placeholder="Brief Description"/>
+        </div>
+        <button onclick="addAiTool()" class="mt-4 bg-cyan-500 text-black px-6 py-2 rounded-lg font-bold text-sm">Add AI Tool Permanently</button>
+    </div>
+    <div id="aitools-list" class="space-y-3"></div>
+</div>
+</div>
+
+<script>
+const API = '/api/';
+async function api(endpoint, opts={}) {
+    try {
+        const r = await fetch(API + endpoint, {method:opts.method||'GET', headers:{'Content-Type':'application/json'}, credentials:'include', body:opts.body?JSON.stringify(opts.body):undefined});
+        return await r.json();
+    } catch(e) { return {success:false, message:'Network error'}; }
+}
+
+function showTab(name) {
+    document.querySelectorAll('.tab-content').forEach(t=>t.classList.add('hidden'));
+    document.getElementById('tab-'+name).classList.remove('hidden');
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    if (event && event.target) event.target.classList.add('active');
+    if(name==='dashboard') loadDashboard();
+    if(name==='games') loadGames();
+    if(name==='credentials') loadCreds();
+    if(name==='orders') loadOrders();
+    if(name==='blogs') loadBlogs();
+    if(name==='aitools') loadAiTools();
+}
+
+async function loadDashboard() {
+    const d = await api('admin/stats');
+    if(!d.success) return;
+    const s = d.stats;
+    document.getElementById('stats-grid').innerHTML = [
+        ['Users',s.total_users||0,'group'],['Games',s.total_games||0,'sports_esports'],
+        ['Orders',s.total_orders||0,'receipt_long'],['Revenue','₹'+(s.total_revenue||0),'payments'],
+        ['Pending',s.pending_orders||0,'pending'],['Confirmed',s.confirmed_orders||0,'check_circle'],
+        ['Free Games',s.free_games||0,'lock_open'],['Credentials',s.unclaimed_creds||0,'vpn_key']
+    ].map(([l,v,i])=>`<div class="glass stat-card rounded-xl"><span class="material-symbols-outlined text-cyan-400 text-2xl mb-2">${i}</span><div class="num">${v}</div><div class="text-xs text-white/40 mt-1">${l}</div></div>`).join('');
+    const o = await api('admin/orders/all?status=payment_claimed');
+    document.getElementById('recent-orders').innerHTML = (o.orders||[]).slice(0,5).map(x=>`<div class="glass rounded-lg p-4 flex justify-between items-center"><div><span class="text-cyan-400 font-mono text-sm">${x.order_ref}</span> <span class="text-white/50 text-xs">by ${x.users?x.users.email:''}</span><div class="text-white text-sm font-bold">₹${x.total_amount}</div></div><div class="flex gap-2"><button onclick="updateOrder(${x.id},'confirmed')" class="bg-green-600/20 text-green-400 px-3 py-1 rounded text-xs font-bold hover:bg-green-600/40">Confirm</button><button onclick="updateOrder(${x.id},'cancelled')" class="bg-red-600/20 text-red-400 px-3 py-1 rounded text-xs font-bold hover:bg-red-600/40">Cancel</button></div></div>`).join('')||'<div class="text-white/30 text-sm">No pending orders</div>';
+}
+
+async function loadGames() {
+    const d = await api('games/list');
+    document.getElementById('games-list').innerHTML = (d.games||[]).map(g=>`<div class="glass rounded-lg p-4 flex justify-between items-center"><div class="flex items-center gap-4"><div><span class="text-white font-bold">${g.name}</span><div class="text-xs text-white/40">${g.type} · ${g.genre||'N/A'} · ${g.type==='premium'?'₹'+g.price:'Free'}</div></div></div><div class="flex gap-2"><button onclick="deleteGame(${g.id})" class="text-red-400 hover:text-red-300 text-sm">Delete</button></div></div>`).join('');
+    const freeGames = (d.games||[]).filter(g=>g.type==='free');
+    document.getElementById('c-game').innerHTML = freeGames.map(g=>`<option value="${g.id}">${g.name}</option>`).join('');
+}
+
+async function addGame() {
+    const body = {name:$('#g-name'),type:$('#g-type'),price:parseFloat($('#g-price'))||0,genre:$('#g-genre'),image:$('#g-image'),description:$('#g-desc')};
+    const d = await api('admin/games/add',{method:'POST',body});
+    alert(d.message); if(d.success) loadGames();
+}
+async function deleteGame(id) { if(!confirm('Delete this game?')) return; await api('admin/games/delete/'+id,{method:'POST'}); loadGames(); }
+
+async function loadCreds() {
+    const d = await api('admin/credentials/list');
+    document.getElementById('creds-list').innerHTML = (d.credentials||[]).map(c=>`<div class="glass rounded-lg p-4 flex justify-between items-center"><div><span class="text-white font-bold text-sm">${c.games?c.games.name:''}</span> <span class="text-cyan-400 font-mono text-xs">${c.username} / ${c.password}</span><div class="text-xs mt-1">${c.is_claimed?'<span class="badge-c">Claimed</span>':'<span class="badge-p">Available</span>'}</div></div><button onclick="deleteCred(${c.id})" class="text-red-400 hover:text-red-300 text-xs">Delete</button></div>`).join('');
+}
+async function addCred() {
+    const body = {game_id:parseInt($('#c-game')),username:$('#c-user'),password:$('#c-pass')};
+    const d = await api('admin/credentials/add',{method:'POST',body});
+    alert(d.message); if(d.success) loadCreds();
+}
+
+async function loadOrders(status) {
+    const url = status ? 'admin/orders/all?status='+status : 'admin/orders/all';
+    const d = await api(url);
+    document.getElementById('orders-list').innerHTML = (d.orders||[]).map(o=>{
+        const badge = o.status==='confirmed'?'badge-c':o.status==='cancelled'?'badge-x':'badge-p';
+        return `<div class="glass rounded-lg p-4"><div class="flex justify-between items-start"><div><span class="text-cyan-400 font-mono text-sm font-bold">${o.order_ref}</span> <span class="${badge}">${o.status}</span><div class="text-white/50 text-xs mt-1">${o.users?o.users.name:''} (${o.users?o.users.email:''})</div></div><div class="text-right"><div class="text-xl font-bold text-white">₹${o.total_amount}</div>${o.status==='payment_claimed'?`<div class="flex gap-2 mt-2"><button onclick="updateOrder(${o.id},'confirmed')" class="bg-green-600/20 text-green-400 px-3 py-1 rounded text-xs font-bold">Confirm</button><button onclick="updateOrder(${o.id},'cancelled')" class="bg-red-600/20 text-red-400 px-3 py-1 rounded text-xs font-bold">Cancel</button></div>`:''}</div></div></div>`;
+    }).join('')||'<div class="text-white/30 text-sm">No orders found</div>';
+}
+async function updateOrder(id,status) {
+    const d = await api('admin/orders/update/'+id,{method:'POST',body:{status}});
+    alert(d.message); loadOrders(); loadDashboard();
+}
+
+async function loadBlogs() {
+    const d = await api('blogs/all');
+    document.getElementById('blogs-list').innerHTML = (d.blogs||[]).map(b=>`<div class="glass rounded-lg p-4 flex justify-between items-center"><div><span class="text-white font-bold">${b.title}</span><div class="text-xs text-white/40">${b.category||'General'} · ${b.read_time} min</div></div><button onclick="deleteBlog(${b.id})" class="text-red-400 hover:text-red-300 text-xs">Delete</button></div>`).join('');
+}
+async function addBlog() {
+    const body = {title:$('#b-title'),content:document.getElementById('b-content').value,category:$('#b-category'),image:$('#b-image'),read_time:parseInt($('#b-readtime'))||5};
+    const d = await api('admin/blogs/add',{method:'POST',body});
+    alert(d.message); if(d.success) loadBlogs();
+}
+async function deleteBlog(id) { if(!confirm('Delete article?')) return; await api('admin/blogs/delete/'+id,{method:'POST'}); loadBlogs(); }
+
+async function loadAiTools() {
+    const d = await api('admin/aitools/list');
+    document.getElementById('aitools-list').innerHTML = (d.tools||[]).map(t=>`<div class="glass rounded-lg p-4 flex justify-between items-center"><div><span class="text-white font-bold">${t.name}</span><div class="text-xs text-white/40">${t.category}</div></div><button onclick="deleteAiTool(${t.id})" class="text-red-400 hover:text-red-300 text-xs">Delete</button></div>`).join('')||'<div class="text-white/30 text-sm">No tools added yet</div>';
+}
+async function addAiTool() {
+    const body = {name:$('#ai-name'),category:$('#ai-cat'),link:$('#ai-link'),image:$('#ai-image'),description:$('#ai-desc')};
+    const d = await api('admin/aitools/add',{method:'POST',body});
+    alert(d.message); if(d.success) loadAiTools();
+}
+async function deleteAiTool(id) { if(!confirm('Delete this AI tool?')) return; await api('admin/aitools/delete/'+id,{method:'POST'}); loadAiTools(); }
+
+function $(sel) { return document.querySelector(sel).value.trim(); }
+async function logout() { await api('auth/logout'); localStorage.removeItem('ga_user'); window.location.href='login.html'; }
+
+(async()=>{
+    const d = await api('auth/me');
+    if(!d.success||d.user.role!=='admin') { window.location.href='login.html'; return; }
+    loadDashboard();
+})();
+</script>
+</body></html>
