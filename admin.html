@@ -64,6 +64,8 @@ body{background:#050505;color:#e5e2e1;font-family:'Inter',sans-serif}
 <input id="g-genre" class="ni" placeholder="Genre (Action, RPG...)"/>
 <input id="g-image" class="ni" placeholder="Image URL"/>
 <input id="g-desc" class="ni" placeholder="Description"/>
+<input id="g-user" class="ni" placeholder="ID/Username (For Free Games)"/>
+<input id="g-pass" class="ni" placeholder="Password (For Free Games)"/>
 </div>
 <button onclick="addGame()" class="mt-4 bg-cyan-500 text-black px-6 py-2 rounded-lg font-bold text-sm hover:shadow-[0_0_15px_rgba(0,242,255,.5)] transition">Add Game</button>
 </div>
@@ -176,9 +178,23 @@ async function loadGames() {
 }
 
 async function addGame() {
-    const body = {name:$('#g-name'),type:$('#g-type'),price:parseFloat($('#g-price'))||0,genre:$('#g-genre'),image:$('#g-image'),description:$('#g-desc')};
-    const d = await api('admin/games/add',{method:'POST',body});
-    alert(d.message); if(d.success) loadGames();
+    const body = {
+        name: $('#g-name'),
+        type: $('#g-type'),
+        price: parseFloat($('#g-price')) || 0,
+        genre: $('#g-genre'),
+        image: $('#g-image'),
+        description: $('#g-desc'),
+        username: $('#g-user'), // New
+        password: $('#g-pass')  // New
+    };
+    const d = await api('admin/games/add', {method:'POST', body});
+    alert(d.message); 
+    if(d.success) {
+        loadGames();
+        // Clear fields
+        ['g-name','g-genre','g-image','g-desc','g-user','g-pass'].forEach(id => document.getElementById(id).value = '');
+    }
 }
 async function deleteGame(id) { if(!confirm('Delete this game?')) return; await api('admin/games/delete/'+id,{method:'POST'}); loadGames(); }
 

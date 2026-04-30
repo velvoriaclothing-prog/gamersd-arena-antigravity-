@@ -195,9 +195,26 @@ app.get('/api/admin/stats', requireAdmin, async (req, res) => {
 
 // ── ADMIN: GAMES ─────────────────────────────────────
 app.post('/api/admin/games/add', requireAdmin, async (req, res) => {
-    const { data, error } = await supabase.from('games').insert([req.body]);
+    const { name, type, price, genre, image, description, username, password } = req.body;
+    
+    // 1. Insert the Game
+    const { data, error } = await supabase.from('games').insert([{
+        name, type, price, genre, image, description
+    }]).select();
+
     if (error) return res.json({ success: false, message: error.message });
-    res.json({ success: true, message: 'Game added successfully' });
+
+    // 2. If it's a FREE game and ID/Pass provided, insert credentials automatically
+    if (type === 'free' && username && password) {
+        const gameId = data[0].id;
+        await supabase.from('credentials').insert([{
+            game_id: gameId,
+            username: username,
+            password: password
+        }]);
+    }
+
+    res.json({ success: true, message: 'Game and Credentials added permanently!' });
 });
 
 app.post('/api/admin/games/delete/:id', requireAdmin, async (req, res) => {
