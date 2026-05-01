@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Free Reveals | Gamers Arena</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+    <style>
+        body { background: #050505; color: white; font-family: 'Inter', sans-serif; }
+        .glass { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); backdrop-filter: blur(10px); }
+        .game-card { transition: transform 0.2s, border-color 0.2s; }
+        .game-card:hover { border-color: #00f2ff; transform: translateY(-4px); }
+        .btn-unlock { background: linear-gradient(90deg, #00f2ff, #0088ff); color: black; font-weight: 800; }
+        .cred-box { background: rgba(0,242,255,0.1); border: 1px dashed #00f2ff; }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        .reveal-anim { animation: slideDown 0.3s ease-out; }
+    </style>
+</head>
+<body class="pb-20">
+    <nav class="p-6 flex justify-between items-center border-b border-white/5 sticky top-0 bg-black/80 backdrop-blur-md z-50">
+        <a href="index.html" class="text-2xl font-black italic tracking-tighter text-cyan-400">GAMERS ARENA</a>
+        <div class="flex gap-6 text-sm font-bold uppercase tracking-widest text-white/50">
+            <a href="index.html" class="hover:text-cyan-400">Store</a>
+            <a href="free-games.html" class="text-cyan-400">Free Reveals</a>
+            <a href="premium-games.html" class="hover:text-cyan-400">Premium</a>
+        </div>
+    </nav>
+
+    <header class="py-20 px-6 text-center">
+        <h1 class="text-6xl font-black italic mb-4">FREE REVEALS</h1>
+        <p class="text-white/40 uppercase tracking-[0.3em] text-xs">Unlock Premium Accounts Instantly</p>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-6">
+        <div id="free-games-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Fast Loading Skeleton -->
+            <div class="h-80 glass rounded-2xl animate-pulse"></div>
+            <div class="h-80 glass rounded-2xl animate-pulse"></div>
+            <div class="h-80 glass rounded-2xl animate-pulse"></div>
+        </div>
+    </main>
+
+    <script>
+        async function loadFreeGames() {
+            const grid = document.getElementById('free-games-grid');
+            try {
+                // Performance Logic: Use cache if available
+                const cached = localStorage.getItem('ga_free_games');
+                if (cached) render(JSON.parse(cached));
+
+                const r = await fetch('/api/games/list');
+                const d = await r.json();
+                if (d.success) {
+                    const free = d.games.filter(g => g.type === 'free');
+                    localStorage.setItem('ga_free_games', JSON.stringify(free));
+                    render(free);
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        function render(games) {
+            const grid = document.getElementById('free-games-grid');
+            grid.innerHTML = games.map(g => `
+                <div class="game-card glass rounded-2xl overflow-hidden flex flex-col">
+                    <img src="${g.image}" class="w-full h-48 object-cover" />
+                    <div class="p-6 flex-1 flex flex-col">
+                        <h3 class="text-xl font-bold mb-2 uppercase italic">${g.name}</h3>
+                        <p class="text-white/50 text-sm mb-6 line-clamp-2">${g.description}</p>
+                        
+                        <div id="cred-area-${g.id}" class="mt-auto">
+                            <button onclick="reveal(${g.id})" class="btn-unlock w-full py-3 rounded-lg flex items-center justify-center gap-2 hover:scale-[1.02] transition-transform">
+                                <span class="material-symbols-outlined">key</span>
+                                UNLOCK CREDENTIAL
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function reveal(id) {
+            const area = document.getElementById('cred-area-'+id);
+            area.innerHTML = '<div class="text-cyan-400 text-center py-2 animate-pulse">DECRYPTING...</div>';
+            
+            try {
+                const r = await fetch('/api/games/reveal/'+id);
+                const d = await r.json();
+                if(d.success) {
+                    area.innerHTML = `
+                        <div class="cred-box p-4 rounded-lg reveal-anim">
+                            <div class="flex justify-between mb-2">
+                                <span class="text-[10px] text-cyan-400 font-black uppercase">Username</span>
+                                <span class="text-white font-mono">${d.credential.username}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-[10px] text-cyan-400 font-black uppercase">Password</span>
+                                <span class="text-white font-mono">${d.credential.password}</span>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    alert(d.message);
+                    loadFreeGames(); // Reset button
+                }
+            } catch(e) { alert('Login required to unlock'); window.location.href='login.html'; }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadFreeGames);
+    </script>
+</body>
+</html>

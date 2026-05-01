@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Store | Gamers Arena</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+    <style>
+        body { background: #050505; color: white; font-family: 'Inter', sans-serif; }
+        .glass { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); backdrop-filter: blur(10px); }
+        .premium-card { transition: all 0.3s; border: 1px solid rgba(182, 0, 248, 0.1); }
+        .premium-card:hover { border-color: #b600f8; box-shadow: 0 0 30px rgba(182, 0, 248, 0.1); }
+        .btn-buy { background: linear-gradient(90deg, #b600f8, #ff00c8); color: white; font-weight: 800; }
+        .price-tag { background: rgba(182, 0, 248, 0.2); color: #e0aaff; border: 1px solid rgba(182, 0, 248, 0.3); }
+    </style>
+</head>
+<body class="pb-20">
+    <nav class="p-6 flex justify-between items-center border-b border-white/5 sticky top-0 bg-black/80 backdrop-blur-md z-50">
+        <a href="index.html" class="text-2xl font-black italic tracking-tighter text-cyan-400">GAMERS ARENA</a>
+        <div class="flex gap-6 text-sm font-bold uppercase tracking-widest text-white/50">
+            <a href="index.html" class="hover:text-cyan-400">Store</a>
+            <a href="free-games.html" class="hover:text-cyan-400">Free Reveals</a>
+            <a href="premium-games.html" class="text-purple-400">Premium</a>
+        </div>
+        <a href="cart.html" class="relative">
+            <span class="material-symbols-outlined">shopping_bag</span>
+            <span id="cart-count" class="absolute -top-2 -right-2 bg-purple-600 text-[10px] w-4 h-4 flex items-center justify-center rounded-full">0</span>
+        </a>
+    </nav>
+
+    <header class="py-20 px-6 text-center">
+        <h1 class="text-6xl font-black italic mb-4 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500">PREMIUM STORE</h1>
+        <p class="text-white/40 uppercase tracking-[0.3em] text-xs">Elite Accounts • Lifetime Access • Instant Delivery</p>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-6">
+        <div id="premium-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div class="h-96 glass rounded-2xl animate-pulse"></div>
+            <div class="h-96 glass rounded-2xl animate-pulse"></div>
+        </div>
+    </main>
+
+    <script src="cart-logic.js"></script>
+    <script>
+        async function loadPremium() {
+            try {
+                const r = await fetch('/api/games/list');
+                const d = await r.json();
+                if (d.success) {
+                    const premium = d.games.filter(g => g.type === 'premium');
+                    render(premium);
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        function render(games) {
+            const grid = document.getElementById('premium-grid');
+            grid.innerHTML = games.map(g => `
+                <div class="premium-card glass rounded-2xl overflow-hidden flex flex-col">
+                    <img src="${g.image}" class="w-full h-56 object-cover" />
+                    <div class="p-6 flex-1 flex flex-col">
+                        <div class="flex justify-between items-start mb-4">
+                            <h3 class="text-xl font-bold uppercase italic">${g.name}</h3>
+                            <span class="price-tag px-3 py-1 rounded text-sm font-bold">₹${g.price}</span>
+                        </div>
+                        <p class="text-white/50 text-sm mb-8 line-clamp-3">${g.description}</p>
+                        
+                        <button onclick="addToCart('${g.name}', '₹${g.price}', '${g.image}')" class="btn-buy mt-auto w-full py-4 rounded-xl flex items-center justify-center gap-2 hover:scale-[1.02] transition-transform shadow-lg shadow-purple-900/20">
+                            <span class="material-symbols-outlined">add_shopping_cart</span>
+                            ADD TO CART
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadPremium();
+            updateCartCount();
+        });
+        function updateCartCount() {
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            document.getElementById('cart-count').innerText = cart.length;
+        }
+    </script>
+</body>
+</html>
