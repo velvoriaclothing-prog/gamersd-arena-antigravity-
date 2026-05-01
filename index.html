@@ -90,16 +90,14 @@
         async function loadHub() {
             try {
                 // Load AI Tools
-                const ra = await fetch('/api/aitools/list');
+                const ra = await fetch('ai-tools-data.json');
                 const da = await ra.json();
-                if(da.success) {
-                    document.getElementById('ai-grid').innerHTML = da.tools.slice(0,12).map(t => `
-                        <a href="${t.link}" target="_blank" class="glass p-6 rounded-2xl text-center group border-white/5 hover:border-cyan-400/40 transition-all">
-                            <img src="${t.image}" alt="${t.name} - AI Tool" class="w-12 h-12 mx-auto mb-4 rounded-lg grayscale group-hover:grayscale-0 transition-all" />
-                            <div class="text-[10px] font-black uppercase text-white/70 group-hover:text-cyan-400">${t.name}</div>
-                        </a>
-                    `).join('');
-                }
+                document.getElementById('ai-grid').innerHTML = da.slice(0,12).map(t => `
+                    <a href="${t.link}" target="_blank" class="glass p-6 rounded-2xl text-center group border-white/5 hover:border-cyan-400/40 transition-all">
+                        <img src="${t.image}" alt="${t.name} - AI Tool" class="w-12 h-12 mx-auto mb-4 rounded-lg grayscale group-hover:grayscale-0 transition-all" />
+                        <div class="text-[10px] font-black uppercase text-white/70 group-hover:text-cyan-400">${t.name}</div>
+                    </a>
+                `).join('');
 
                 // Load News
                 const rn = await fetch('/api/blogs/all');

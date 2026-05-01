@@ -53,12 +53,10 @@
 
         async function loadTools() {
             try {
-                const r = await fetch('/api/aitools/list');
+                const r = await fetch('ai-tools-data.json');
                 const d = await r.json();
-                if (d.success) {
-                    allTools = d.tools;
-                    renderTools(allTools);
-                }
+                allTools = d;
+                renderTools(allTools);
             } catch (e) { console.error(e); }
         }
 
