@@ -110,33 +110,19 @@ app.get('/api/games/list', async (req, res) => {
     res.json({ success: true, games: data });
 });
 
-app.get('/api/games/reveal/:id', requireAuth, async (req, res) => {
+app.get('/api/games/reveal/:id', async (req, res) => {
     if (!supabase) return res.json({ success: true, credential: { username: 'test_user', password: 'test_password' } });
     
-    // Check if already claimed
-    const { data: existing } = await supabase
-        .from('credentials')
-        .select('*')
-        .eq('game_id', req.params.id)
-        .eq('claimed_by', req.session.userId)
-        .single();
-
-    if (existing) return res.json({ success: true, credential: { username: existing.username, password: existing.password } });
-
-    // Find new
+    // Find credential for this game
     const { data: cred, error } = await supabase
         .from('credentials')
         .select('*')
         .eq('game_id', req.params.id)
-        .eq('is_claimed', false)
         .limit(1)
         .single();
 
     if (error || !cred) return res.json({ success: false, message: 'No credentials left!' });
 
-    // Claim
-    await supabase.from('credentials').update({ is_claimed: true, claimed_by: req.session.userId, claimed_at: new Date() }).eq('id', cred.id);
-    
     res.json({ success: true, credential: { username: cred.username, password: cred.password } });
 });
 

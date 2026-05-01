@@ -5,6 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gamers Arena | Elite Gaming Hub</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <meta name="description" content="Gamers Arena - The elite hub for free premium gaming account reveals, AI tools directory, and daily tech intel. Fast, secure, and permanent.">
+    <meta name="keywords" content="gaming accounts, free game accounts, premium gaming accounts, AI tools directory, gamers arena, tech news">
+    <meta name="author" content="Gamers Arena">
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://gamersarena.shop/">
+    <meta property="og:title" content="Gamers Arena | Elite Gaming Hub">
+    <meta property="og:description" content="Unlock premium gaming accounts and explore the best AI tools directory.">
+    <meta property="og:image" content="https://gamersarena.shop/assets/banner.jpg">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
     <style>
@@ -16,7 +25,7 @@
         .neon-text { text-shadow: 0 0 10px rgba(0, 242, 255, 0.5); }
     </style>
 </head>
-<body class="hero-gradient min-h-screen">
+<body class="bg-black text-white min-h-screen relative z-0">
     <nav class="p-6 flex justify-between items-center border-b border-white/5 bg-black/50 backdrop-blur-md sticky top-0 z-50">
         <div class="text-2xl font-black italic tracking-tighter text-cyan-400">GAMERS ARENA</div>
         <div class="hidden md:flex gap-8 text-xs font-black uppercase tracking-widest text-white/40">
@@ -85,7 +94,7 @@
                 if(da.success) {
                     document.getElementById('ai-grid').innerHTML = da.tools.slice(0,12).map(t => `
                         <a href="${t.link}" target="_blank" class="glass p-6 rounded-2xl text-center group border-white/5 hover:border-cyan-400/40 transition-all">
-                            <img src="${t.image}" class="w-12 h-12 mx-auto mb-4 rounded-lg grayscale group-hover:grayscale-0 transition-all" />
+                            <img src="${t.image}" alt="${t.name} - AI Tool" class="w-12 h-12 mx-auto mb-4 rounded-lg grayscale group-hover:grayscale-0 transition-all" />
                             <div class="text-[10px] font-black uppercase text-white/70 group-hover:text-cyan-400">${t.name}</div>
                         </a>
                     `).join('');
@@ -98,7 +107,7 @@
                     document.getElementById('news-grid').innerHTML = dn.blogs.slice(0,3).map(b => `
                         <div class="glass rounded-2xl overflow-hidden group cursor-pointer border-white/5 hover:border-purple-400/40 transition-all">
                             <div class="h-48 overflow-hidden relative">
-                                <img src="${b.image}" class="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform" />
+                                <img src="${b.image}" alt="${b.title} - News" class="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform" />
                                 <div class="absolute top-4 left-4 bg-black/80 px-3 py-1 rounded text-[10px] font-bold text-purple-400 border border-purple-400/20 uppercase tracking-widest">${b.category}</div>
                             </div>
                             <div class="p-8">
@@ -111,6 +120,6 @@
             } catch(e) { console.error(e); }
         }
         document.addEventListener('DOMContentLoaded', loadHub);
-    </script>
+    <script src="space-bg.js"></script>
 </body>
 </html>

@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Free Reveals | Gamers Arena</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <meta name="description" content="Unlock free premium gaming accounts instantly. High-quality account reveals with zero lag. Explore our collection of free gaming credentials.">
+    <meta name="keywords" content="free gaming accounts, account reveals, gamers arena, free credentials">
+    <meta property="og:title" content="Free Gaming Account Reveals | Gamers Arena">
+    <meta property="og:description" content="Instant premium account unlocks for free.">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
     <style>
@@ -18,7 +22,7 @@
         .reveal-anim { animation: slideDown 0.3s ease-out; }
     </style>
 </head>
-<body class="pb-20">
+<body class="bg-black text-white pb-20 relative z-0">
     <nav class="p-6 flex justify-between items-center border-b border-white/5 sticky top-0 bg-black/80 backdrop-blur-md z-50">
         <a href="index.html" class="text-2xl font-black italic tracking-tighter text-cyan-400">GAMERS ARENA</a>
         <div class="flex gap-6 text-sm font-bold uppercase tracking-widest text-white/50">
@@ -64,7 +68,7 @@
             const grid = document.getElementById('free-games-grid');
             grid.innerHTML = games.map(g => `
                 <div class="game-card glass rounded-2xl overflow-hidden flex flex-col">
-                    <img src="${g.image}" class="w-full h-48 object-cover" />
+                    <img src="${g.image}" alt="${g.name} Account Access" class="w-full h-48 object-cover" />
                     <div class="p-6 flex-1 flex flex-col">
                         <h3 class="text-xl font-bold mb-2 uppercase italic">${g.name}</h3>
                         <p class="text-white/50 text-sm mb-6 line-clamp-2">${g.description}</p>
@@ -109,5 +113,6 @@
 
         document.addEventListener('DOMContentLoaded', loadFreeGames);
     </script>
+    <script src="space-bg.js"></script>
 </body>
 </html>
