@@ -6,7 +6,7 @@
     <title>Gamers Arena | Elite Gaming Hub - Free Reveals & AI Directory</title>
     <link rel="canonical" href="https://gamersarena.shop/" />
     <script src="https://cdn.tailwindcss.com"></script>
-    <meta name="description" content="Gamers Arena is the elite hub for free premium gaming account reveals, a curated directory of 500+ AI tools, and daily tech intelligence. Fast, secure, and permanent.">
+    <meta name="description" content="Gamers Arena: The elite hub for free premium gaming account reveals, AI tools directory, and daily tech intel. Fast, secure, and permanent gaming hub.">
     <meta name="keywords" content="gaming accounts, free game accounts, premium gaming accounts, AI tools directory, gamers arena, tech news, game reveals">
     <meta name="author" content="Gamers Arena">
     
@@ -39,6 +39,12 @@
             to { opacity: 1; transform: translateY(0); }
         }
         .animate-fade-in-up { animation: fadeInUp 0.6s ease-out forwards; }
+        
+        /* Mobile Performance Optimization */
+        @media (max-width: 768px) {
+            .hero-title { font-size: 4rem !important; }
+            .feature-grid { grid-template-cols: 1fr !important; }
+        }
     </style>
 
     <!-- Schema.org Structured Data -->
@@ -196,6 +202,17 @@
             <div class="col-span-2">
                 <div class="text-2xl font-black italic tracking-tighter text-cyan-400 mb-6">GAMERS ARENA</div>
                 <p class="text-white/40 text-sm max-w-md">The world's leading elite gaming hub for premium account reveals and curated AI tools. Join thousands of pro gamers today.</p>
+            </div>
+            <div>
+                <h4 class="text-xs font-bold uppercase tracking-[0.3em] mb-6">Quick Links</h4>
+                <ul class="text-xs text-white/40 space-y-3">
+                    <li><a href="index.html" class="hover:text-cyan-400">Home Base</a></li>
+                    <li><a href="free-games.html" class="hover:text-cyan-400">Free Reveals</a></li>
+                    <li><a href="premium-games.html" class="hover:text-cyan-400">Premium Store</a></li>
+                    <li><a href="ai-directory.html" class="hover:text-cyan-400">AI Tools Hub</a></li>
+                    <li><a href="blog.html" class="hover:text-cyan-400">Daily Intel</a></li>
+                    <li><a href="login.html" class="hover:text-cyan-400">Agent Login</a></li>
+                </ul>
             </div>
             <div>
                 <h4 class="text-xs font-bold uppercase tracking-[0.3em] mb-6">Connect</h4>
