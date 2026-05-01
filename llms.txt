@@ -1,0 +1,25 @@
+# Gamers Arena
+
+Elite Gaming Hub for Premium Account Reveals and Curated AI Tools.
+
+## Core Services
+- **Free Reveals**: Instant access to premium gaming accounts (Steam, Epic, etc.).
+- **Premium Store**: Lifetime access to high-performance gaming accounts.
+- **AI Directory**: A curated list of 500+ AI tools categorized by use case (Text, Image, Video, Coding, etc.).
+- **Daily Intel**: Automated AI tech feed and blog for gamers.
+
+## Key Links
+- [Home](https://gamersarena.shop/index.html)
+- [Free Reveals](https://gamersarena.shop/free-games.html)
+- [Premium Store](https://gamersarena.shop/premium-games.html)
+- [AI Directory](https://gamersarena.shop/ai-directory.html)
+- [Daily Intel (Blog)](https://gamersarena.shop/blog.html)
+
+## Technology Stack
+- Frontend: HTML5, Tailwind CSS, JavaScript (Vanilla)
+- Backend: Node.js (Express), Supabase (PostgreSQL)
+- Animations: Custom CSS3, Space-themed JS Canvas background
+
+## Contact & Support
+- Email: support@gamersarena.shop
+- Telegram: @gamersarena_shop

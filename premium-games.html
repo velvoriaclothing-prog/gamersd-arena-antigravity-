@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Premium Store | Gamers Arena</title>
+    <title>Premium Store | Gamers Arena - Buy Elite Gaming Accounts</title>
+    <link rel="canonical" href="https://gamersarena.shop/premium-games.html" />
+    <link rel="icon" type="image/png" href="https://gamersarena.shop/favicon.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <meta name="description" content="Buy elite premium gaming accounts with lifetime access. Instant delivery, secure payments, and high-performance accounts.">
     <meta name="keywords" content="buy gaming accounts, premium store, gamers arena accounts, buy steam accounts">
@@ -83,12 +85,8 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             loadPremium();
-            updateCartCount();
+            if(typeof updateCartBadge === 'function') updateCartBadge();
         });
-        function updateCartCount() {
-            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-            document.getElementById('cart-count').innerText = cart.length;
-        }
     </script>
     <script src="space-bg.js"></script>
 </body>

@@ -244,7 +244,10 @@ async function addAiTool() {
 }
 async function deleteAiTool(id) { if(!confirm('Delete this AI tool?')) return; await api('admin/aitools/delete/'+id,{method:'POST'}); loadAiTools(); }
 
-function $(sel) { return document.querySelector(sel).value.trim(); }
+function $(sel) { 
+    const el = document.querySelector(sel);
+    return el ? el.value.trim() : ''; 
+}
 async function logout() { await api('auth/logout'); localStorage.removeItem('ga_user'); window.location.href='login.html'; }
 
 (async()=>{
