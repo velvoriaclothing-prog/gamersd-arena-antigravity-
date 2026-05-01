@@ -17,9 +17,8 @@
         .float-anim { animation: float 4s ease-in-out infinite; }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center relative overflow-hidden">
-    <!-- Animated BG -->
-    <canvas id="bg-canvas" class="fixed inset-0 z-0 pointer-events-none opacity-30"></canvas>
+<body class="bg-black text-white min-h-screen flex items-center justify-center relative overflow-hidden z-0">
+    <script src="space-bg.js"></script>
     
     <div class="relative z-10 w-full max-w-md px-4">
         <!-- Logo -->
@@ -82,23 +81,6 @@
     </div>
 
     <script>
-    // ── Background Animation ──
-    const canvas = document.getElementById('bg-canvas');
-    const ctx = canvas.getContext('2d');
-    function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-    window.addEventListener('resize', resize); resize();
-    let t = 0;
-    (function anim() {
-        ctx.fillStyle = 'rgba(5,5,5,0.1)'; ctx.fillRect(0,0,canvas.width,canvas.height);
-        ctx.beginPath();
-        for(let i=0; i<canvas.width; i+=20) {
-            let y = canvas.height/2 + Math.sin(i*0.005+t)*180*Math.sin(t*0.4)+Math.cos(i*0.02+t*2)*40;
-            i===0 ? ctx.moveTo(i,y) : ctx.lineTo(i,y);
-        }
-        ctx.strokeStyle='rgba(0,242,255,0.6)'; ctx.lineWidth=3; ctx.shadowBlur=20; ctx.shadowColor='#00f2ff'; ctx.stroke();
-        t+=0.015; requestAnimationFrame(anim);
-    })();
-
     function switchTab(tab) {
         const isLogin = tab === 'login';
         document.getElementById('login-form').classList.toggle('hidden', !isLogin);
