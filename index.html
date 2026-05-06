@@ -11,8 +11,11 @@
 <body>
     <nav class="navbar">
         <div class="logo-container">
-            <div class="logo-box">GA</div>
-            <div class="logo-text">GAMERS ARENA <span class="logo-sub">FREE TO USE</span></div>
+            <img src="logo.png" alt="Gamers Arena Logo" style="height: 50px; width: 50px; object-fit: contain; border-radius: 10px;">
+            <div>
+                <div class="logo-text">GAMERS ARENA</div>
+                <span class="logo-sub">PC GAMES ACCOUNTS STORE</span>
+            </div>
         </div>
         <div class="menu-icon">
             <span class="material-symbols-outlined">menu</span>
@@ -107,7 +110,7 @@
         
         <div class="details-main">
             <div class="details-left">
-                <img id="detail-img" src="" alt="Game Preview" class="game-preview-img">
+                <img id="detail-img" src="" alt="Game Preview" class="game-preview-img" onerror="this.src='logo.png'" style="background: linear-gradient(135deg, #0d1a2d, #1a2d4a);">
             </div>
             
             <div class="details-right">
@@ -192,8 +195,8 @@
             document.getElementById('total-count').innerText = `${games.length} listings`;
             grid.innerHTML = games.map(g => `
                 <div class="game-card glass-3d" onclick="openDetails(${g.id})">
-                    <div class="card-top">
-                        <img src="${g.image}" alt="${g.name}">
+                    <div class="card-top" style="background: linear-gradient(135deg, #0d1a2d, #1a2d4a);">
+                        <img src="${g.image || 'logo.png'}" alt="${g.name}" onerror="this.src='logo.png'" style="object-fit: contain; padding: 10px;">
                         <div class="service-badge">
                             <span class="material-symbols-outlined" style="font-size: 14px;">sports_esports</span>
                             ${g.genre || 'Game'}
