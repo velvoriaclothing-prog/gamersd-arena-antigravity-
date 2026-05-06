@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GAMERS ARENA | Reveal Unlock</title>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+    <link rel="stylesheet" href="cinematic.css">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="index.html" class="logo-container" id="ga-logo">
+            <img src="logo.png" alt="Logo" class="logo-img" onerror="this.src='https://via.placeholder.com/50/000/fff?text=GA'">
+            <div>
+                <div class="logo-text">GAMERS ARENA</div>
+                <span class="logo-sub">PC GAMES ACCOUNTS STORE</span>
+            </div>
+        </a>
+        <div class="nav-links">
+            <a href="library.html">← BACK TO VAULT</a>
+        </div>
+    </nav>
+
+    <div class="section" style="padding-top: 12rem; display: flex; flex-direction: column; align-items: center;">
+        
+        <h1 id="game-title" class="glowing-text" style="font-size: 3.5rem; margin-bottom: 1rem; text-align: center;">Loading...</h1>
+        <p style="color: var(--text-muted); margin-bottom: 3rem;">Initiate the 30-second security bypass to reveal the shared account credentials.</p>
+
+        <div class="timer-container" id="timer-box">
+            <span class="material-symbols-outlined" style="font-size: 4rem; color: var(--text-muted);">lock</span>
+            <div id="countdown" class="countdown">30</div>
+            <p style="color: var(--text-muted); margin-bottom: 2rem;">Seconds remaining until credential decryption.</p>
+            
+            <button id="btn-start" class="btn btn-primary" onclick="startTimer()">
+                Initiate Unlock Protocol <span class="material-symbols-outlined">lock_open</span>
+            </button>
+        </div>
+
+        <div class="credentials-box" id="creds-box" style="width: 100%; max-width: 600px;">
+            <h3 style="color: var(--accent-blue); margin-bottom: 1.5rem; border-bottom: 1px solid var(--glass-border); padding-bottom: 0.5rem;">Decryption Complete</h3>
+            
+            <div class="cred-row">
+                <div>
+                    <div class="cred-label">Username / Email</div>
+                    <div class="cred-value" id="res-user">fetching...</div>
+                </div>
+                <button class="copy-btn" onclick="copyText('res-user')">Copy</button>
+            </div>
+            
+            <div class="cred-row">
+                <div>
+                    <div class="cred-label">Password</div>
+                    <div class="cred-value" id="res-pass">fetching...</div>
+                </div>
+                <button class="copy-btn" onclick="copyText('res-pass')">Copy</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="global.js"></script>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const gameId = urlParams.get('id');
+        
+        // Fetch game info to set title
+        if(gameId) {
+            document.getElementById('game-title').innerText = "Game ID: " + gameId;
+            // In real integration, fetch from /api/games/list and find by ID to set title
+        }
+
+        function startTimer() {
+            document.getElementById('btn-start').style.display = 'none';
+            let timeLeft = 30;
+            const display = document.getElementById('countdown');
+            
+            const timer = setInterval(() => {
+                timeLeft--;
+                display.innerText = timeLeft;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    revealCreds();
+                }
+            }, 1000);
+        }
+
+        function revealCreds() {
+            document.getElementById('timer-box').style.display = 'none';
+            document.getElementById('creds-box').style.display = 'block';
+
+            // Real backend fetch
+            fetch(\`/api/games/reveal/\${gameId}\`)
+                .then(res => res.json())
+                .then(data => {
+                    if(data.success) {
+                        document.getElementById('res-user').innerText = data.credentials.username;
+                        document.getElementById('res-pass').innerText = data.credentials.password;
+                    } else {
+                        document.getElementById('res-user').innerText = "ERROR";
+                        document.getElementById('res-pass').innerText = "Data missing or Supabase down";
+                    }
+                })
+                .catch(() => {
+                    document.getElementById('res-user').innerText = "DemoUser123";
+                    document.getElementById('res-pass').innerText = "DemoPass!@#";
+                });
+        }
+
+        function copyText(id) {
+            const text = document.getElementById(id).innerText;
+            navigator.clipboard.writeText(text);
+            alert("Copied to clipboard!");
+        }
+    </script>
+</body>
+</html>

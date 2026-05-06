@@ -3,305 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GAMERS ARENA | Premium Account Library</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <title>GAMERS ARENA | Cinematic Hub</title>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
-    <link rel="stylesheet" href="arena.css">
+    <link rel="stylesheet" href="cinematic.css">
 </head>
 <body>
     <nav class="navbar">
-        <div class="logo-container">
-            <img src="logo.png" alt="Gamers Arena Logo" style="height: 50px; width: 50px; object-fit: contain; border-radius: 10px;">
+        <a href="index.html" class="logo-container" id="ga-logo">
+            <img src="logo.png" alt="Logo" class="logo-img" onerror="this.src='https://via.placeholder.com/50/000/fff?text=GA'">
             <div>
                 <div class="logo-text">GAMERS ARENA</div>
                 <span class="logo-sub">PC GAMES ACCOUNTS STORE</span>
             </div>
-        </div>
-        <div class="menu-icon">
-            <span class="material-symbols-outlined">menu</span>
+        </a>
+        <div class="nav-links">
+            <a href="index.html" style="color: var(--accent-blue);">HOME</a>
+            <a href="library.html">FREE DROPS</a>
+            <a href="premium.html">PREMIUM STORE</a>
         </div>
     </nav>
 
-    <header class="hero-v3">
+    <header class="hero">
         <div class="hero-content">
-            <div class="tag" style="display: inline-block; margin-bottom: 1rem; color: var(--accent-blue);">COMMUNITY • GAMING • UTILITIES</div>
-            <h1>One place for <span>drops</span>, tools, and rewards</h1>
-            <p>GAMERS ARENA brings together shared account listings you can browse in seconds, giveaways, disposable email, community chat, and more — organised so visitors understand the product before they jump in.</p>
+            <div class="hero-tag">Welcome to the Arena</div>
+            <h1 class="glowing-text">Premium Accounts &<br>Exclusive Bundles</h1>
+            <p>Access the highest tier of shared gaming accounts. Claim your free drops instantly or upgrade your arsenal in the Premium Store.</p>
             
-            <div class="btn-group">
-                <a href="#main-content" class="btn btn-primary">
-                    Browse accounts <span class="material-symbols-outlined">rocket_launch</span>
+            <div style="display: flex; gap: 1.5rem; justify-content: center;">
+                <a href="library.html" class="btn btn-secondary">
+                    Free Drops Library <span class="material-symbols-outlined">view_module</span>
                 </a>
-                <a href="https://t.me/gamersarena_shop" target="_blank" class="btn btn-secondary">
-                    Premium Store <span class="material-symbols-outlined">shopping_cart</span>
+                <a href="premium.html" class="btn btn-primary">
+                    Enter Premium Store <span class="material-symbols-outlined">shopping_cart</span>
                 </a>
-                <a href="https://t.me/gamersarena_support" target="_blank" class="btn btn-secondary">
-                    Live Support <span class="material-symbols-outlined">support_agent</span>
-                </a>
-            </div>
-
-            <div class="tag-cloud">
-                <div class="tag">STEAM • XBOX • EPIC</div>
-                <div class="tag">STREAMING & APPS</div>
-                <div class="tag">TEMP MAIL & VERIFICATIONS</div>
-                <div class="tag">DISCORD & TELEGRAM</div>
-            </div>
-        </div>
-
-        <div class="hero-visual">
-            <div class="dashboard-card glass-3d">
-                <div class="dashboard-header">
-                    <div class="dot dot-red"></div>
-                    <div class="dot dot-yellow"></div>
-                    <div class="dot dot-green"></div>
-                </div>
-                <div style="font-size: 0.7rem; color: var(--text-muted); font-family: monospace;">
-                    <p style="color: var(--accent-cyan);">GAMERSARENA.COM/DATABASE</p>
-                    <div style="margin-top: 1rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.5rem;">
-                        <div style="color: var(--accent-blue); font-weight: bold;">GAMING</div>
-                        <div style="height: 4px; background: rgba(255,255,255,0.1); width: 80%; margin-top: 4px;"></div>
-                    </div>
-                    <div style="margin-top: 1rem; display: flex; gap: 1rem;">
-                        <div style="flex: 1;">
-                            <div style="font-weight: bold;">CATALOG</div>
-                            <div style="color: white; margin-top: 2px;">Filtered</div>
-                        </div>
-                        <div style="flex: 1;">
-                            <div style="font-weight: bold;">UNLOCK</div>
-                            <div style="color: white; margin-top: 2px;">Timed</div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </header>
 
-    <div class="section-title">
-        <h2 style="font-size: 2rem; font-weight: 900; margin-bottom: 0.5rem;">Recent postings</h2>
-        <div class="listings-count" style="padding: 0; margin-bottom: 1rem;">
-            <span id="total-count">0 listings</span>
-            <span>Select a card to view details</span>
-        </div>
-    </div>
-
-    <div class="search-container" style="margin: 2rem 8%;">
-        <div class="search-input-wrapper">
-            <span class="material-symbols-outlined search-icon">search</span>
-            <input type="text" id="game-search" class="search-input" placeholder="Search games, apps, or descriptions...">
-        </div>
-        <select id="service-filter" class="service-filter">
-            <option value="all">All Services</option>
-            <option value="streaming">Streaming</option>
-            <option value="gaming">Gaming</option>
-        </select>
-    </div>
-
-    <main id="main-content">
-        <div id="games-grid" class="games-grid">
-            <!-- Game cards injected here -->
-        </div>
-    </main>
-
-    <!-- Details View (Hidden by default) -->
-    <div id="details-view" class="details-container" style="display: none;">
-        <button class="back-btn" onclick="closeDetails()">
-            <span class="material-symbols-outlined">arrow_back</span> Back to library
-        </button>
-        
-        <div class="details-main">
-            <div class="details-left">
-                <img id="detail-img" src="" alt="Game Preview" class="game-preview-img" onerror="this.src='logo.png'" style="background: linear-gradient(135deg, #0d1a2d, #1a2d4a);">
-            </div>
-            
-            <div class="details-right">
-                <h1 id="detail-title" style="font-size: 2.5rem; font-weight: 900; margin-bottom: 0.5rem;"></h1>
-                <p id="detail-desc" style="color: var(--text-muted); margin-bottom: 2rem;"></p>
-                
-                <div style="display: flex; gap: 1rem; margin-bottom: 2rem; color: var(--text-muted); font-size: 0.8rem;">
-                    <span>Posted by aura_drops</span>
-                    <span>May 6, 2026</span>
-                </div>
-
-                <div class="notice-box">
-                    <div style="font-size: 20px; color: #ff4d4d;">⚠️</div>
-                    <div>
-                        <h4>Important notice</h4>
-                        <p>If you see a "Something went wrong" message pop up, don't worry — that doesn't mean the account isn't working. The account is fine, but too many people are trying at once. Wait a moment and try again later.</p>
-                    </div>
-                </div>
-
-                <div class="notice-box" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);">
-                    <div style="font-size: 20px;">🔒</div>
-                    <div>
-                        <h4>Shared access</h4>
-                        <p>Do not change passwords, enable Steam Guard, or alter account settings. Modifications can lock accounts for everyone. Use responsibly.</p>
-                    </div>
-                </div>
-
-                <div id="unlock-section" class="reveal-section">
-                    <h2>Unlock credentials</h2>
-                    <p>Reveal the username and password when you are ready.</p>
-                    <button class="reveal-btn" onclick="startReveal()">
-                        <span class="material-symbols-outlined">lock_open</span> Show credentials
-                    </button>
-                </div>
-
-                <div id="timer-section" class="reveal-section" style="display: none;">
-                    <div id="timer-circle" class="timer-circle">30s</div>
-                    <p>Wait for credentials to be revealed...</p>
-                </div>
-
-                <div id="creds-result" class="creds-box" style="display: none;">
-                    <h3 style="margin-bottom: 1.5rem;">Your credentials</h3>
-                    <div class="cred-field">
-                        <label class="cred-label">Username / Email</label>
-                        <div class="cred-value-wrapper">
-                            <input type="text" id="res-user" class="cred-value" readonly>
-                            <button class="copy-btn" onclick="copyText('res-user')">Copy</button>
-                        </div>
-                    </div>
-                    <div class="cred-field">
-                        <label class="cred-label">Password</label>
-                        <div class="cred-value-wrapper">
-                            <input type="password" id="res-pass" class="cred-value" readonly>
-                            <button class="copy-btn" onclick="copyText('res-pass')">Copy</button>
-                        </div>
-                    </div>
-                    <div class="notice-box" style="background: var(--warning-red); border: 1px solid var(--warning-border); margin-top: 2rem;">
-                         <p>🔒 Keep private. Don't redistribute these credentials. Misuse hurts the whole community.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        let allGames = [];
-        let activeGameId = null;
-
-        async function loadGames() {
-            try {
-                const r = await fetch('/api/games/list');
-                const d = await r.json();
-                if (d.success) {
-                    allGames = d.games;
-                    renderGrid(allGames);
-                }
-            } catch (e) { console.error(e); }
-        }
-
-        function renderGrid(games) {
-            const grid = document.getElementById('games-grid');
-            document.getElementById('total-count').innerText = `${games.length} listings`;
-            grid.innerHTML = games.map(g => `
-                <div class="game-card glass-3d" onclick="openDetails(${g.id})">
-                    <div class="card-top" style="background: linear-gradient(135deg, #0d1a2d, #1a2d4a);">
-                        <img src="${g.image || 'logo.png'}" alt="${g.name}" onerror="this.src='logo.png'" style="object-fit: contain; padding: 10px;">
-                        <div class="service-badge">
-                            <span class="material-symbols-outlined" style="font-size: 14px;">sports_esports</span>
-                            ${g.genre || 'Game'}
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <h3>${g.name}</h3>
-                        <p>${g.description || 'Premium access for ' + g.name}</p>
-                        <div class="card-link">Click to view details & get account <span class="material-symbols-outlined" style="font-size: 14px;">arrow_forward</span></div>
-                    </div>
-                    <div class="card-footer">
-                        <div class="user-info">
-                            <div class="user-avatar"></div>
-                            <span>gamers_arena</span>
-                        </div>
-                        <div style="font-size: 10px; color: #bbb;">May 6, 2026</div>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function openDetails(id) {
-            const game = allGames.find(g => g.id == id);
-            if (!game) return;
-            activeGameId = id;
-            
-            document.getElementById('detail-title').innerText = game.name;
-            document.getElementById('detail-desc').innerText = game.description;
-            document.getElementById('detail-img').src = game.image;
-            
-            document.getElementById('main-content').style.display = 'none';
-            document.querySelector('.hero-v3').style.display = 'none';
-            document.querySelector('.search-container').style.display = 'none';
-            document.querySelector('.section-title').style.display = 'none';
-            document.getElementById('details-view').style.display = 'block';
-            
-            // Update details branding
-            document.querySelector('.details-right span').innerText = 'Posted by gamers_arena';
-            
-            // Reset Reveal State
-            document.getElementById('unlock-section').style.display = 'block';
-            document.getElementById('timer-section').style.display = 'none';
-            document.getElementById('creds-result').style.display = 'none';
-            window.scrollTo(0, 0);
-        }
-
-        function closeDetails() {
-            document.getElementById('details-view').style.display = 'none';
-            document.getElementById('main-content').style.display = 'block';
-            document.querySelector('.hero-v3').style.display = 'grid';
-            document.querySelector('.search-container').style.display = 'flex';
-            document.querySelector('.section-title').style.display = 'block';
-        }
-
-        function startReveal() {
-            document.getElementById('unlock-section').style.display = 'none';
-            document.getElementById('timer-section').style.display = 'block';
-            
-            let timeLeft = 30;
-            const timerEl = document.getElementById('timer-circle');
-            const interval = setInterval(() => {
-                timeLeft--;
-                timerEl.innerText = timeLeft + 's';
-                if (timeLeft <= 0) {
-                    clearInterval(interval);
-                    fetchCredentials();
-                }
-            }, 1000);
-        }
-
-        async function fetchCredentials() {
-            try {
-                const r = await fetch(\`/api/games/reveal/\${activeGameId}\`);
-                const d = await r.json();
-                if (d.success) {
-                    document.getElementById('res-user').value = d.credential.username;
-                    document.getElementById('res-pass').value = d.credential.password;
-                    document.getElementById('timer-section').style.display = 'none';
-                    document.getElementById('creds-result').style.display = 'block';
-                } else {
-                    alert(d.message || 'Error fetching credentials');
-                    closeDetails();
-                }
-            } catch (e) { console.error(e); }
-        }
-
-        function copyText(id) {
-            const el = document.getElementById(id);
-            el.select();
-            document.execCommand('copy');
-            alert('Copied to clipboard!');
-        }
-
-        // Search logic
-        document.getElementById('game-search').addEventListener('input', (e) => {
-            const val = e.target.value.toLowerCase();
-            const filtered = allGames.filter(g => 
-                g.name.toLowerCase().includes(val) || 
-                g.description?.toLowerCase().includes(val)
-            );
-            renderGrid(filtered);
-        });
-
-        document.addEventListener('DOMContentLoaded', loadGames);
-    </script>
+    <script src="global.js"></script>
 </body>
 </html>
->

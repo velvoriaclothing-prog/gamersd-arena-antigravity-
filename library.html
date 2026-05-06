@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GAMERS ARENA | Free Drops Vault</title>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+    <link rel="stylesheet" href="cinematic.css">
+    <style>
+        .search-box { display: flex; gap: 1rem; max-width: 800px; margin: 0 auto 4rem auto; }
+        .search-input { flex: 1; padding: 1.5rem 2rem; border-radius: 50px; border: 1px solid var(--accent-blue); background: rgba(0, 229, 255, 0.05); color: #fff; font-size: 1.2rem; outline: none; transition: 0.3s; backdrop-filter: blur(10px); }
+        .search-input:focus { box-shadow: 0 0 20px var(--accent-blue-dim); }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="index.html" class="logo-container" id="ga-logo">
+            <img src="logo.png" alt="Logo" class="logo-img" onerror="this.src='https://via.placeholder.com/50/000/fff?text=GA'">
+            <div>
+                <div class="logo-text">GAMERS ARENA</div>
+                <span class="logo-sub">PC GAMES ACCOUNTS STORE</span>
+            </div>
+        </a>
+        <div class="nav-links">
+            <a href="index.html">HOME</a>
+            <a href="library.html" style="color: var(--accent-blue);">FREE DROPS</a>
+            <a href="premium.html">PREMIUM STORE</a>
+        </div>
+    </nav>
+
+    <div class="section" style="padding-top: 12rem;">
+        <div class="section-header">
+            <div class="section-subtitle">The Vault</div>
+            <h1 class="section-title glowing-text">Free Drops Library</h1>
+            <p style="color: var(--text-muted); font-size: 1.2rem;">Browse 296+ high-tier PC game accounts. Select a card to unlock credentials.</p>
+        </div>
+
+        <div class="search-box">
+            <input type="text" id="search" class="search-input" placeholder="Search games, genres, or keywords...">
+            <button class="btn btn-primary" style="border-radius: 50px;"><span class="material-symbols-outlined">search</span></button>
+        </div>
+
+        <div class="grid" id="games-grid">
+            <!-- Dynamically populated via JS -->
+            <div style="text-align: center; color: var(--text-muted); grid-column: 1/-1;">Loading games database...</div>
+        </div>
+    </div>
+
+    <script src="global.js"></script>
+    <script>
+        // Fetch games from backend (using fallback logic if needed)
+        fetch('/api/games/list')
+            .then(res => res.json())
+            .then(data => {
+                if(data.success && data.games) {
+                    renderGames(data.games);
+                } else {
+                    document.getElementById('games-grid').innerHTML = '<div style="color: red; text-align:center; grid-column: 1/-1;">Failed to load games.</div>';
+                }
+            })
+            .catch(err => {
+                // If API fails (e.g. static preview), render dummy data
+                renderGames([
+                    {id: 1, name: 'Grand Theft Auto V Legacy', genre: 'Open World', image: 'logo.png'},
+                    {id: 2, name: 'Cyberpunk 2077', genre: 'RPG', image: 'logo.png'},
+                    {id: 3, name: 'Elden Ring', genre: 'Action', image: 'logo.png'}
+                ]);
+            });
+
+        function renderGames(games) {
+            const grid = document.getElementById('games-grid');
+            grid.innerHTML = games.map(g => \`
+                <a href="game.html?id=\${g.id}" class="card-3d">
+                    <div class="card-image-wrapper">
+                        <img src="\${g.image || 'logo.png'}" alt="\${g.name}" onerror="this.src='logo.png'">
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-title">\${g.name}</h3>
+                        <p class="card-desc" style="color: var(--accent-red);">\${g.genre || 'PC Game'}</p>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: auto;">
+                            <span style="font-size: 0.9rem; color: var(--text-muted);">View Details</span>
+                            <span class="material-symbols-outlined" style="color: var(--accent-blue);">arrow_forward</span>
+                        </div>
+                    </div>
+                </a>
+            \`).join('');
+        }
+    </script>
+</body>
+</html>
