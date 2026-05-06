@@ -100,48 +100,61 @@ app.get('/api/auth/logout', (req, res) => {
 
 // ── GAMES ───────────────────────────────────────────────
 app.get('/api/games/list', async (req, res) => {
-    if (!supabase) {
+    let games = [];
+    
+    // Try Supabase first if available
+    if (supabase) {
         try {
-            const gamesData = JSON.parse(fs.readFileSync(path.join(__dirname, 'games-data.json'), 'utf8'));
-            return res.json({ success: true, games: gamesData });
-        } catch (e) {
-            // Sample data if JSON not found
-            return res.json({ success: true, games: [
-                { id: 1, name: 'Neon Samurai', type: 'free', price: 0, image: 'https://images.unsplash.com/photo-1614583225154-5fc20b64190b?w=800' },
-                { id: 2, name: 'Elden Ring', type: 'premium', price: 4999, description: 'Master the challenges...' }
-            ]});
+            const { data, error } = await supabase.from('games').select('*').order('created_at', { ascending: false });
+            if (!error && data && data.length > 0) {
+                return res.json({ success: true, games: data });
+            }
+        } catch (err) {
+            console.error('Supabase fetch error:', err);
         }
     }
-    const { data, error } = await supabase.from('games').select('*').order('created_at', { ascending: false });
-    res.json({ success: true, games: data });
+
+    // Fallback to JSON if Supabase failed or returned empty
+    try {
+        const gamesData = JSON.parse(fs.readFileSync(path.join(__dirname, 'games-data.json'), 'utf8'));
+        return res.json({ success: true, games: gamesData });
+    } catch (e) {
+        // Sample data if JSON also fails
+        return res.json({ success: true, games: [
+            { id: 1, name: 'Neon Samurai', type: 'free', price: 0, image: 'https://images.unsplash.com/photo-1614583225154-5fc20b64190b?w=800' },
+            { id: 2, name: 'Elden Ring', type: 'premium', price: 4999, description: 'Master the challenges...' }
+        ]});
+    }
 });
 
 app.get('/api/games/reveal/:id', async (req, res) => {
-    if (!supabase) {
+    // 1. Try Supabase
+    if (supabase) {
         try {
-            const credsData = JSON.parse(fs.readFileSync(path.join(__dirname, 'credentials-data.json'), 'utf8'));
-            const gameCreds = credsData.filter(c => c.game_id == req.params.id);
-            if (gameCreds.length === 0) return res.json({ success: false, message: 'No credentials found for this game.' });
+            const { data: cred, error } = await supabase
+                .from('credentials')
+                .select('*')
+                .eq('game_id', req.params.id)
+                .limit(1)
+                .single();
             
-            // Pick a random one
-            const cred = gameCreds[Math.floor(Math.random() * gameCreds.length)];
-            return res.json({ success: true, credential: { username: cred.username, password: cred.password } });
-        } catch (e) {
-            return res.json({ success: true, credential: { username: 'test_user', password: 'test_password' } });
-        }
+            if (!error && cred) {
+                return res.json({ success: true, credential: { username: cred.username, password: cred.password } });
+            }
+        } catch (err) {}
     }
-    
-    // Find credential for this game
-    const { data: cred, error } = await supabase
-        .from('credentials')
-        .select('*')
-        .eq('game_id', req.params.id)
-        .limit(1)
-        .single();
 
-    if (error || !cred) return res.json({ success: false, message: 'No credentials left!' });
-
-    res.json({ success: true, credential: { username: cred.username, password: cred.password } });
+    // 2. Fallback to JSON
+    try {
+        const credsData = JSON.parse(fs.readFileSync(path.join(__dirname, 'credentials-data.json'), 'utf8'));
+        const gameCreds = credsData.filter(c => c.game_id == req.params.id);
+        if (gameCreds.length === 0) return res.json({ success: false, message: 'No credentials found for this game.' });
+        
+        const cred = gameCreds[Math.floor(Math.random() * gameCreds.length)];
+        return res.json({ success: true, credential: { username: cred.username, password: cred.password } });
+    } catch (e) {
+        return res.json({ success: true, credential: { username: 'test_user', password: 'test_password' } });
+    }
 });
 
 // ── ORDERS ──────────────────────────────────────────────
