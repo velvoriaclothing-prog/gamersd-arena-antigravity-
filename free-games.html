@@ -37,49 +37,52 @@
 
     <header class="py-20 px-6 text-center">
         <h1 class="text-6xl font-black italic mb-4">FREE REVEALS</h1>
-        <p class="text-white/40 uppercase tracking-[0.3em] text-xs">Unlock Premium Accounts Instantly</p>
+        <p class="text-white/40 uppercase tracking-[0.3em] text-xs mb-12">Unlock Premium Accounts Instantly</p>
+        
+        <div class="max-w-2xl mx-auto relative group">
+            <input type="text" id="game-search" placeholder="Search by game title..." class="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-12 text-sm focus:border-cyan-400/50 outline-none transition-all">
+            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-white/20 group-hover:text-cyan-400 transition-colors">search</span>
+        </div>
     </header>
 
     <main class="max-w-7xl mx-auto px-6">
         <div id="free-games-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <!-- Fast Loading Skeleton -->
-            <div class="h-80 glass rounded-2xl animate-pulse"></div>
-            <div class="h-80 glass rounded-2xl animate-pulse"></div>
-            <div class="h-80 glass rounded-2xl animate-pulse"></div>
+            <!-- Loading state -->
+            <div class="col-span-full text-center py-20 text-white/20 uppercase tracking-widest text-xs">Awaiting Data Link...</div>
         </div>
     </main>
 
     <script>
-        async function loadFreeGames() {
-            const grid = document.getElementById('free-games-grid');
-            try {
-                // Performance Logic: Use cache if available
-                const cached = localStorage.getItem('ga_free_games');
-                if (cached) render(JSON.parse(cached));
+        let allGames = [];
 
+        async function loadFreeGames() {
+            try {
                 const r = await fetch('/api/games/list');
                 const d = await r.json();
                 if (d.success) {
-                    const free = d.games.filter(g => g.type === 'free');
-                    localStorage.setItem('ga_free_games', JSON.stringify(free));
-                    render(free);
+                    allGames = d.games.filter(g => g.type === 'free');
+                    render(allGames);
                 }
             } catch (e) { console.error(e); }
         }
 
         function render(games) {
             const grid = document.getElementById('free-games-grid');
+            if (games.length === 0) {
+                grid.innerHTML = '<div class="col-span-full text-center py-20 text-white/20 uppercase tracking-widest text-xs">No matches found in database.</div>';
+                return;
+            }
             grid.innerHTML = games.map(g => `
                 <div class="game-card glass rounded-2xl overflow-hidden flex flex-col">
-                    <img src="${g.image}" alt="${g.name} Account Access" class="w-full h-48 object-cover" />
+                    <img src="${g.image}" alt="${g.name} Account Access" class="w-full h-48 object-cover opacity-60" />
                     <div class="p-6 flex-1 flex flex-col">
-                        <h3 class="text-xl font-bold mb-2 uppercase italic text-cyan-400">${g.name}</h3>
-                        <p class="text-gray-300 text-sm mb-6 line-clamp-2">${g.description}</p>
+                        <h3 class="text-xl font-bold mb-2 uppercase italic text-cyan-400 line-clamp-2">${g.name}</h3>
+                        <p class="text-gray-400 text-xs mb-6 line-clamp-3 leading-relaxed">${g.description}</p>
                         
                         <div id="cred-area-${g.id}" class="mt-auto">
-                            <button onclick="reveal(${g.id})" class="btn-unlock w-full py-3 rounded-lg flex items-center justify-center gap-2 hover:scale-[1.02] transition-transform">
-                                <span class="material-symbols-outlined">key</span>
-                                UNLOCK CREDENTIAL
+                            <button onclick="reveal(${g.id})" class="btn-unlock w-full py-3 rounded-xl flex items-center justify-center gap-2 hover:scale-[1.02] transition-all">
+                                <span class="material-symbols-outlined text-sm">key</span>
+                                REVEAL ACCOUNT
                             </button>
                         </div>
                     </div>
@@ -87,31 +90,41 @@
             `).join('');
         }
 
+        document.getElementById('game-search').addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase();
+            const filtered = allGames.filter(g => g.name.toLowerCase().includes(term));
+            render(filtered);
+        });
+
         async function reveal(id) {
             const area = document.getElementById('cred-area-'+id);
-            area.innerHTML = '<div class="text-cyan-400 text-center py-2 animate-pulse">DECRYPTING...</div>';
+            const originalHTML = area.innerHTML;
+            area.innerHTML = '<div class="text-cyan-400 text-center py-2 animate-pulse text-xs font-black italic tracking-widest">DECRYPTING ENCRYPTION...</div>';
             
             try {
                 const r = await fetch('/api/games/reveal/'+id);
                 const d = await r.json();
                 if(d.success) {
                     area.innerHTML = `
-                        <div class="cred-box p-4 rounded-lg reveal-anim">
-                            <div class="flex justify-between mb-2">
-                                <span class="text-[10px] text-cyan-400 font-black uppercase">Username</span>
-                                <span class="text-white font-mono">${d.credential.username}</span>
+                        <div class="cred-box p-4 rounded-xl reveal-anim space-y-3">
+                            <div class="flex justify-between items-center border-b border-cyan-400/10 pb-2">
+                                <span class="text-[8px] text-cyan-400 font-black uppercase tracking-widest">Username</span>
+                                <span class="text-xs text-white font-mono select-all">${d.credential.username}</span>
                             </div>
-                            <div class="flex justify-between">
-                                <span class="text-[10px] text-cyan-400 font-black uppercase">Password</span>
-                                <span class="text-white font-mono">${d.credential.password}</span>
+                            <div class="flex justify-between items-center">
+                                <span class="text-[8px] text-cyan-400 font-black uppercase tracking-widest">Password</span>
+                                <span class="text-xs text-white font-mono select-all">${d.credential.password}</span>
                             </div>
                         </div>
                     `;
                 } else {
                     alert(d.message);
-                    loadFreeGames(); // Reset button
+                    area.innerHTML = originalHTML;
                 }
-            } catch(e) { alert('Login required to unlock'); window.location.href='login.html'; }
+            } catch(e) { 
+                alert('Authentication required for reveal.'); 
+                window.location.href='login.html'; 
+            }
         }
 
         document.addEventListener('DOMContentLoaded', loadFreeGames);

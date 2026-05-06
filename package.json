@@ -13,7 +13,16 @@
     "dotenv": "^16.3.1",
     "cookie-session": "^2.0.0",
     "body-parser": "^1.20.2",
-    "@supabase/supabase-js": "^2.38.4"
+    "@supabase/supabase-js": "^2.38.4",
+    "antigravity-awesome-skills": "file:./antigravity-skills/antigravity-awesome-skills",
+    "antigravity-workflows": "file:./antigravity-skills/antigravity-workflows",
+    "awesome-agent-skills": "file:./antigravity-skills/awesome-agent-skills",
+    "Agentic-SEO-Skill": "file:./antigravity-skills/Agentic-SEO-Skill",
+    "Understand-Anything": "file:./antigravity-skills/Understand-Anything",
+    "codymaster": "file:./antigravity-skills/codymaster",
+    "playwright-skill": "file:./antigravity-skills/playwright-skill",
+    "software_development_department": "file:./antigravity-skills/software_development_department",
+    "vibe-coder-kit": "file:./antigravity-skills/vibe-coder-kit"
   },
   "engines": {
     "node": ">=14.0.0"

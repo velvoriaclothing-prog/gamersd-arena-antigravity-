@@ -1,4 +1,6 @@
 node_modules/
+antigravity-skills/
+scratch/
 .env
 .DS_Store
 *.log

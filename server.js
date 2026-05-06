@@ -4,6 +4,7 @@ const dotenv = require('dotenv');
 const cookieSession = require('cookie-session');
 const { createClient } = require('@supabase/supabase-js');
 const path = require('path');
+const fs = require('fs');
 
 dotenv.config();
 
@@ -100,18 +101,35 @@ app.get('/api/auth/logout', (req, res) => {
 // ── GAMES ───────────────────────────────────────────────
 app.get('/api/games/list', async (req, res) => {
     if (!supabase) {
-        // Sample data if DB not connected
-        return res.json({ success: true, games: [
-            { id: 1, name: 'Neon Samurai', type: 'free', price: 0, image: 'https://images.unsplash.com/photo-1614583225154-5fc20b64190b?w=800' },
-            { id: 2, name: 'Elden Ring', type: 'premium', price: 4999, description: 'Master the challenges...' }
-        ]});
+        try {
+            const gamesData = JSON.parse(fs.readFileSync(path.join(__dirname, 'games-data.json'), 'utf8'));
+            return res.json({ success: true, games: gamesData });
+        } catch (e) {
+            // Sample data if JSON not found
+            return res.json({ success: true, games: [
+                { id: 1, name: 'Neon Samurai', type: 'free', price: 0, image: 'https://images.unsplash.com/photo-1614583225154-5fc20b64190b?w=800' },
+                { id: 2, name: 'Elden Ring', type: 'premium', price: 4999, description: 'Master the challenges...' }
+            ]});
+        }
     }
     const { data, error } = await supabase.from('games').select('*').order('created_at', { ascending: false });
     res.json({ success: true, games: data });
 });
 
 app.get('/api/games/reveal/:id', async (req, res) => {
-    if (!supabase) return res.json({ success: true, credential: { username: 'test_user', password: 'test_password' } });
+    if (!supabase) {
+        try {
+            const credsData = JSON.parse(fs.readFileSync(path.join(__dirname, 'credentials-data.json'), 'utf8'));
+            const gameCreds = credsData.filter(c => c.game_id == req.params.id);
+            if (gameCreds.length === 0) return res.json({ success: false, message: 'No credentials found for this game.' });
+            
+            // Pick a random one
+            const cred = gameCreds[Math.floor(Math.random() * gameCreds.length)];
+            return res.json({ success: true, credential: { username: cred.username, password: cred.password } });
+        } catch (e) {
+            return res.json({ success: true, credential: { username: 'test_user', password: 'test_password' } });
+        }
+    }
     
     // Find credential for this game
     const { data: cred, error } = await supabase

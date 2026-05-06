@@ -135,32 +135,39 @@
 
     <main class="max-w-7xl mx-auto px-6 pb-40 space-y-40">
         <!-- AI Tools Preview -->
-        <section>
-            <div class="flex justify-between items-end mb-12">
-                <div>
-                    <h2 class="text-4xl font-black italic tracking-tighter mb-2">ELITE AI DIRECTORY</h2>
-                    <p class="text-white/40 uppercase tracking-widest text-[10px]">Over 500+ Tools for Pro Gamers</p>
-                </div>
-                <button onclick="window.location.href='ai-directory.html'" class="text-cyan-400 font-bold text-sm">View Full Directory</button>
-            </div>
-            <div id="ai-grid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                <!-- AI Tools load instantly from cache -->
-            </div>
-        </section>
+<!-- Games Preview -->
+<section>
+    <div class="flex justify-between items-end mb-12">
+        <div>
+            <h2 class="text-4xl font-black italic tracking-tighter mb-2">ELITE GAMES HUB</h2>
+            <p class="text-white/40 uppercase tracking-widest text-[10px]">Free and Premium Gaming Accounts</p>
+        </div>
+        <button onclick="window.location.href='games.html'" class="text-cyan-400 font-bold text-sm">View All Games</button>
+    </div>
+    <div id="games-grid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+        <!-- Game cards will be injected here -->
+    </div>
+</section>
 
-        <!-- Latest News -->
-        <section>
-            <div class="flex justify-between items-end mb-12">
-                <div>
-                    <h2 class="text-4xl font-black italic tracking-tighter mb-2">DAILY INTEL</h2>
-                    <p class="text-white/40 uppercase tracking-widest text-[10px]">Automated AI Tech Feed</p>
-                </div>
-                <a href="blog.html" class="text-purple-400 font-bold text-sm">Full Intel Archive</a>
-            </div>
-            <div id="news-grid" class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <!-- News loads instantly -->
-            </div>
-        </section>
+<script>
+    async function loadGames() {
+        try {
+            const r = await fetch('/api/games/list');
+            const d = await r.json();
+            if (d.success) {
+                const grid = document.getElementById('games-grid');
+                grid.innerHTML = d.games.slice(0, 12).map(g => `
+                    <div class="glass p-4 rounded-xl flex flex-col h-full">
+                        <img src="${g.image}" alt="${g.name}" class="w-full h-32 object-cover mb-2 rounded" />
+                        <h3 class="text-sm font-bold text-cyan-400 line-clamp-2">${g.name}</h3>
+                        <p class="text-[10px] text-white/50 flex-1 mt-2">${g.description?.substring(0,40) || ''}...</p>
+                        <span class="text-[10px] mt-2 font-black ${g.type === 'premium' ? 'text-purple-400' : 'text-cyan-400'}">${g.type.toUpperCase()}</span>
+                    </div>`).join('');
+            }
+        } catch (e) { console.error(e); }
+    }
+    document.addEventListener('DOMContentLoaded', loadGames);
+</script>
     </main>
 
     <script>
