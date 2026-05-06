@@ -150,3 +150,38 @@ body {
 /* UTILS */
 .glowing-text { text-shadow: 0 0 30px rgba(255,255,255,0.4); }
 
+/* DRAGON CANVAS */
+#dragon-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    z-index: 0; /* Keep it behind everything */
+    pointer-events: none; /* Let clicks pass through */
+}
+
+/* FLOATING CONTROLLERS (1,000,000% UI Upgrade) */
+.floating-controllers {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    z-index: 0;
+    pointer-events: none;
+}
+.cgi-controller {
+    position: absolute;
+    font-size: 15rem !important;
+    color: rgba(0, 229, 255, 0.05);
+    filter: drop-shadow(0 0 30px rgba(0, 229, 255, 0.2));
+    animation: drift 20s infinite linear;
+}
+.c1 { top: 10%; left: -5%; animation-duration: 25s; }
+.c2 { top: 60%; right: -5%; animation-duration: 30s; animation-direction: reverse; color: rgba(255, 0, 85, 0.05); filter: drop-shadow(0 0 30px rgba(255, 0, 85, 0.2)); }
+.c3 { top: -5%; right: 20%; animation-duration: 22s; font-size: 10rem !important; }
+
+@keyframes drift {
+    0% { transform: translate(0, 0) rotate(0deg); }
+    33% { transform: translate(50px, -50px) rotate(15deg); }
+    66% { transform: translate(-30px, 30px) rotate(-10deg); }
+    100% { transform: translate(0, 0) rotate(0deg); }
+}
+
