@@ -1,6 +1,7 @@
-Sitemap: https://gamersarena.shop/sitemap.xml
-
 User-agent: *
-Disallow: /admin.html
-Disallow: /api/
 Allow: /
+Disallow: /api/
+Disallow: /admin.html
+Disallow: /admin
+
+Sitemap: https://gamersarena.com/sitemap.xml

@@ -3,14 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GAMERS ARENA | Premium Store</title>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+    <meta name="theme-color" content="#030305">
+    
+    <title>Buy Premium PC Games | Personal Accounts | Gamers Arena</title>
+    <meta name="description" content="Purchase permanent, personal Steam accounts for premium PC games like GTA V, Cyberpunk 2077, and Elden Ring at unbeatable prices on Gamers Arena.">
+    <meta name="keywords" content="buy premium PC games, cheap GTA V account, buy Cyberpunk 2077 cheap, Elden ring Steam account, Gamers Arena premium">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://gamersarena.com/premium.html">
+    
+    <meta property="og:title" content="Buy Premium PC Games | Gamers Arena">
+    <meta property="og:description" content="Purchase permanent, personal Steam accounts for premium PC games at unbeatable prices.">
+    <meta property="og:image" content="https://gamersarena.com/logo.png">
+    <meta property="twitter:card" content="summary_large_image">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
     <link rel="stylesheet" href="cinematic.css">
+
+    <!-- STRUCTURED DATA (JSON-LD) for Products -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Store",
+      "name": "Gamers Arena Premium Store",
+      "url": "https://gamersarena.com/premium.html",
+      "image": "https://gamersarena.com/logo.png",
+      "priceRange": "$$"
+    }
+    </script>
 </head>
 <body>
-    <nav class="navbar">
-        <a href="index.html" class="logo-container" id="ga-logo">
-            <img src="logo.png" alt="Logo" class="logo-img" onerror="this.src='https://via.placeholder.com/50/000/fff?text=GA'">
+    <nav class="navbar" aria-label="Main Navigation">
+        <a href="index.html" class="logo-container" id="ga-logo" aria-label="Gamers Arena Home">
+            <img src="logo.png" alt="Gamers Arena Logo" class="logo-img" onerror="this.src='https://via.placeholder.com/50/000/fff?text=GA'" width="50" height="50">
             <div>
                 <div class="logo-text">GAMERS ARENA</div>
                 <span class="logo-sub">PC GAMES ACCOUNTS STORE</span>
@@ -19,52 +45,57 @@
         <div class="nav-links">
             <a href="index.html">HOME</a>
             <a href="library.html">FREE DROPS</a>
-            <a href="premium.html" style="color: var(--accent-blue);">PREMIUM STORE</a>
+            <a href="premium.html" style="color: var(--accent-blue);" aria-current="page">PREMIUM STORE</a>
         </div>
     </nav>
 
-    <div class="section" style="padding-top: 12rem;">
-        <div class="section-header">
-            <div class="section-subtitle">Exclusive Access</div>
-            <h1 class="section-title glowing-text" style="font-size: 4rem;">Personal Accounts of Premium Games</h1>
-            <p style="color: var(--text-muted); font-size: 1.2rem; max-width: 600px; margin: 0 auto; margin-bottom: 4rem;">Secure, permanent access to the highest tier of PC gaming. Select a bundle below to proceed to checkout.</p>
-            
-            <div style="background: rgba(0, 229, 255, 0.05); border: 1px solid var(--accent-blue-dim); padding: 2.5rem; border-radius: 16px; max-width: 800px; margin: 0 auto; text-align: center; backdrop-filter: blur(10px); box-shadow: 0 0 30px rgba(0,0,0,0.5);">
-                <span class="material-symbols-outlined" style="font-size: 3.5rem; color: var(--accent-blue); margin-bottom: 1rem; text-shadow: 0 0 20px var(--accent-blue-dim);">verified_user</span>
-                <h3 style="font-size: 1.8rem; margin-bottom: 1rem; color: #fff;">100% Personal & Secure</h3>
-                <p style="color: var(--text-muted); font-size: 1.1rem; line-height: 1.6;">All the games purchased here will come directly to your <strong>personal Steam account</strong>. You can access all the games permanently in your own library.</p>
+    <main>
+        <section class="section" style="padding-top: 12rem;">
+            <div class="section-header">
+                <div class="section-subtitle">Exclusive Access</div>
+                <h1 class="section-title glowing-text" style="font-size: 4rem;">Personal Accounts of Premium Games</h1>
+                <p style="color: var(--text-muted); font-size: 1.2rem; max-width: 600px; margin: 0 auto; margin-bottom: 4rem;">Secure, permanent access to the highest tier of PC gaming. Select a bundle below to proceed to checkout securely via Telegram.</p>
+                
+                <div style="background: rgba(0, 229, 255, 0.05); border: 1px solid var(--accent-blue-dim); padding: 2.5rem; border-radius: 16px; max-width: 800px; margin: 0 auto; text-align: center; backdrop-filter: blur(10px); box-shadow: 0 0 30px rgba(0,0,0,0.5);">
+                    <span class="material-symbols-outlined" style="font-size: 3.5rem; color: var(--accent-blue); margin-bottom: 1rem; text-shadow: 0 0 20px var(--accent-blue-dim);" aria-hidden="true">verified_user</span>
+                    <h2 style="font-size: 1.8rem; margin-bottom: 1rem; color: #fff;">100% Personal & Secure</h2>
+                    <p style="color: var(--text-muted); font-size: 1.1rem; line-height: 1.6;">All the games purchased here will come directly to your <strong>personal Steam account</strong>. You can access all the games permanently in your own library.</p>
+                </div>
             </div>
-        </div>
 
-        <div class="grid" id="premium-grid">
-            <!-- Dynamically loaded premium bundles -->
-        </div>
-    </div>
+            <div class="grid" id="premium-grid" aria-label="Premium Game Bundles">
+                <!-- Dynamically loaded premium bundles -->
+            </div>
+        </section>
+    </main>
 
-    <script src="global.js"></script>
+    <footer style="text-align: center; padding: 3rem; border-top: 1px solid var(--glass-border); background: var(--bg-dark); color: var(--text-muted);">
+        <p>&copy; 2026 Gamers Arena. All rights reserved. Prices listed in INR (₹).</p>
+    </footer>
+
+    <script src="global.js" defer></script>
     <script>
-        // Dummy premium bundles (Will be managed by Admin panel)
         const premiumBundles = [
-            { id: 'b1', name: 'GTA V + RDR2 Ultimate', price: '₹1499', img: 'logo.png', desc: 'Full permanent access to Rockstar\'s best.' },
-            { id: 'b2', name: 'Cyberpunk 2077 + DLC', price: '₹1299', img: 'logo.png', desc: 'Includes Phantom Liberty expansion.' },
-            { id: 'b3', name: 'Elden Ring + Shadow of the Erdtree', price: '₹1999', img: 'logo.png', desc: 'GOTY Edition full access.' }
+            { id: 'b1', name: 'GTA V + RDR2 Ultimate', price: '₹1499', img: 'logo.png', desc: 'Full permanent access to Rockstar\'s best open-world masterpieces.' },
+            { id: 'b2', name: 'Cyberpunk 2077 + DLC', price: '₹1299', img: 'logo.png', desc: 'Includes the critically acclaimed Phantom Liberty expansion.' },
+            { id: 'b3', name: 'Elden Ring + Shadow of the Erdtree', price: '₹1999', img: 'logo.png', desc: 'Game of the Year Edition full permanent access.' }
         ];
 
         const grid = document.getElementById('premium-grid');
         grid.innerHTML = premiumBundles.map(b => `
-            <div class="card-3d" onclick="window.location.href='cart.html?bundle=${encodeURIComponent(b.name)}&price=${encodeURIComponent(b.price)}'">
+            <a href="cart.html?bundle=${encodeURIComponent(b.name)}&price=${encodeURIComponent(b.price)}" class="card-3d" aria-label="Buy ${b.name} for ${b.price}">
                 <div class="card-image-wrapper">
-                    <img src="${b.img}" alt="${b.name}" onerror="this.src='logo.png'">
+                    <img src="${b.img}" alt="Cover art for ${b.name}" loading="lazy" onerror="this.src='logo.png'">
                 </div>
                 <div class="card-content">
                     <h3 class="card-title">${b.name}</h3>
                     <p class="card-desc">${b.desc}</p>
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-top: auto;">
                         <span class="card-price">${b.price}</span>
-                        <span class="material-symbols-outlined" style="color: var(--accent-blue);">shopping_cart_checkout</span>
+                        <span class="material-symbols-outlined" style="color: var(--accent-blue);" aria-hidden="true">shopping_cart_checkout</span>
                     </div>
                 </div>
-            </div>
+            </a>
         `).join('');
     </script>
 </body>

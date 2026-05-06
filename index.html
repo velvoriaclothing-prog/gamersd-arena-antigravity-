@@ -3,79 +3,128 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GAMERS ARENA | Cinematic Hub</title>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+    <meta name="theme-color" content="#030305">
+    
+    <!-- PRIMARY SEO -->
+    <title>GAMERS ARENA | Premium PC Game Accounts & Free Drops</title>
+    <meta name="description" content="Join Gamers Arena to access the highest tier of shared PC gaming accounts. Claim free game drops instantly or upgrade your arsenal with exclusive premium game bundles.">
+    <meta name="keywords" content="PC games, buy Steam games cheap, free gaming accounts, shared Steam accounts, GTA V free account, Gamers Arena, premium game bundles, offline PC games">
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="Gamers Arena">
+    <link rel="canonical" href="https://gamersarena.com/">
+    
+    <!-- OPEN GRAPH (Social Media) -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://gamersarena.com/">
+    <meta property="og:title" content="GAMERS ARENA | Premium PC Game Accounts & Free Drops">
+    <meta property="og:description" content="Access the highest tier of shared PC gaming accounts. Claim free game drops instantly or upgrade your arsenal.">
+    <meta property="og:image" content="https://gamersarena.com/logo.png">
+
+    <!-- TWITTER CARDS -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:title" content="GAMERS ARENA | Premium PC Games">
+    <meta property="twitter:description" content="Access the highest tier of shared PC gaming accounts securely.">
+    <meta property="twitter:image" content="https://gamersarena.com/logo.png">
+
+    <!-- PRECONNECT & FONTS FOR PERFORMANCE -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
     <link rel="stylesheet" href="cinematic.css">
+
+    <!-- STRUCTURED DATA (JSON-LD) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Gamers Arena",
+      "url": "https://gamersarena.com/",
+      "description": "Provider of premium and free shared PC gaming accounts.",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Gamers Arena",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://gamersarena.com/logo.png"
+        }
+      }
+    }
+    </script>
 </head>
 <body>
-    <nav class="navbar">
-        <a href="index.html" class="logo-container" id="ga-logo">
-            <img src="logo.png" alt="Logo" class="logo-img" onerror="this.src='https://via.placeholder.com/50/000/fff?text=GA'">
+    <nav class="navbar" aria-label="Main Navigation">
+        <a href="index.html" class="logo-container" id="ga-logo" aria-label="Gamers Arena Home">
+            <img src="logo.png" alt="Gamers Arena Logo" class="logo-img" onerror="this.src='https://via.placeholder.com/50/000/fff?text=GA'" width="50" height="50">
             <div>
                 <div class="logo-text">GAMERS ARENA</div>
                 <span class="logo-sub">PC GAMES ACCOUNTS STORE</span>
             </div>
         </a>
         <div class="nav-links">
-            <a href="index.html" style="color: var(--accent-blue);">HOME</a>
+            <a href="index.html" style="color: var(--accent-blue);" aria-current="page">HOME</a>
             <a href="library.html">FREE DROPS</a>
             <a href="premium.html">PREMIUM STORE</a>
         </div>
     </nav>
 
-    <header class="hero">
-        <!-- 1,000,000% Upgrade: Floating CGI Controllers -->
-        <div class="floating-controllers">
-            <span class="material-symbols-outlined cgi-controller c1">sports_esports</span>
-            <span class="material-symbols-outlined cgi-controller c2">videogame_asset</span>
-            <span class="material-symbols-outlined cgi-controller c3">gamepad</span>
-        </div>
-
-        <div class="hero-content">
-            <div class="hero-tag">Welcome to the Arena</div>
-            <h1 class="glowing-text">Premium Accounts &<br>Exclusive Bundles</h1>
-            <p>Access the highest tier of shared gaming accounts. Claim your free drops instantly or upgrade your arsenal in the Premium Store.</p>
-
-            
-            <div style="display: flex; gap: 1.5rem; justify-content: center;">
-                <a href="library.html" class="btn btn-secondary">
-                    Free Drops Library <span class="material-symbols-outlined">view_module</span>
-                </a>
-                <a href="premium.html" class="btn btn-primary">
-                    Enter Premium Store <span class="material-symbols-outlined">shopping_cart</span>
-                </a>
-            </div>
-        </div>
-    </header>
-
-    <div class="section" style="background: rgba(5,5,8,0.6); border-top: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border);">
-        <div class="section-header" style="margin-bottom: 4rem;">
-            <div class="section-subtitle">Important Rules</div>
-            <h2 class="section-title glowing-text" style="font-size: 2.5rem;">About Free Drops</h2>
-        </div>
-        <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; max-width: 1200px; margin: 0 auto;">
-            
-            <div class="card-3d" style="padding: 2.5rem 2rem; text-align: center; border-top: 3px solid var(--accent-blue);">
-                <span class="material-symbols-outlined" style="font-size: 3.5rem; color: var(--accent-blue); margin-bottom: 1rem; text-shadow: 0 0 20px var(--accent-blue-dim);">group</span>
-                <h3 style="margin-bottom: 1rem; font-size: 1.5rem;">Shared Accounts</h3>
-                <p style="color: var(--text-muted); font-size: 1rem; line-height: 1.6;">These are legally purchased shared accounts. They are absolutely <strong>NOT</strong> hacked or stolen accounts.</p>
-            </div>
-            
-            <div class="card-3d" style="padding: 2.5rem 2rem; text-align: center; border-top: 3px solid var(--accent-red); border-color: rgba(255,0,85,0.3);">
-                <span class="material-symbols-outlined" style="font-size: 3.5rem; color: var(--accent-red); margin-bottom: 1rem; text-shadow: 0 0 20px var(--accent-red-dim);">gpp_bad</span>
-                <h3 style="margin-bottom: 1rem; font-size: 1.5rem;">Do Not Modify</h3>
-                <p style="color: var(--text-muted); font-size: 1rem; line-height: 1.6;">Never attempt to change the password or enable Steam Guard. Doing so will result in an <strong>immediate ban</strong>.</p>
-            </div>
-            
-            <div class="card-3d" style="padding: 2.5rem 2rem; text-align: center; border-top: 3px solid var(--accent-blue);">
-                <span class="material-symbols-outlined" style="font-size: 3.5rem; color: var(--accent-blue); margin-bottom: 1rem; text-shadow: 0 0 20px var(--accent-blue-dim);">wifi_off</span>
-                <h3 style="margin-bottom: 1rem; font-size: 1.5rem;">Offline Mode Only</h3>
-                <p style="color: var(--text-muted); font-size: 1rem; line-height: 1.6;">Always play the games in <strong>OFFLINE mode</strong> to avoid interrupting other players and ensure smooth gameplay.</p>
+    <main>
+        <header class="hero">
+            <!-- 1,000,000% Upgrade: Floating CGI Controllers -->
+            <div class="floating-controllers" aria-hidden="true">
+                <span class="material-symbols-outlined cgi-controller c1">sports_esports</span>
+                <span class="material-symbols-outlined cgi-controller c2">videogame_asset</span>
+                <span class="material-symbols-outlined cgi-controller c3">gamepad</span>
             </div>
 
-        </div>
-    </div>
+            <div class="hero-content">
+                <div class="hero-tag">Welcome to the Arena</div>
+                <h1 class="glowing-text">Premium Accounts &<br>Exclusive Bundles</h1>
+                <p>Access the highest tier of shared gaming accounts. Claim your free drops instantly or upgrade your arsenal in the Premium Store for permanent access to AAA titles.</p>
+                
+                <div style="display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap;">
+                    <a href="library.html" class="btn btn-secondary" aria-label="Browse Free Drops Library">
+                        Free Drops Library <span class="material-symbols-outlined" aria-hidden="true">view_module</span>
+                    </a>
+                    <a href="premium.html" class="btn btn-primary" aria-label="Enter Premium Games Store">
+                        Enter Premium Store <span class="material-symbols-outlined" aria-hidden="true">shopping_cart</span>
+                    </a>
+                </div>
+            </div>
+        </header>
 
-    <script src="global.js"></script>
+        <section class="section" style="background: rgba(5,5,8,0.6); border-top: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border);" aria-labelledby="rules-heading">
+            <div class="section-header" style="margin-bottom: 4rem;">
+                <div class="section-subtitle">Important Rules</div>
+                <h2 id="rules-heading" class="section-title glowing-text" style="font-size: 2.5rem;">About Free Drops</h2>
+            </div>
+            <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; max-width: 1200px; margin: 0 auto;">
+                
+                <article class="card-3d" style="padding: 2.5rem 2rem; text-align: center; border-top: 3px solid var(--accent-blue);">
+                    <span class="material-symbols-outlined" style="font-size: 3.5rem; color: var(--accent-blue); margin-bottom: 1rem; text-shadow: 0 0 20px var(--accent-blue-dim);" aria-hidden="true">group</span>
+                    <h3 style="margin-bottom: 1rem; font-size: 1.5rem;">Shared Accounts</h3>
+                    <p style="color: var(--text-muted); font-size: 1rem; line-height: 1.6;">These are legally purchased shared accounts. They are absolutely <strong>NOT</strong> hacked or stolen accounts. We provide secure access for the gaming community.</p>
+                </article>
+                
+                <article class="card-3d" style="padding: 2.5rem 2rem; text-align: center; border-top: 3px solid var(--accent-red); border-color: rgba(255,0,85,0.3);">
+                    <span class="material-symbols-outlined" style="font-size: 3.5rem; color: var(--accent-red); margin-bottom: 1rem; text-shadow: 0 0 20px var(--accent-red-dim);" aria-hidden="true">gpp_bad</span>
+                    <h3 style="margin-bottom: 1rem; font-size: 1.5rem;">Do Not Modify</h3>
+                    <p style="color: var(--text-muted); font-size: 1rem; line-height: 1.6;">Never attempt to change the password or enable Steam Guard. Doing so violates our terms and will result in an <strong>immediate, permanent ban</strong> from the Arena.</p>
+                </article>
+                
+                <article class="card-3d" style="padding: 2.5rem 2rem; text-align: center; border-top: 3px solid var(--accent-blue);">
+                    <span class="material-symbols-outlined" style="font-size: 3.5rem; color: var(--accent-blue); margin-bottom: 1rem; text-shadow: 0 0 20px var(--accent-blue-dim);" aria-hidden="true">wifi_off</span>
+                    <h3 style="margin-bottom: 1rem; font-size: 1.5rem;">Offline Mode Only</h3>
+                    <p style="color: var(--text-muted); font-size: 1rem; line-height: 1.6;">Always play the games in <strong>OFFLINE mode</strong> on Steam or Epic Games to avoid interrupting other players and to ensure 100% smooth, uninterrupted gameplay.</p>
+                </article>
+
+            </div>
+        </section>
+    </main>
+
+    <footer style="text-align: center; padding: 3rem; border-top: 1px solid var(--glass-border); background: var(--bg-dark); color: var(--text-muted);">
+        <p>&copy; 2026 Gamers Arena. All rights reserved. | <a href="library.html" style="color: var(--accent-blue); text-decoration: none;">Free Drops</a> | <a href="premium.html" style="color: var(--accent-blue); text-decoration: none;">Premium Store</a></p>
+    </footer>
+
+    <script src="global.js" defer></script>
 </body>
 </html>
