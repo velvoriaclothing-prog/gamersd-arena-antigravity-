@@ -3,93 +3,96 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#030305">
-    
-    <title>Free PC Games Drops Vault | Gamers Arena</title>
-    <meta name="description" content="Browse our massive library of over 290 free shared PC game accounts. Find your favorite AAA titles and wait for the 30-second unlock to get instant access.">
-    <meta name="keywords" content="free PC games, shared game accounts, play GTA V free, free Steam accounts library, Gamers Arena drops">
-    <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://gamersarena.com/library.html">
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-    <link rel="stylesheet" href="cinematic.css">
+    <title>Account library | GAMERS ARENA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+    <link rel="stylesheet" href="aura.css">
 </head>
 <body>
-    <nav class="navbar" aria-label="Main Navigation">
-        <a href="index.html" class="logo-container" id="ga-logo" aria-label="Gamers Arena Home">
-            <img src="logo.png" alt="Gamers Arena Logo" class="logo-img" onerror="this.src='https://via.placeholder.com/50/000/fff?text=GA'" width="50" height="50">
+    <nav class="navbar">
+        <a href="index.html" class="logo-container">
+            <img src="logo.png" alt="Logo" class="logo-icon" onerror="this.src='https://via.placeholder.com/40/000/fff?text=GA'">
             <div>
                 <div class="logo-text">GAMERS ARENA</div>
-                <span class="logo-sub">PC GAMES ACCOUNTS STORE</span>
+                <div class="logo-sub">FREE TO USE</div>
             </div>
         </a>
-        <div class="nav-links">
-            <a href="index.html">HOME</a>
-            <a href="library.html" style="color: var(--accent-blue);" aria-current="page">FREE DROPS</a>
-            <a href="premium.html">PREMIUM STORE</a>
-        </div>
+        <button class="nav-menu-btn"><span class="material-symbols-outlined">menu</span></button>
     </nav>
 
-    <main>
-        <section class="section" style="padding-top: 12rem;">
-            <div class="section-header">
-                <div class="section-subtitle">The Vault</div>
-                <h1 class="section-title glowing-text">Free Drops Library</h1>
-                <p style="color: var(--text-muted); font-size: 1.2rem;">Browse 296+ high-tier PC game accounts. Select a card to initiate the 30-second decryption sequence.</p>
-            </div>
+    <div class="container">
+        <div class="lib-header">
+            <span class="lib-badge">BROWSE</span>
+            <h1 style="font-size: 2.5rem; font-weight: 900; margin-bottom: 1rem;">Account library</h1>
+            <p style="color: var(--text-muted); max-width: 600px;">Search and filter curated drops across games and apps. Open listing credentials and community notes.</p>
+        </div>
 
-            <form class="search-box" role="search" onsubmit="event.preventDefault();">
-                <label for="search" class="visually-hidden" style="display:none;">Search Games</label>
-                <input type="text" id="search" class="search-input" placeholder="Search games, genres, or keywords..." aria-label="Search games">
-                <button type="submit" class="btn btn-primary" style="border-radius: 50px;" aria-label="Execute Search"><span class="material-symbols-outlined" aria-hidden="true">search</span></button>
-            </form>
+        <div class="search-bar-container">
+            <span class="material-symbols-outlined" style="color: var(--text-muted); margin: 0.8rem;">search</span>
+            <input type="text" class="search-input" id="search" placeholder="Search games, apps, or descriptions...">
+            <select style="background: transparent; border: none; color: var(--text-main); outline: none; margin-right: 1rem; cursor: pointer;">
+                <option value="all">All Services</option>
+                <option value="steam">Steam</option>
+                <option value="epic">Epic</option>
+            </select>
+        </div>
 
-            <div class="grid" id="games-grid" aria-live="polite">
-                <!-- Dynamically populated via JS -->
-                <div style="text-align: center; color: var(--text-muted); grid-column: 1/-1;">Loading secure games database...</div>
-            </div>
-        </section>
-    </main>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 1.5rem; color: var(--text-muted); font-size: 0.9rem;">
+            <span style="font-weight: bold; color: var(--text-main);" id="listing-count">Loading listings...</span>
+            <span>Select a card to view details</span>
+        </div>
 
-    <footer style="text-align: center; padding: 3rem; border-top: 1px solid var(--glass-border); background: var(--bg-dark); color: var(--text-muted);">
-        <p>&copy; 2026 Gamers Arena. All rights reserved.</p>
-    </footer>
+        <div class="card-grid" id="games-grid">
+            <!-- Loading Skeletons -->
+            <div class="game-card" style="height: 300px; opacity: 0.5;"></div>
+            <div class="game-card" style="height: 300px; opacity: 0.5;"></div>
+            <div class="game-card" style="height: 300px; opacity: 0.5;"></div>
+        </div>
+    </div>
 
-    <script src="global.js" defer></script>
     <script>
         fetch('http://localhost:3000/api/games')
             .then(res => res.json())
             .then(data => {
                 if(data.success && data.games) renderGames(data.games);
-                else throw new Error("Fallback required");
             })
             .catch(() => {
+                // Fallback demo data
                 renderGames([
-                    {id: 1, name: 'Grand Theft Auto V Legacy', genre: 'Open World', image: 'logo.png'},
-                    {id: 2, name: 'Cyberpunk 2077', genre: 'RPG', image: 'logo.png'},
-                    {id: 3, name: 'Elden Ring', genre: 'Action', image: 'logo.png'}
+                    {id: 1, game: 'Prime Video', desc: '5x Prime Video...', user: 'Emojiman', date: 'May 6, 2026, 08:52 PM'},
+                    {id: 2, game: '57 Crunchyroll', desc: 'Enjoy...', user: 'Emojiman', date: 'May 6, 2026, 08:50 PM'},
+                    {id: 3, game: '140 XBOX ACCOUNTS', desc: 'enjoy and vouch me...', user: 'Emojiman', date: 'May 6, 2026, 08:46 PM'},
+                    {id: 4, game: 'GTA STEAM FRESH', desc: 'By emojiman..', user: 'Emojiman', date: 'May 6, 2026, 08:25 PM'}
                 ]);
             });
 
         function renderGames(games) {
+            document.getElementById('listing-count').innerText = games.length + ' listings';
             const grid = document.getElementById('games-grid');
-            grid.innerHTML = games.map(g => `
-                <a href="game.html?id=${g.id}" class="card-3d" aria-label="Unlock ${g.game || g.name}">
-                    <div class="card-image-wrapper">
-                        <img src="${g.image || 'logo.png'}" alt="Cover image of ${g.game || g.name}" loading="lazy" onerror="this.src='logo.png'">
+            grid.innerHTML = games.map((g, i) => {
+                const gradients = [
+                    'linear-gradient(135deg, #3b82f6, #06b6d4)',
+                    'linear-gradient(135deg, #8b5cf6, #3b82f6)',
+                    'linear-gradient(135deg, #10b981, #3b82f6)'
+                ];
+                const bg = gradients[i % gradients.length];
+                
+                return `
+                <a href="game.html?id=${g.id}" class="game-card">
+                    <div class="card-top" style="background: ${bg};">
+                        <div class="platform-badge"><span class="material-symbols-outlined" style="font-size:14px;">check_circle</span> Verified</div>
+                        ${g.image ? `<img src="${g.image}" onerror="this.style.display='none'" alt="Cover">` : ''}
                     </div>
-                    <div class="card-content">
-                        <h2 class="card-title">${g.game || g.name}</h2>
-                        <p class="card-desc" style="color: var(--accent-red);">${g.genre || 'PC Game'}</p>
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: auto;">
-                            <span style="font-size: 0.9rem; color: var(--text-muted);">Initiate Unlock</span>
-                            <span class="material-symbols-outlined" style="color: var(--accent-blue);" aria-hidden="true">lock_open</span>
+                    <div class="card-bottom">
+                        <h3>${g.game || g.name}</h3>
+                        <p>${g.desc || 'Click to view details & get account →'}</p>
+                        <div class="card-meta">
+                            <span style="display:flex; align-items:center; gap:0.3rem;"><span class="material-symbols-outlined" style="font-size:14px;">person</span> admin</span>
+                            <span style="display:flex; align-items:center; gap:0.3rem;"><span class="material-symbols-outlined" style="font-size:14px;">calendar_today</span> Today</span>
                         </div>
                     </div>
                 </a>
-            `).join('');
+            `}).join('');
         }
     </script>
 </body>

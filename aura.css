@@ -1,0 +1,435 @@
+:root {
+    --bg-base: #101623;
+    --bg-panel: #171f2e;
+    --bg-card-bottom: #ffffff;
+    --text-main: #ffffff;
+    --text-muted: #8b9cb6;
+    --text-dark: #101623;
+    --accent-teal: #00e5ff;
+    --accent-teal-dark: #00b3cc;
+    --accent-purple: #8b5cf6;
+    --border-color: rgba(255, 255, 255, 0.05);
+    --border-alert: rgba(255, 85, 85, 0.3);
+    --bg-alert: rgba(255, 85, 85, 0.05);
+    --font-main: 'Inter', sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: var(--font-main);
+}
+
+body {
+    background-color: var(--bg-base);
+    color: var(--text-main);
+    line-height: 1.6;
+}
+
+/* Navbar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    background-color: var(--bg-panel);
+    border-bottom: 2px solid var(--accent-teal-dark);
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    text-decoration: none;
+}
+
+.logo-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    background: #000;
+}
+
+.logo-text {
+    font-size: 1.4rem;
+    font-weight: 900;
+    color: var(--text-main);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.logo-sub {
+    font-size: 0.7rem;
+    color: var(--accent-teal);
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.nav-menu-btn {
+    background: none;
+    border: none;
+    color: var(--accent-teal);
+    cursor: pointer;
+}
+
+/* Container */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+/* Hero Section */
+.hero-box {
+    background: linear-gradient(180deg, rgba(23,31,46,1) 0%, rgba(16,22,35,1) 100%);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 4rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-content {
+    flex: 1;
+    max-width: 600px;
+}
+
+.hero-title {
+    font-size: 3.5rem;
+    font-weight: 900;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+}
+
+.hero-title span {
+    color: #8b5cf6; /* purple highlight */
+}
+
+.hero-desc {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+}
+
+.btn-group {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.btn {
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    text-decoration: none;
+    transition: 0.2s;
+    border: none;
+}
+
+.btn-primary {
+    background-color: #c4b5fd;
+    color: #000;
+}
+
+.btn-primary:hover {
+    background-color: #ddd6fe;
+}
+
+.btn-outline {
+    background-color: transparent;
+    color: var(--text-main);
+    border: 1px solid var(--border-color);
+}
+
+.btn-outline:hover {
+    background-color: rgba(255,255,255,0.05);
+}
+
+.tags {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.tag {
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-muted);
+    font-size: 0.7rem;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+/* Features Grid */
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+    margin-top: 3rem;
+}
+
+.feature-card {
+    background: var(--bg-panel);
+    border: 1px solid var(--border-color);
+    padding: 1.5rem;
+    border-radius: 12px;
+}
+
+.feature-title {
+    font-weight: bold;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.feature-desc {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+/* Library Header */
+.lib-header {
+    background: var(--bg-panel);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 3rem;
+    margin-bottom: 2rem;
+}
+
+.lib-badge {
+    background: rgba(0, 229, 255, 0.1);
+    color: var(--accent-teal);
+    padding: 0.4rem 1rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    display: inline-block;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+}
+
+.search-bar-container {
+    display: flex;
+    background: var(--bg-panel);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.5rem;
+    margin-bottom: 2rem;
+}
+
+.search-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--text-main);
+    padding: 0.8rem 1rem;
+    outline: none;
+    font-size: 1rem;
+}
+
+/* White Bottom Cards */
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+.game-card {
+    background: var(--bg-card-bottom);
+    border-radius: 16px;
+    overflow: hidden;
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s;
+}
+
+.game-card:hover {
+    transform: translateY(-5px);
+}
+
+.card-top {
+    height: 160px;
+    background: linear-gradient(135deg, #4f46e5, #06b6d4);
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.card-top img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.platform-badge {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: rgba(0,0,0,0.6);
+    color: #fff;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.card-bottom {
+    padding: 1.5rem;
+    color: var(--text-dark);
+}
+
+.card-bottom h3 {
+    font-size: 1.2rem;
+    font-weight: 900;
+    margin-bottom: 0.5rem;
+}
+
+.card-bottom p {
+    font-size: 0.85rem;
+    color: #4b5563;
+    margin-bottom: 1rem;
+}
+
+.card-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: #6b7280;
+    border-top: 1px solid #e5e7eb;
+    padding-top: 1rem;
+}
+
+/* Game Page Details */
+.game-details-layout {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.game-cover {
+    width: 300px;
+    height: 180px;
+    background: var(--bg-panel);
+    border-radius: 12px;
+    object-fit: cover;
+}
+
+.game-info {
+    flex: 1;
+}
+
+.alert-box {
+    background: var(--bg-alert);
+    border: 1px solid var(--border-alert);
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.alert-title {
+    color: #ff5555;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.alert-text {
+    font-size: 0.9rem;
+    color: #d1d5db;
+}
+
+/* Credential Reveal Section */
+.reveal-banner {
+    background: linear-gradient(135deg, #0f766e, #064e3b);
+    border-radius: 16px;
+    padding: 4rem 2rem;
+    text-align: center;
+    margin-top: 2rem;
+}
+
+.reveal-banner h2 {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.btn-reveal {
+    background: #fff;
+    color: #0f766e;
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    margin-top: 1.5rem;
+}
+
+/* Credentials Form */
+.creds-container {
+    background: var(--bg-panel);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 2rem;
+    margin-top: 2rem;
+    display: none;
+}
+
+.cred-group {
+    margin-bottom: 1.5rem;
+}
+
+.cred-group label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.cred-input-wrapper {
+    display: flex;
+    background: var(--bg-base);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.cred-input-wrapper input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--text-main);
+    padding: 1rem;
+    font-size: 1rem;
+    outline: none;
+}
+
+.btn-copy {
+    background: rgba(255,255,255,0.05);
+    border: none;
+    border-left: 1px solid var(--border-color);
+    color: var(--accent-teal);
+    padding: 0 1.5rem;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn-copy:hover {
+    background: rgba(255,255,255,0.1);
+}
