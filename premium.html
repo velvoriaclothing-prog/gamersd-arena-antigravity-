@@ -27,7 +27,13 @@
         <div class="section-header">
             <div class="section-subtitle">Exclusive Access</div>
             <h1 class="section-title glowing-text" style="font-size: 4rem;">Personal Accounts of Premium Games</h1>
-            <p style="color: var(--text-muted); font-size: 1.2rem; max-width: 600px; margin: 0 auto;">Secure, permanent access to the highest tier of PC gaming. Select a bundle below to proceed to checkout.</p>
+            <p style="color: var(--text-muted); font-size: 1.2rem; max-width: 600px; margin: 0 auto; margin-bottom: 4rem;">Secure, permanent access to the highest tier of PC gaming. Select a bundle below to proceed to checkout.</p>
+            
+            <div style="background: rgba(0, 229, 255, 0.05); border: 1px solid var(--accent-blue-dim); padding: 2.5rem; border-radius: 16px; max-width: 800px; margin: 0 auto; text-align: center; backdrop-filter: blur(10px); box-shadow: 0 0 30px rgba(0,0,0,0.5);">
+                <span class="material-symbols-outlined" style="font-size: 3.5rem; color: var(--accent-blue); margin-bottom: 1rem; text-shadow: 0 0 20px var(--accent-blue-dim);">verified_user</span>
+                <h3 style="font-size: 1.8rem; margin-bottom: 1rem; color: #fff;">100% Personal & Secure</h3>
+                <p style="color: var(--text-muted); font-size: 1.1rem; line-height: 1.6;">All the games purchased here will come directly to your <strong>personal Steam account</strong>. You can access all the games permanently in your own library.</p>
+            </div>
         </div>
 
         <div class="grid" id="premium-grid">
@@ -39,9 +45,9 @@
     <script>
         // Dummy premium bundles (Will be managed by Admin panel)
         const premiumBundles = [
-            { id: 'b1', name: 'GTA V + RDR2 Ultimate', price: '$15.00', img: 'logo.png', desc: 'Full permanent access to Rockstar\'s best.' },
-            { id: 'b2', name: 'Cyberpunk 2077 + DLC', price: '$12.50', img: 'logo.png', desc: 'Includes Phantom Liberty expansion.' },
-            { id: 'b3', name: 'Elden Ring + Shadow of the Erdtree', price: '$18.00', img: 'logo.png', desc: 'GOTY Edition full access.' }
+            { id: 'b1', name: 'GTA V + RDR2 Ultimate', price: '₹1499', img: 'logo.png', desc: 'Full permanent access to Rockstar\'s best.' },
+            { id: 'b2', name: 'Cyberpunk 2077 + DLC', price: '₹1299', img: 'logo.png', desc: 'Includes Phantom Liberty expansion.' },
+            { id: 'b3', name: 'Elden Ring + Shadow of the Erdtree', price: '₹1999', img: 'logo.png', desc: 'GOTY Edition full access.' }
         ];
 
         const grid = document.getElementById('premium-grid');

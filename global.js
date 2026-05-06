@@ -25,12 +25,14 @@ function closeAdminModal() {
 
 function loginAdmin(e) {
     e.preventDefault();
+    const id = document.getElementById('admin-id').value;
     const pass = document.getElementById('admin-pass').value;
-    // Simple frontend redirect for now, in prod validate via backend
-    if (pass === 'admin') { 
+    
+    // Frontend redirect, strictly checking credentials
+    if (id === 'admin' && pass === 'aditi0110') { 
         window.location.href = 'admin.html';
     } else {
-        alert('Access Denied. Incorrect Password.');
+        alert('ACCESS DENIED: Invalid Admin Credentials.');
     }
 }
 
