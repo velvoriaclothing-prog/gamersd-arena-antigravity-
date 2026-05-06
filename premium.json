@@ -1,0 +1,23 @@
+[
+  {
+    "id": "b1",
+    "name": "GTA V + RDR2 Ultimate",
+    "price": "₹1499",
+    "desc": "Full permanent access to Rockstar's best open-world masterpieces.",
+    "image": "logo.png"
+  },
+  {
+    "id": "b2",
+    "name": "Cyberpunk 2077 + DLC",
+    "price": "₹1299",
+    "desc": "Includes the critically acclaimed Phantom Liberty expansion.",
+    "image": "logo.png"
+  },
+  {
+    "id": "b3",
+    "name": "Elden Ring + Shadow of the Erdtree",
+    "price": "₹1999",
+    "desc": "Game of the Year Edition full permanent access.",
+    "image": "logo.png"
+  }
+]

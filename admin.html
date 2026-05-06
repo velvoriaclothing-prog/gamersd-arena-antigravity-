@@ -40,16 +40,20 @@
         <div class="admin-content">
             <div id="panel-drops" class="dashboard-panel active">
                 <h1 style="font-size: 2.5rem; font-weight: 900;">Manage Free Drops</h1>
-                <p style="color: var(--text-muted);">View and manage the 296 games and 347 accounts.</p>
-                <div style="margin-top: 2rem;">
-                    <button class="btn btn-primary">+ Add New Game Drop</button>
+                <p style="color: var(--text-muted);">View and manage the games and accounts database.</p>
+                <div style="margin-top: 2rem; background: rgba(0,0,0,0.5); padding: 1.5rem; border-radius: 8px;">
+                    <h3>Add New Game Account</h3>
+                    <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                        <input type="text" id="new-game-title" class="admin-input" placeholder="Game Title">
+                        <input type="text" id="new-game-user" class="admin-input" placeholder="Username">
+                        <input type="text" id="new-game-pass" class="admin-input" placeholder="Password">
+                        <button class="btn btn-primary" onclick="addGame()">+ Add</button>
+                    </div>
                 </div>
                 <table>
-                    <thead><tr><th>Game ID</th><th>Game Name</th><th>Accounts Attached</th><th>Action</th></tr></thead>
-                    <tbody>
-                        <tr><td>1</td><td>Grand Theft Auto V Legacy</td><td>1</td><td><button class="btn-secondary">Edit</button></td></tr>
-                        <tr><td>2</td><td>Cities: Skylines</td><td>1</td><td><button class="btn-secondary">Edit</button></td></tr>
-                        <tr><td colspan="4" style="text-align: center; color: var(--text-muted);">... Backend integration pending ...</td></tr>
+                    <thead><tr><th>ID</th><th>Game Name</th><th>Action</th></tr></thead>
+                    <tbody id="admin-games-list">
+                        <tr><td colspan="3">Loading...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -57,13 +61,19 @@
             <div id="panel-bundles" class="dashboard-panel">
                 <h1 style="font-size: 2.5rem; font-weight: 900;">Premium Bundles</h1>
                 <p style="color: var(--text-muted);">Manage the bundles displayed in the Premium Store.</p>
-                <div style="margin-top: 2rem;">
-                    <button class="btn btn-primary">+ Create Premium Bundle</button>
+                <div style="margin-top: 2rem; background: rgba(0,0,0,0.5); padding: 1.5rem; border-radius: 8px;">
+                    <h3>Create Premium Bundle</h3>
+                    <div style="display: flex; gap: 1rem; margin-top: 1rem; flex-wrap: wrap;">
+                        <input type="text" id="new-bundle-name" class="admin-input" placeholder="Bundle Name">
+                        <input type="text" id="new-bundle-price" class="admin-input" placeholder="Price (e.g. ₹1999)">
+                        <input type="text" id="new-bundle-desc" class="admin-input" placeholder="Description" style="flex: 1 1 100%;">
+                        <button class="btn btn-primary" onclick="addBundle()">+ Create</button>
+                    </div>
                 </div>
                 <table>
-                    <thead><tr><th>Bundle Name</th><th>Price</th><th>Action</th></tr></thead>
-                    <tbody>
-                        <tr><td>GTA V + RDR2 Ultimate</td><td>$15.00</td><td><button class="btn-secondary">Edit</button></td></tr>
+                    <thead><tr><th>ID</th><th>Bundle Name</th><th>Price</th><th>Action</th></tr></thead>
+                    <tbody id="admin-bundles-list">
+                        <tr><td colspan="4">Loading...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -71,11 +81,76 @@
     </div>
 
     <script>
+        const API_URL = 'http://localhost:3000';
+        const CREDS = { id: 'admin', pass: 'aditi0110' };
+
         function switchTab(tabId) {
             document.querySelectorAll('.dashboard-panel').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('active'));
             document.getElementById('panel-' + tabId).classList.add('active');
             event.currentTarget.classList.add('active');
+        }
+
+        // LOAD DATA
+        function loadAdminData() {
+            fetch(API_URL + '/api/games').then(r=>r.json()).then(data => {
+                const tbody = document.getElementById('admin-games-list');
+                tbody.innerHTML = data.games.map(g => `
+                    <tr><td>${g.id}</td><td>${g.game || g.name}</td>
+                    <td><button class="btn-secondary" style="padding: 0.5rem;" onclick="deleteGame('${g.id}')">Delete</button></td></tr>
+                `).join('');
+            });
+
+            fetch(API_URL + '/api/premium').then(r=>r.json()).then(data => {
+                const tbody = document.getElementById('admin-bundles-list');
+                tbody.innerHTML = data.bundles.map(b => `
+                    <tr><td>${b.id}</td><td>${b.name}</td><td>${b.price}</td>
+                    <td><button class="btn-secondary" style="padding: 0.5rem;" onclick="deleteBundle('${b.id}')">Delete</button></td></tr>
+                `).join('');
+            });
+        }
+        loadAdminData();
+
+        // ADD GAME
+        function addGame() {
+            const gameData = {
+                game: document.getElementById('new-game-title').value,
+                username: document.getElementById('new-game-user').value,
+                password: document.getElementById('new-game-pass').value
+            };
+            fetch(API_URL + '/api/admin/games', {
+                method: 'POST', headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ ...CREDS, gameData })
+            }).then(() => { alert("Added!"); loadAdminData(); });
+        }
+
+        // DELETE GAME
+        function deleteGame(gameId) {
+            fetch(API_URL + '/api/admin/games/delete', {
+                method: 'POST', headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ ...CREDS, gameId })
+            }).then(() => loadAdminData());
+        }
+
+        // ADD BUNDLE
+        function addBundle() {
+            const bundleData = {
+                name: document.getElementById('new-bundle-name').value,
+                price: document.getElementById('new-bundle-price').value,
+                desc: document.getElementById('new-bundle-desc').value
+            };
+            fetch(API_URL + '/api/admin/premium', {
+                method: 'POST', headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ ...CREDS, bundleData })
+            }).then(() => { alert("Created!"); loadAdminData(); });
+        }
+
+        // DELETE BUNDLE
+        function deleteBundle(bundleId) {
+            fetch(API_URL + '/api/admin/premium/delete', {
+                method: 'POST', headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ ...CREDS, bundleId })
+            }).then(() => loadAdminData());
         }
     </script>
 </body>

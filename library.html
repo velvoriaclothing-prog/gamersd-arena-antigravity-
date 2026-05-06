@@ -59,7 +59,7 @@
 
     <script src="global.js" defer></script>
     <script>
-        fetch('/api/games/list')
+        fetch('http://localhost:3000/api/games')
             .then(res => res.json())
             .then(data => {
                 if(data.success && data.games) renderGames(data.games);
@@ -76,12 +76,12 @@
         function renderGames(games) {
             const grid = document.getElementById('games-grid');
             grid.innerHTML = games.map(g => `
-                <a href="game.html?id=${g.id}" class="card-3d" aria-label="Unlock ${g.name}">
+                <a href="game.html?id=${g.id}" class="card-3d" aria-label="Unlock ${g.game || g.name}">
                     <div class="card-image-wrapper">
-                        <img src="${g.image || 'logo.png'}" alt="Cover image of ${g.name}" loading="lazy" onerror="this.src='logo.png'">
+                        <img src="${g.image || 'logo.png'}" alt="Cover image of ${g.game || g.name}" loading="lazy" onerror="this.src='logo.png'">
                     </div>
                     <div class="card-content">
-                        <h2 class="card-title">${g.name}</h2>
+                        <h2 class="card-title">${g.game || g.name}</h2>
                         <p class="card-desc" style="color: var(--accent-red);">${g.genre || 'PC Game'}</p>
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-top: auto;">
                             <span style="font-size: 0.9rem; color: var(--text-muted);">Initiate Unlock</span>

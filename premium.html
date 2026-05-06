@@ -75,28 +75,37 @@
 
     <script src="global.js" defer></script>
     <script>
-        const premiumBundles = [
-            { id: 'b1', name: 'GTA V + RDR2 Ultimate', price: '₹1499', img: 'logo.png', desc: 'Full permanent access to Rockstar\'s best open-world masterpieces.' },
-            { id: 'b2', name: 'Cyberpunk 2077 + DLC', price: '₹1299', img: 'logo.png', desc: 'Includes the critically acclaimed Phantom Liberty expansion.' },
-            { id: 'b3', name: 'Elden Ring + Shadow of the Erdtree', price: '₹1999', img: 'logo.png', desc: 'Game of the Year Edition full permanent access.' }
-        ];
+        fetch('http://localhost:3000/api/premium')
+            .then(res => res.json())
+            .then(data => {
+                if(data.success && data.bundles) renderBundles(data.bundles);
+                else throw new Error("Fallback required");
+            })
+            .catch(() => {
+                const premiumBundles = [
+                    { id: 'b1', name: 'GTA V + RDR2 Ultimate', price: '₹1499', image: 'logo.png', desc: 'Full permanent access to Rockstar\'s best open-world masterpieces.' }
+                ];
+                renderBundles(premiumBundles);
+            });
 
-        const grid = document.getElementById('premium-grid');
-        grid.innerHTML = premiumBundles.map(b => `
-            <a href="cart.html?bundle=${encodeURIComponent(b.name)}&price=${encodeURIComponent(b.price)}" class="card-3d" aria-label="Buy ${b.name} for ${b.price}">
-                <div class="card-image-wrapper">
-                    <img src="${b.img}" alt="Cover art for ${b.name}" loading="lazy" onerror="this.src='logo.png'">
-                </div>
-                <div class="card-content">
-                    <h3 class="card-title">${b.name}</h3>
-                    <p class="card-desc">${b.desc}</p>
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: auto;">
-                        <span class="card-price">${b.price}</span>
-                        <span class="material-symbols-outlined" style="color: var(--accent-blue);" aria-hidden="true">shopping_cart_checkout</span>
+        function renderBundles(bundles) {
+            const grid = document.getElementById('premium-grid');
+            grid.innerHTML = bundles.map(b => `
+                <a href="cart.html?bundle=${encodeURIComponent(b.name)}&price=${encodeURIComponent(b.price)}" class="card-3d" aria-label="Buy ${b.name} for ${b.price}">
+                    <div class="card-image-wrapper">
+                        <img src="${b.image || 'logo.png'}" alt="Cover art for ${b.name}" loading="lazy" onerror="this.src='logo.png'">
                     </div>
-                </div>
-            </a>
-        `).join('');
+                    <div class="card-content">
+                        <h3 class="card-title">${b.name}</h3>
+                        <p class="card-desc">${b.desc || ''}</p>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: auto;">
+                            <span class="card-price">${b.price}</span>
+                            <span class="material-symbols-outlined" style="color: var(--accent-blue);" aria-hidden="true">shopping_cart_checkout</span>
+                        </div>
+                    </div>
+                </a>
+            `).join('');
+        }
     </script>
 </body>
 </html>

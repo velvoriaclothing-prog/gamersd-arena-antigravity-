@@ -62,17 +62,30 @@
     <script>
         const urlParams = new URLSearchParams(window.location.search);
         const gameId = urlParams.get('id');
-        
-        // Fetch game info to set title
+        let gameDataCache = null;
+
         if(gameId) {
-            document.getElementById('game-title').innerText = "Game ID: " + gameId;
-            // In real integration, fetch from /api/games/list and find by ID to set title
+            // Fetch game early to get title
+            fetch('http://localhost:3000/api/games/' + gameId)
+                .then(res => res.json())
+                .then(data => {
+                    if(data.success) {
+                        document.getElementById('game-title').innerText = data.game.game || data.game.name;
+                        gameDataCache = data.game;
+                    } else {
+                        document.getElementById('game-title').innerText = "Game Not Found";
+                    }
+                })
+                .catch(() => document.getElementById('game-title').innerText = "Database Error");
+        } else {
+            document.getElementById('game-title').innerText = "Invalid ID";
         }
 
         function startTimer() {
             document.getElementById('btn-start').style.display = 'none';
             let timeLeft = 30;
             const display = document.getElementById('countdown');
+            display.parentElement.classList.add('pulse-timer'); // Add CSS animation class
             
             const timer = setInterval(() => {
                 timeLeft--;
@@ -80,6 +93,7 @@
                 
                 if (timeLeft <= 0) {
                     clearInterval(timer);
+                    display.parentElement.classList.remove('pulse-timer');
                     revealCreds();
                 }
             }, 1000);
@@ -89,22 +103,13 @@
             document.getElementById('timer-box').style.display = 'none';
             document.getElementById('creds-box').style.display = 'block';
 
-            // Real backend fetch
-            fetch(\`/api/games/reveal/\${gameId}\`)
-                .then(res => res.json())
-                .then(data => {
-                    if(data.success) {
-                        document.getElementById('res-user').innerText = data.credentials.username;
-                        document.getElementById('res-pass').innerText = data.credentials.password;
-                    } else {
-                        document.getElementById('res-user').innerText = "ERROR";
-                        document.getElementById('res-pass').innerText = "Data missing or Supabase down";
-                    }
-                })
-                .catch(() => {
-                    document.getElementById('res-user').innerText = "DemoUser123";
-                    document.getElementById('res-pass').innerText = "DemoPass!@#";
-                });
+            if(gameDataCache) {
+                document.getElementById('res-user').innerText = gameDataCache.username;
+                document.getElementById('res-pass').innerText = gameDataCache.password;
+            } else {
+                document.getElementById('res-user').innerText = "ERROR";
+                document.getElementById('res-pass').innerText = "Failed to load credentials.";
+            }
         }
 
         function copyText(id) {
