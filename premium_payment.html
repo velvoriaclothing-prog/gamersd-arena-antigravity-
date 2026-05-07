@@ -3,48 +3,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upgrade to Premium | GAMERS ARENA</title>
+    <title>Premium Plans | GAMERS ARENA</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
     <link rel="stylesheet" href="cinematic.css">
     <style>
-        :root { --accent-red: #ff0055; --accent-red-dim: rgba(255, 0, 85, 0.2); }
-        body { background: #050505; color: #fff; }
-        .premium-container { max-width: 800px; margin: 100px auto; padding: 2rem; }
-        .payment-card { background: rgba(20,20,25,0.8); border: 2px solid var(--accent-red); border-radius: 30px; padding: 4rem; text-align: center; backdrop-filter: blur(20px); box-shadow: 0 0 50px var(--accent-red-dim); }
-        .qr-wrapper { background: #fff; padding: 1.5rem; border-radius: 20px; display: inline-block; margin: 2rem 0; box-shadow: 0 0 30px rgba(255,255,255,0.1); }
-        .upi-id { font-family: monospace; background: rgba(255,255,255,0.05); padding: 1rem 2rem; border-radius: 10px; font-size: 1.2rem; color: var(--accent-red); margin-bottom: 2rem; display: inline-block; }
-        .step-badge { background: var(--accent-red); color: #fff; width: 30px; height: 30px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: 900; margin-right: 1rem; }
-        .step-list { text-align: left; max-width: 500px; margin: 2rem auto; }
-        .step-item { display: flex; align-items: center; margin-bottom: 1.5rem; color: rgba(255,255,255,0.8); }
+        body { background: #030305; color: #fff; }
+        .pricing-section { padding: 8rem 5%; text-align: center; }
+        .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2.5rem; max-width: 1200px; margin: 4rem auto; }
+        
+        .plan-card { 
+            background: rgba(20,22,28,0.7); 
+            border: 1px solid rgba(255,255,255,0.1); 
+            border-radius: 30px; 
+            padding: 3rem; 
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+        }
+        
+        .plan-card:hover { transform: translateY(-15px); border-color: var(--accent-red); box-shadow: 0 20px 40px rgba(255,0,85,0.2); }
+        .plan-card.ultimate { border: 2px solid var(--accent-red); box-shadow: 0 0 30px var(--accent-red-dim); }
+        .plan-card.ultimate::before { content: 'BEST VALUE'; position: absolute; top: 20px; right: -30px; background: var(--accent-red); color: #fff; padding: 0.5rem 3rem; transform: rotate(45deg); font-size: 0.7rem; font-weight: 900; }
+
+        .price-tag { font-size: 3.5rem; font-weight: 900; margin: 1.5rem 0; color: #fff; }
+        .old-price { font-size: 1.2rem; text-decoration: line-through; color: rgba(255,255,255,0.3); margin-right: 0.5rem; }
+        .plan-name { font-size: 1.5rem; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; }
+        .feature-list { list-style: none; padding: 0; margin: 2rem 0; text-align: left; }
+        .feature-item { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 1rem; color: rgba(255,255,255,0.7); }
+        .feature-item span { color: var(--accent-red); }
+
+        .offer-banner { background: var(--accent-red); color: #fff; padding: 0.8rem; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; font-size: 0.9rem; position: sticky; top: 0; z-index: 100; box-shadow: 0 5px 20px var(--accent-red-dim); }
+        .badge { background: rgba(255,255,255,0.1); padding: 0.3rem 0.8rem; border-radius: 50px; font-size: 0.7rem; font-weight: 800; margin-bottom: 1rem; display: inline-block; }
     </style>
 </head>
 <body>
-    <div class="premium-container">
-        <div class="payment-card">
-            <div class="hero-tag" style="border-color: var(--accent-red); color: var(--accent-red);">Limited Time Offer</div>
-            <h1 class="glowing-text" style="font-size: 3rem; margin-bottom: 1rem; color: var(--accent-red);">Activate Premium</h1>
-            <p style="color: rgba(255,255,255,0.6);">One-time payment of ₹49 for Lifetime Access</p>
+    <div class="offer-banner">🔥 LIMITED TIME OFFER: NEW USER DEALS ENDING SOON! ⏳</div>
 
-            <div class="qr-wrapper">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=your-upi-id@bank%26pn=Gamers%20Arena%26am=49%26cu=INR" alt="UPI QR">
+    <section class="pricing-section">
+        <div class="hero-tag" style="border-color: var(--accent-red); color: var(--accent-red);">Membership Plans</div>
+        <h1 class="glowing-text" style="font-size: 3.5rem;">Choose Your Arsenal</h1>
+        <p style="color: var(--text-muted); max-width: 600px; margin: 0 auto;">Select a plan that fits your gaming needs. Lifetime access, daily reveals.</p>
+
+        <div class="pricing-grid">
+            <!-- STARTER -->
+            <div class="plan-card">
+                <div class="badge">NEW USER OFFER</div>
+                <div class="plan-name">Starter</div>
+                <div class="price-tag"><span class="old-price">₹299</span>₹49</div>
+                <ul class="feature-list">
+                    <li class="feature-item"><span class="material-symbols-outlined">check_circle</span> 5 Reveals Per Day</li>
+                    <li class="feature-item"><span class="material-symbols-outlined">check_circle</span> All Game Categories</li>
+                    <li class="feature-item"><span class="material-symbols-outlined">check_circle</span> Lifetime Access</li>
+                    <li class="feature-item"><span class="material-symbols-outlined">check_circle</span> Telegram Support</li>
+                </ul>
+                <button onclick="selectPlan('starter', 49)" class="btn btn-secondary" style="width: 100%; justify-content: center;">Choose Starter</button>
             </div>
 
-            <br>
-            <div class="upi-id">UPI ID: your-upi-id@bank</div>
-
-            <div class="step-list">
-                <div class="step-item"><span class="step-badge">1</span> Scan QR & Pay ₹49 using any UPI App.</div>
-                <div class="step-item"><span class="step-badge">2</span> Take a Screenshot of the success screen.</div>
-                <div class="step-item"><span class="step-badge">3</span> Click the button below to verify on Telegram.</div>
+            <!-- PRO -->
+            <div class="plan-card" style="border-color: rgba(255,255,255,0.3);">
+                <div class="badge" style="background: var(--accent-red);">MOST POPULAR</div>
+                <div class="plan-name">Pro Gamer</div>
+                <div class="price-tag"><span class="old-price">₹499</span>₹79</div>
+                <ul class="feature-list">
+                    <li class="feature-item"><span class="material-symbols-outlined">check_circle</span> 12 Reveals Per Day</li>
+                    <li class="feature-item"><span class="material-symbols-outlined">check_circle</span> All Game Categories</li>
+                    <li class="feature-item"><span class="material-symbols-outlined">check_circle</span> Lifetime Access</li>
+                    <li class="feature-item"><span class="material-symbols-outlined">check_circle</span> Priority Support</li>
+                </ul>
+                <button onclick="selectPlan('pro', 79)" class="btn btn-danger" style="width: 100%; justify-content: center;">Upgrade to Pro</button>
             </div>
 
-            <a href="https://t.me/verificationforgamersarenabot" target="_blank" class="btn btn-danger" style="width: 100%; justify-content: center; font-size: 1.2rem;">
-                Verify on Telegram <span class="material-symbols-outlined">send</span>
-            </a>
-            
-            <p style="margin-top: 1.5rem; font-size: 0.8rem; color: rgba(255,255,255,0.4);">Activation usually takes 10-30 minutes after verification.</p>
+            <!-- ULTIMATE -->
+            <div class="plan-card ultimate">
+                <div class="badge" style="background: gold; color: #000;">ELITE ACCESS</div>
+                <div class="plan-name" style="color: gold;">Ultimate</div>
+                <div class="price-tag"><span class="old-price">₹999</span>₹99</div>
+                <ul class="feature-list">
+                    <li class="feature-item"><span class="material-symbols-outlined">bolt</span> UNLIMITED Reveals</li>
+                    <li class="feature-item"><span class="material-symbols-outlined">bolt</span> All Game Categories</li>
+                    <li class="feature-item"><span class="material-symbols-outlined">bolt</span> Lifetime Access</li>
+                    <li class="feature-item"><span class="material-symbols-outlined">bolt</span> 24/7 VIP Support</li>
+                </ul>
+                <button onclick="selectPlan('ultimate', 99)" class="btn btn-danger" style="width: 100%; justify-content: center; background: gold; color: #000; box-shadow: 0 0 30px rgba(255,215,0,0.4);">Get Ultimate</button>
+            </div>
         </div>
-    </div>
+
+        <!-- PAYMENT MODAL (Telegram) -->
+        <div id="payment-modal" class="modal-overlay">
+            <div class="admin-modal" style="max-width: 500px;">
+                <h2 id="modal-plan-name" class="glowing-text" style="color: var(--accent-red);">Ultimate Plan</h2>
+                <p>To activate, scan & pay <b id="modal-amount">₹99</b></p>
+                <div style="background: #fff; padding: 1rem; border-radius: 15px; display: inline-block; margin: 1.5rem 0;">
+                    <img id="modal-qr" src="" alt="QR" width="180">
+                </div>
+                <div style="font-family: monospace; background: rgba(255,255,255,0.05); padding: 0.8rem; border-radius: 10px; margin-bottom: 2rem;">UPI: your-upi-id@bank</div>
+                
+                <a href="https://t.me/verificationforgamersarenabot" target="_blank" class="btn btn-danger" style="width: 100%; justify-content: center;">Verify on Telegram</a>
+                <button onclick="closeModal()" class="btn btn-secondary" style="width: 100%; justify-content: center; margin-top: 1rem;">Back to Plans</button>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        function selectPlan(plan, amount) {
+            document.getElementById('modal-plan-name').innerText = plan.toUpperCase() + " PLAN";
+            document.getElementById('modal-amount').innerText = "₹" + amount;
+            document.getElementById('modal-qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=your-upi-id@bank%26pn=Gamers%20Arena%26am=${amount}%26cu=INR`;
+            document.getElementById('payment-modal').classList.add('active');
+        }
+        function closeModal() { document.getElementById('payment-modal').classList.remove('active'); }
+    </script>
 </body>
 </html>

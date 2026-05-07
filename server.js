@@ -27,7 +27,7 @@ bot.onText(/\/start/, (msg) => {
 });
 
 bot.onText(/\/verify/, (msg) => {
-    bot.sendMessage(msg.chat.id, "Please send your registered website EMAIL and UTR/Transaction ID in this format:\n\n`EMAIL: your@email.com` \n`UTR: 1234567890`", { parse_mode: 'Markdown' });
+    bot.sendMessage(msg.chat.id, "Please send your details in this format:\n\n`EMAIL: your@email.com` \n`UTR: 1234567890` \n`PLAN: Starter/Pro/Ultimate`", { parse_mode: 'Markdown' });
 });
 
 bot.on('message', async (msg) => {
@@ -35,12 +35,14 @@ bot.on('message', async (msg) => {
     if (text.startsWith('EMAIL:')) {
         const emailMatch = text.match(/EMAIL:\s*(.+)/i);
         const utrMatch = text.match(/UTR:\s*(.+)/i);
+        const planMatch = text.match(/PLAN:\s*(.+)/i);
         
         if (emailMatch && utrMatch) {
             const email = emailMatch[1].trim();
             const utr = utrMatch[1].trim();
+            const plan = (planMatch ? planMatch[1].trim().toLowerCase() : 'starter');
             
-            const { error } = await supabase.from('payment_requests').insert([{ user_email: email, utr_id: utr, status: 'pending' }]);
+            const { error } = await supabase.from('payment_requests').insert([{ user_email: email, utr_id: utr, plan_name: plan, status: 'pending' }]);
             if (error) {
                 bot.sendMessage(msg.chat.id, "❌ Error: This UTR might already be submitted or email not found.");
             } else {
@@ -73,16 +75,20 @@ app.post('/api/content', async (req, res) => {
 // API: Auth - Login
 app.post('/api/auth/login', async (req, res) => {
     const { email, password } = req.body;
-    
-    // Check for hardcoded master admin first
     if (email === 'admin' && password === 'aditi0110') {
-        return res.json({ success: true, user: { name: 'Admin', email: 'admin', role: 'admin', is_premium: true } });
+        return res.json({ success: true, user: { name: 'Admin', email: 'admin', role: 'admin', is_premium: true, current_plan: 'ultimate' } });
     }
-
-    const { data: user, error } = await supabase.from('site_users').select('*').eq('email', email).eq('password', password).maybeSingle();
-    
+    const { data: user } = await supabase.from('site_users').select('*').eq('email', email).eq('password', password).maybeSingle();
     if (user) {
-        res.json({ success: true, user: { name: user.name, email: user.email, role: user.role, is_premium: user.is_premium } });
+        const updatedUser = await ensureLimitReset(user);
+        res.json({ success: true, user: { 
+            name: updatedUser.name, 
+            email: updatedUser.email, 
+            role: updatedUser.role, 
+            is_premium: updatedUser.is_premium,
+            current_plan: updatedUser.current_plan,
+            reveals_today: updatedUser.daily_reveal_count
+        }});
     } else {
         res.status(401).json({ success: false, message: 'Invalid credentials' });
     }
@@ -118,18 +124,20 @@ app.get('/api/admin/payments', async (req, res) => {
     res.json({ success: true, payments: data });
 });
 
-// API: Admin - Approve/Reject Payment
+// API: Admin - Process Payment (with Plan Support)
 app.post('/api/admin/payments/process', async (req, res) => {
-    const { id, pass, requestId, status } = req.body;
+    const { id, pass, requestId, status, plan } = req.body;
     if (id !== 'admin' || pass !== 'aditi0110') return res.status(401).json({ success: false });
 
     const { data: request } = await supabase.from('payment_requests').update({ status }).eq('id', requestId).select().single();
     
     if (status === 'approved') {
-        await supabase.from('site_users').update({ is_premium: true }).eq('email', request.user_email);
+        await supabase.from('site_users').update({ 
+            is_premium: true, 
+            current_plan: plan || request.plan_name || 'starter' 
+        }).eq('email', request.user_email);
     }
-    
-    res.json({ success: true, message: `Payment ${status}` });
+    res.json({ success: true, message: `Payment ${status} for plan ${plan}` });
 });
 
 // API: Get All Free Games (Safe - No Passwords)
@@ -139,21 +147,40 @@ app.get('/api/games', async (req, res) => {
     res.json({ success: true, games: data });
 });
 
-// API: Get Specific Game Credentials (Secure)
+// API: Get Specific Game Credentials (Tiered Protection)
 app.post('/api/games/reveal', async (req, res) => {
     const { gameId, email } = req.body;
     
-    // Check if user is premium or admin
-    if (email !== 'admin') {
-        const { data: user } = await supabase.from('site_users').select('is_premium').eq('email', email).single();
-        if (!user || !user.is_premium) {
-            return res.status(403).json({ success: false, message: 'PREMIUM_REQUIRED' });
-        }
+    // 1. Check Admin
+    if (email === 'admin') {
+        const { data } = await supabase.from('games').select('*').eq('id', gameId).single();
+        return res.json({ success: true, game: data });
     }
 
-    const { data, error } = await supabase.from('games').select('*').eq('id', gameId).single();
-    if (data) res.json({ success: true, game: data });
-    else res.status(404).json({ success: false, message: 'Game not found' });
+    // 2. Check User & Plan
+    let { data: user } = await supabase.from('site_users').select('*').eq('email', email).single();
+    if (!user || !user.is_premium) return res.status(403).json({ success: false, message: 'PREMIUM_REQUIRED' });
+
+    // 3. Reset Limits if needed
+    user = await ensureLimitReset(user);
+
+    // 4. Validate Tiered Limits
+    const limits = { 'starter': 5, 'pro': 12, 'ultimate': Infinity };
+    const maxReveals = limits[user.current_plan] || 0;
+
+    if (user.daily_reveal_count >= maxReveals) {
+        return res.status(403).json({ success: false, message: 'LIMIT_REACHED' });
+    }
+
+    // 5. Reveal & Log
+    const { data: game } = await supabase.from('games').select('*').eq('id', gameId).single();
+    if (game) {
+        await supabase.from('site_users').update({ daily_reveal_count: user.daily_reveal_count + 1 }).eq('email', email);
+        await supabase.from('reveal_logs').insert([{ user_email: email, game_id: gameId }]);
+        res.json({ success: true, game });
+    } else {
+        res.status(404).json({ success: false, message: 'Game not found' });
+    }
 });
 
 // API: Admin Add Game

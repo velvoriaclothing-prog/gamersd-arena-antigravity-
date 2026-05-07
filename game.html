@@ -83,11 +83,9 @@
     <script>
         const urlParams = new URLSearchParams(window.location.search);
         const gameId = urlParams.get('id');
-        const user = JSON.parse(localStorage.getItem('ga_user') || '{}');
+        let user = JSON.parse(localStorage.getItem('ga_user') || '{}');
 
-        if (!user.email) {
-            window.location.href = 'login.html';
-        }
+        if (!user.email) { window.location.href = 'login.html'; }
 
         // Load Basic Info
         if(gameId) {
@@ -98,26 +96,28 @@
                     if(game) {
                         document.getElementById('game-title').innerText = game.game || game.name;
                         if(game.image) document.getElementById('game-img').src = game.image;
-                        checkPremiumStatus();
-                    } else {
-                        document.getElementById('game-title').innerText = "Game Not Found";
+                        renderUI();
                     }
                 });
         }
 
-        function checkPremiumStatus() {
+        function renderUI() {
+            const timerBox = document.getElementById('timer-box');
             if (!user.is_premium && user.role !== 'admin') {
-                // REDIRECT TO PAYMENT IF NOT PREMIUM
                 window.location.href = 'premium_payment.html';
                 return;
             }
-            
-            const timerBox = document.getElementById('timer-box');
+
+            const limits = { 'starter': 5, 'pro': 12, 'ultimate': '∞' };
+            const limit = limits[user.current_plan] || 0;
+            const remaining = limit === '∞' ? '∞' : (limit - user.reveals_today);
+
             timerBox.innerHTML = `
-                <div style="background: rgba(0, 255, 136, 0.1); border: 2px solid #00ff88; padding: 2rem; border-radius: 15px;">
-                    <h2 style="color: #00ff88;">Premium Unlocked</h2>
-                    <p style="color: #fff; margin-bottom: 1.5rem;">You have full access to this account. Enjoy!</p>
-                    <button class="btn btn-primary" onclick="revealCreds()" style="background: #00ff88; color: #000; border: none;">Instant Reveal <span class="material-symbols-outlined">key</span></button>
+                <div style="background: rgba(255, 0, 85, 0.1); border: 2px solid var(--accent-red); padding: 2rem; border-radius: 20px; text-align: center;">
+                    <div class="badge" style="background: var(--accent-red); margin-bottom: 1rem;">${user.current_plan.toUpperCase()} PLAN</div>
+                    <h2 style="color: #fff; margin-bottom: 0.5rem;">Ready to Play?</h2>
+                    <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Reveals remaining today: <b style="color: var(--accent-red);">${remaining}</b></p>
+                    <button class="btn btn-danger" onclick="revealCreds()" style="width: 100%; justify-content: center;">Reveal Credentials <span class="material-symbols-outlined">key</span></button>
                 </div>
             `;
         }
@@ -125,8 +125,8 @@
         async function revealCreds() {
             const btn = event.target;
             btn.disabled = true;
-            btn.innerText = "Revealing...";
-            
+            btn.innerText = "Checking Limits...";
+
             try {
                 const res = await fetch('/api/games/reveal', {
                     method: 'POST',
@@ -134,19 +134,36 @@
                     body: JSON.stringify({ gameId, email: user.email })
                 });
                 const data = await res.json();
-                
+
                 if (data.success) {
                     document.getElementById('timer-box').style.display = 'none';
                     document.getElementById('creds-box').style.display = 'block';
                     document.getElementById('res-user').value = data.game.username;
                     document.getElementById('res-pass').value = data.game.password;
+                    
+                    // Update local reveal count
+                    user.reveals_today += 1;
+                    localStorage.setItem('ga_user', JSON.stringify(user));
+                } else if (data.message === 'LIMIT_REACHED') {
+                    showLimitPopup();
                 } else {
-                    alert("Access Denied: Please upgrade to Premium.");
                     window.location.href = 'premium_payment.html';
                 }
-            } catch (e) {
-                alert("Server error. Please try again.");
-            }
+            } catch (e) { alert("Server error. Try again."); btn.disabled = false; btn.innerText = "Reveal Credentials"; }
+        }
+
+        function showLimitPopup() {
+            const overlay = document.createElement('div');
+            overlay.className = 'modal-overlay active';
+            overlay.innerHTML = `
+                <div class="admin-modal">
+                    <h2 class="glowing-text" style="color: var(--accent-red);">LIMIT REACHED!</h2>
+                    <p style="margin: 1.5rem 0;">You have used all your reveals for today on the <b>${user.current_plan.toUpperCase()}</b> plan.</p>
+                    <a href="premium_payment.html" class="btn btn-danger" style="width:100%; justify-content:center;">Upgrade Plan for Unlimited Access</a>
+                    <button onclick="this.parentElement.parentElement.remove()" class="btn btn-secondary" style="width:100%; justify-content:center; margin-top:1rem;">I'll wait until tomorrow</button>
+                </div>
+            `;
+            document.body.appendChild(overlay);
         }
 
         function copyText(id) {

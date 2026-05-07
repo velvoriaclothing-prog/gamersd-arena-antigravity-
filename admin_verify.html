@@ -47,7 +47,12 @@
                     <div>
                         <span class="status-badge status-${req.status}">${req.status}</span>
                         ${req.status === 'pending' ? `
-                            <button onclick="processRequest(${req.id}, 'approved')" class="btn btn-primary" style="padding: 0.5rem 1rem; margin-left: 1rem;">Approve</button>
+                            <select id="plan-${req.id}" class="admin-input" style="width: auto; margin: 0 1rem; padding: 0.3rem;">
+                                <option value="starter">Starter (5)</option>
+                                <option value="pro">Pro (12)</option>
+                                <option value="ultimate">Ultimate (∞)</option>
+                            </select>
+                            <button onclick="processRequest(${req.id}, 'approved')" class="btn btn-primary" style="padding: 0.5rem 1rem;">Approve</button>
                             <button onclick="processRequest(${req.id}, 'rejected')" class="btn btn-danger" style="padding: 0.5rem 1rem; margin-left: 0.5rem;">Reject</button>
                         ` : ''}
                     </div>
@@ -57,10 +62,15 @@
         }
 
         async function processRequest(requestId, status) {
+            let plan = 'starter';
+            if (status === 'approved') {
+                plan = document.getElementById(`plan-${requestId}`).value;
+            }
+
             const res = await fetch('/api/admin/payments/process', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ id: 'admin', pass: 'aditi0110', requestId, status })
+                body: JSON.stringify({ id: 'admin', pass: 'aditi0110', requestId, status, plan })
             });
             if ((await res.json()).success) {
                 alert(`Request ${status}!`);
