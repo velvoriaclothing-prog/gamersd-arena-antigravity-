@@ -96,9 +96,12 @@
                 <h2 id="modal-plan-name" class="glowing-text" style="color: var(--accent-red);">Ultimate Plan</h2>
                 <p>To activate, scan & pay <b id="modal-amount">₹99</b></p>
                 <div style="background: #fff; padding: 1rem; border-radius: 15px; display: inline-block; margin: 1.5rem 0;">
-                    <img id="modal-qr" src="" alt="QR" width="180">
+                    <!-- USING YOUR CUSTOM QR IMAGE -->
+                    <img id="modal-qr" src="upi_qr.png" alt="Scan to Pay" width="220" style="border-radius: 10px;">
                 </div>
-                <div style="font-family: monospace; background: rgba(255,255,255,0.05); padding: 0.8rem; border-radius: 10px; margin-bottom: 2rem;">UPI: your-upi-id@bank</div>
+                <div style="font-family: monospace; background: rgba(255,255,255,0.05); padding: 0.8rem; border-radius: 10px; margin-bottom: 2rem; color: #00ff88; font-weight: 800; letter-spacing: 1px;">
+                    UPI ID: gamersarena@upi
+                </div>
                 
                 <a href="https://t.me/verificationforgamersarenabot" target="_blank" class="btn btn-danger" style="width: 100%; justify-content: center;">Verify on Telegram</a>
                 <button onclick="closeModal()" class="btn btn-secondary" style="width: 100%; justify-content: center; margin-top: 1rem;">Back to Plans</button>
@@ -110,7 +113,7 @@
         function selectPlan(plan, amount) {
             document.getElementById('modal-plan-name').innerText = plan.toUpperCase() + " PLAN";
             document.getElementById('modal-amount').innerText = "₹" + amount;
-            document.getElementById('modal-qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=your-upi-id@bank%26pn=Gamers%20Arena%26am=${amount}%26cu=INR`;
+            // Note: We use your static high-quality QR image for all plans
             document.getElementById('payment-modal').classList.add('active');
         }
         function closeModal() { document.getElementById('payment-modal').classList.remove('active'); }
