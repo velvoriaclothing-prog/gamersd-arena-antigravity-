@@ -173,7 +173,17 @@ app.post('/api/auth/login', async (req, res) => {
     if (email === 'admin' && password === 'aditi0110') {
         return res.json({ success: true, user: { name: 'Admin', email: 'admin', role: 'admin', is_premium: true, current_plan: 'ultimate' } });
     }
-    const { data: user } = await supabase.from('site_users').select('*').eq('email', email).eq('password', password).maybeSingle();
+
+    // Special handling for Google OAuth refresh
+    let user;
+    if (password && password.startsWith('google_oauth_')) {
+        const { data } = await supabase.from('site_users').select('*').eq('email', email).eq('password', password).maybeSingle();
+        user = data;
+    } else {
+        const { data } = await supabase.from('site_users').select('*').eq('email', email).eq('password', password).maybeSingle();
+        user = data;
+    }
+
     if (user) {
         const updatedUser = await ensureLimitReset(user);
         res.json({ success: true, user: { 
@@ -182,7 +192,8 @@ app.post('/api/auth/login', async (req, res) => {
             role: updatedUser.role, 
             is_premium: updatedUser.is_premium,
             current_plan: updatedUser.current_plan,
-            reveals_today: updatedUser.daily_reveal_count
+            reveals_today: updatedUser.daily_reveal_count,
+            password: updatedUser.password // Include for refresh support
         }});
     } else {
         res.status(401).json({ success: false, message: 'Invalid credentials' });
@@ -232,7 +243,8 @@ app.post('/api/auth/google', async (req, res) => {
         email: user.email, 
         role: user.role, 
         is_premium: user.is_premium, 
-        current_plan: user.current_plan 
+        current_plan: user.current_plan,
+        password: user.password
     }});
 });
 
