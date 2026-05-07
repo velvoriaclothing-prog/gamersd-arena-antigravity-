@@ -81,13 +81,14 @@
                 const gradients = ['linear-gradient(135deg, #3b82f6, #06b6d4)', 'linear-gradient(135deg, #8b5cf6, #3b82f6)', 'linear-gradient(135deg, #10b981, #3b82f6)'];
                 const bg = gradients[i % gradients.length];
                 const isMega = (g.game_total || 0) >= 25;
+                const hasMultiple = (g.game_total || 0) > 1;
                 
                 return `
                 <a href="game.html?id=${g.id}" class="game-card">
                     <div class="card-top" style="background: ${bg};">
                         <div class="platform-badge"><span class="material-symbols-outlined" style="font-size:14px;">check_circle</span> Verified</div>
                         ${isMega ? '<div style="position:absolute; top:10px; right:10px; background:gold; color:#000; padding:2px 8px; border-radius:50px; font-size:10px; font-weight:900; box-shadow:0 0 15px gold;">MEGA ACCOUNT</div>' : ''}
-                        <div style="position:absolute; bottom:10px; left:10px; background:rgba(0,0,0,0.8); border:1px solid #00ff88; color:#00ff88; padding:2px 8px; border-radius:4px; font-size:10px; font-weight:bold;">${g.game_total || 1} GAMES</div>
+                        ${hasMultiple ? `<div style="position:absolute; bottom:10px; left:10px; background:rgba(0,0,0,0.8); border:1px solid #00ff88; color:#00ff88; padding:2px 8px; border-radius:4px; font-size:10px; font-weight:bold;">${g.game_total} GAMES</div>` : ''}
                         ${g.image ? `<img src="${g.image}" onerror="this.style.display='none'" alt="Cover">` : ''}
                     </div>
                     <div class="card-bottom">

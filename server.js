@@ -284,9 +284,9 @@ app.post('/api/admin/payments/process', async (req, res) => {
     res.json({ success: true, message: `Payment ${status} for plan ${plan}` });
 });
 
-// API: Get All Free Games (Sorted by Game Total)
+// API: Get All Free Games (Sorted by Priority & Game Total)
 app.get('/api/games', async (req, res) => {
-    const { data, error } = await supabase.from('games').select('id, game, image, game_total').order('game_total', { ascending: false });
+    const { data, error } = await supabase.from('games').select('id, game, image, game_total, priority').order('priority', { ascending: true }).order('game_total', { ascending: false });
     if (error) return res.status(500).json({ success: false });
     res.json({ success: true, games: data });
 });
@@ -324,7 +324,7 @@ app.post('/api/games/reveal', async (req, res) => {
     }
 });
 
-// API: Admin Add Game (with Game Total)
+// API: Admin Add Game (with Game Total & Priority)
 app.post('/api/admin/games', async (req, res) => {
     const { id, pass, gameData } = req.body;
     if (id !== 'admin' || pass !== 'aditi0110') return res.status(401).json({ success: false, message: 'Unauthorized' });
@@ -335,6 +335,7 @@ app.post('/api/admin/games', async (req, res) => {
         username: gameData.username,
         password: gameData.password,
         game_total: parseInt(gameData.game_total || 1),
+        priority: parseInt(gameData.priority || 100),
         image: 'logo.png'
     };
     
