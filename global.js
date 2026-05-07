@@ -9,7 +9,8 @@ const observer = new IntersectionObserver((entries) => {
 
 document.addEventListener('DOMContentLoaded', () => {
     // 0. LOGIN WALL (Force login for all pages except login.html)
-    const isLoginPage = window.location.pathname.includes('login.html');
+    const path = window.location.pathname.toLowerCase();
+    const isLoginPage = path.endsWith('login.html') || path.endsWith('login') || path.includes('/login');
     const user = JSON.parse(localStorage.getItem('ga_user'));
     
     if (!user && !isLoginPage) {
