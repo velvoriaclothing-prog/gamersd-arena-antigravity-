@@ -13,48 +13,106 @@ const PORT = process.env.PORT || 3000;
 // Initialize Supabase
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE);
 
-// Initialize Telegram Bot
+// Initialize Telegram Bot (Webhook Mode for Production)
 const TG_TOKEN = process.env.TELEGRAM_BOT_TOKEN || '7297371569:AAEoyHlW_XGZ4B8pL0S6u2fVvW7nS8R_6XU';
-const bot = new TelegramBot(TG_TOKEN, { polling: true });
+const WEBHOOK_URL = `https://gamersd-arena-antigravity.onrender.com/bot${TG_TOKEN}`;
+const bot = new TelegramBot(TG_TOKEN);
+
+// Set Webhook (Only if not in dev)
+if (process.env.NODE_ENV === 'production') {
+    bot.setWebHook(WEBHOOK_URL);
+} else {
+    // Fallback to polling for local dev
+    const botDev = new TelegramBot(TG_TOKEN, { polling: true });
+    setupBotLogic(botDev);
+}
+
+// Webhook endpoint
+app.post(`/bot${TG_TOKEN}`, (req, res) => {
+    bot.processUpdate(req.body);
+    res.sendStatus(200);
+});
+
+function setupBotLogic(botInstance) {
+    const userCooldowns = new Map();
+
+    botInstance.onText(/\/start/, (msg) => {
+        botInstance.sendMessage(msg.chat.id, "🚀 *Gamers Arena Official Verification Bot*\n\nWelcome! To unlock your premium plan, please follow the steps below.\n\n1. Complete payment on the website.\n2. Note your 12-digit UPI/UTR Transaction ID.\n3. Type /verify here to submit.", { parse_mode: 'Markdown' });
+    });
+
+    botInstance.onText(/\/verify/, (msg) => {
+        botInstance.sendMessage(msg.chat.id, "🔍 *Verification Request*\n\nPlease reply with your details in this EXACT format:\n\n`EMAIL: your@email.com` \n`UTR: 123456789012` \n`PLAN: Starter/Pro/Ultimate` \n\n⚠️ _One UTR can only be used for one account._", { parse_mode: 'Markdown' });
+    });
+
+    botInstance.on('message', async (msg) => {
+        const chatId = msg.chat.id;
+        const text = msg.text || '';
+
+        if (text.startsWith('EMAIL:')) {
+            // 1. Rate Limiting (Cooldown)
+            const lastAttempt = userCooldowns.get(chatId);
+            if (lastAttempt && Date.now() - lastAttempt < 60000) { // 1 min cooldown
+                return botInstance.sendMessage(chatId, "⏳ *Cooldown Active*: Please wait 1 minute before submitting again to prevent spam.");
+            }
+            userCooldowns.set(chatId, Date.now());
+
+            // 2. Parse Data
+            const emailMatch = text.match(/EMAIL:\s*(.+)/i);
+            const utrMatch = text.match(/UTR:\s*(.+)/i);
+            const planMatch = text.match(/PLAN:\s*(.+)/i);
+
+            if (!emailMatch || !utrMatch) {
+                return botInstance.sendMessage(chatId, "❌ *Invalid Format*: Please use the format shown in /verify accurately.");
+            }
+
+            const email = emailMatch[1].trim();
+            const utr = utrMatch[1].trim();
+            const plan = (planMatch ? planMatch[1].trim().toLowerCase() : 'starter');
+
+            // 3. UTR Validation (Length Check)
+            if (utr.length < 10 || utr.length > 15) {
+                return botInstance.sendMessage(chatId, "⚠️ *Invalid UTR*: Transaction IDs are usually 12 digits. Please double-check your receipt.");
+            }
+
+            // 4. Duplicate Check & Fraud Prevention
+            const { data: existingRequest } = await supabase.from('payment_requests').select('*').eq('utr_id', utr).maybeSingle();
+            
+            if (existingRequest) {
+                if (existingRequest.user_email === email) {
+                    return botInstance.sendMessage(chatId, "ℹ️ *Already Submitted*: You have already submitted this Transaction ID for this email. Please wait for admin approval.");
+                } else {
+                    return botInstance.sendMessage(chatId, "🚨 *FRAUD ALERT*: This payment transaction ID has already been used with another account. Your account has been flagged for review.", { parse_mode: 'Markdown' });
+                }
+            }
+
+            // 5. Submit to DB
+            const { error } = await supabase.from('payment_requests').insert([{ 
+                user_email: email, 
+                utr_id: utr, 
+                plan_name: plan, 
+                status: 'pending',
+                telegram_id: chatId.toString()
+            }]);
+
+            if (error) {
+                botInstance.sendMessage(chatId, "❌ *System Error*: Could not process request. Please ensure you are using a registered email.");
+            } else {
+                botInstance.sendMessage(chatId, "✅ *Submission Successful!*\n\nPlan: " + plan.toUpperCase() + "\nUTR: " + utr + "\n\nAdmin will verify your payment shortly. This usually takes 10-30 minutes. You will be notified here.", { parse_mode: 'Markdown' });
+            }
+        }
+    });
+
+    botInstance.onText(/\/status/, async (msg) => {
+        botInstance.sendMessage(msg.chat.id, "To check status, please send:\n`CHECK: your@email.com`", { parse_mode: 'Markdown' });
+    });
+}
+
+// Initialize logic for the webhook bot too
+setupBotLogic(bot);
 
 app.use(cors());
 app.use(express.json());
 app.use(express.static(__dirname));
-
-// --- TELEGRAM BOT LOGIC ---
-bot.onText(/\/start/, (msg) => {
-    bot.sendMessage(msg.chat.id, "🚀 Welcome to Gamers Arena Verification Bot!\n\nUse /verify to submit your payment details.");
-});
-
-bot.onText(/\/verify/, (msg) => {
-    bot.sendMessage(msg.chat.id, "Please send your details in this format:\n\n`EMAIL: your@email.com` \n`UTR: 1234567890` \n`PLAN: Starter/Pro/Ultimate`", { parse_mode: 'Markdown' });
-});
-
-bot.on('message', async (msg) => {
-    const text = msg.text || '';
-    if (text.startsWith('EMAIL:')) {
-        const emailMatch = text.match(/EMAIL:\s*(.+)/i);
-        const utrMatch = text.match(/UTR:\s*(.+)/i);
-        const planMatch = text.match(/PLAN:\s*(.+)/i);
-        
-        if (emailMatch && utrMatch) {
-            const email = emailMatch[1].trim();
-            const utr = utrMatch[1].trim();
-            const plan = (planMatch ? planMatch[1].trim().toLowerCase() : 'starter');
-            
-            const { error } = await supabase.from('payment_requests').insert([{ user_email: email, utr_id: utr, plan_name: plan, status: 'pending' }]);
-            if (error) {
-                bot.sendMessage(msg.chat.id, "❌ Error: This UTR might already be submitted or email not found.");
-            } else {
-                bot.sendMessage(msg.chat.id, "✅ Payment submitted! Admin will verify it shortly. You can check status with /status");
-            }
-        }
-    }
-});
-
-bot.onText(/\/status/, async (msg) => {
-    bot.sendMessage(msg.chat.id, "Please provide your email to check status:\n`CHECK: your@email.com`", { parse_mode: 'Markdown' });
-});
 
 // API: Content Management
 app.get('/api/content', async (req, res) => {
