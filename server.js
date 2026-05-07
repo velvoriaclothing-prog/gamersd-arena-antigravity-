@@ -13,71 +13,127 @@ const PORT = process.env.PORT || 3000;
 // Initialize Supabase
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE);
 
-// Initialize Telegram Bot (Polling Mode for 100% Reliability)
+// Initialize Telegram Bot (Polling Mode)
 const TG_TOKEN = process.env.TELEGRAM_BOT_TOKEN || '7297371569:AAEoyHlW_XGZ4B8pL0S6u2fVvW7nS8R_6XU';
 const bot = new TelegramBot(TG_TOKEN, { polling: true });
 
+// State Management for step-by-step verification
+const userStates = new Map();
+
 function setupBotLogic(botInstance) {
-    const userCooldowns = new Map();
+    const mainKeyboard = {
+        reply_markup: {
+            inline_keyboard: [
+                [{ text: "💎 Verify Payment", callback_data: "verify" }, { text: "📊 Pricing Plans", callback_data: "pricing" }],
+                [{ text: "📝 Instructions", callback_data: "instructions" }, { text: "🔍 Check Status", callback_data: "status" }],
+                [{ text: "🛠️ Support", url: "https://t.me/gamersarena_support" }]
+            ]
+        }
+    };
 
     botInstance.onText(/\/start/, (msg) => {
-        botInstance.sendMessage(msg.chat.id, "🚀 *Gamers Arena Official Verification Bot*\n\nWelcome! To unlock your premium plan, please follow the steps below.\n\n1. Complete payment on the website.\n2. Note your 12-digit UPI/UTR Transaction ID.\n3. Type /verify here to submit.", { parse_mode: 'Markdown' });
+        botInstance.sendMessage(msg.chat.id, "🚀 *Welcome to Gamers Arena Premium!* \n\nI am your automated verification assistant. How can I help you today?", { 
+            parse_mode: 'Markdown',
+            ...mainKeyboard
+        });
     });
 
-    botInstance.onText(/\/verify/, (msg) => {
-        botInstance.sendMessage(msg.chat.id, "🔍 *Verification Request*\n\nPlease reply with your details in this EXACT format:\n\n`EMAIL: your@email.com` \n`UTR: 123456789012` \n`PLAN: Starter/Pro/Ultimate` \n\n⚠️ _One UTR can only be used for one account._", { parse_mode: 'Markdown' });
-    });
+    botInstance.on('callback_query', async (query) => {
+        const chatId = query.message.chat.id;
+        const data = query.data;
 
-    botInstance.on('message', async (msg) => {
-        const chatId = msg.chat.id;
-        const text = msg.text || '';
+        if (data === "pricing") {
+            botInstance.sendMessage(chatId, "🔥 *Exclusive New User Deals* \n\n" +
+                "▫️ *Starter*: ₹49 (5 Reveals/day)\n" +
+                "▫️ *Pro Gamer*: ₹79 (12 Reveals/day)\n" +
+                "▫️ *Ultimate*: ₹99 (UNLIMITED Access)\n\n" +
+                "⏳ _Limited time offer ending soon!_", { parse_mode: 'Markdown' });
+        }
 
-        if (text.startsWith('EMAIL:')) {
-            const lastAttempt = userCooldowns.get(chatId);
-            if (lastAttempt && Date.now() - lastAttempt < 60000) {
-                return botInstance.sendMessage(chatId, "⏳ *Cooldown Active*: Please wait 1 minute before submitting again.");
-            }
-            userCooldowns.set(chatId, Date.now());
+        if (data === "instructions") {
+            botInstance.sendMessage(chatId, "📋 *Payment Instructions*\n\n1. Scan the QR on our website.\n2. Pay the exact amount for your plan.\n3. Note down the 12-digit UTR/Ref ID.\n4. Click 'Verify Payment' here to submit.", { parse_mode: 'Markdown' });
+        }
 
-            const emailMatch = text.match(/EMAIL:\s*(.+)/i);
-            const utrMatch = text.match(/UTR:\s*(.+)/i);
-            const planMatch = text.match(/PLAN:\s*(.+)/i);
+        if (data === "verify") {
+            userStates.set(chatId, { step: 'email' });
+            botInstance.sendMessage(chatId, "📧 Please enter your *Registered Website Email*:");
+        }
 
-            if (!emailMatch || !utrMatch) {
-                return botInstance.sendMessage(chatId, "❌ *Invalid Format*: Use the format shown in /verify accurately.");
-            }
+        if (data === "status") {
+            userStates.set(chatId, { step: 'check_status' });
+            botInstance.sendMessage(chatId, "🔍 Enter your *Email* to check membership status:");
+        }
 
-            const email = emailMatch[1].trim();
-            const utr = utrMatch[1].trim();
-            const plan = (planMatch ? planMatch[1].trim().toLowerCase() : 'starter');
-
-            if (utr.length < 10 || utr.length > 15) {
-                return botInstance.sendMessage(chatId, "⚠️ *Invalid UTR*: Please double-check your transaction ID.");
-            }
-
-            const { data: existingRequest } = await supabase.from('payment_requests').select('*').eq('utr_id', utr).maybeSingle();
-            if (existingRequest) {
-                return botInstance.sendMessage(chatId, "🚨 *FRAUD ALERT*: This UTR has already been used.");
-            }
-
-            const { error } = await supabase.from('payment_requests').insert([{ 
-                user_email: email, 
-                utr_id: utr, 
-                plan_name: plan, 
-                status: 'pending',
-                telegram_id: chatId.toString()
-            }]);
-
-            if (error) {
-                botInstance.sendMessage(chatId, "❌ *System Error*: Ensure you use your registered email.");
-            } else {
-                botInstance.sendMessage(chatId, "✅ *Submission Successful!*\n\nAdmin will verify shortly. You will be notified here.");
+        if (data.startsWith("plan_")) {
+            const plan = data.replace("plan_", "");
+            const state = userStates.get(chatId);
+            if (state) {
+                state.plan = plan;
+                state.step = 'utr';
+                botInstance.sendMessage(chatId, `✅ Plan selected: *${plan.toUpperCase()}*\n\nNow, please enter your *12-digit UTR/Transaction ID*:`, { parse_mode: 'Markdown' });
             }
         }
     });
 
-    botInstance.onText(/\/status/, async (msg) => {
-        botInstance.sendMessage(msg.chat.id, "Status checking: `CHECK: your@email.com`", { parse_mode: 'Markdown' });
+    botInstance.on('message', async (msg) => {
+        if (msg.text?.startsWith('/')) return;
+        const chatId = msg.chat.id;
+        const state = userStates.get(chatId);
+
+        if (!state) return;
+
+        if (state.step === 'email') {
+            state.email = msg.text.trim();
+            state.step = 'plan';
+            botInstance.sendMessage(chatId, "🎯 *Select your Plan:*", {
+                reply_markup: {
+                    inline_keyboard: [
+                        [{ text: "Starter (₹49)", callback_data: "plan_starter" }],
+                        [{ text: "Pro (₹79)", callback_data: "plan_pro" }],
+                        [{ text: "Ultimate (₹99)", callback_data: "plan_ultimate" }]
+                    ]
+                }
+            });
+        } 
+        else if (state.step === 'utr') {
+            const utr = msg.text.trim();
+            if (utr.length < 10 || utr.length > 15) {
+                return botInstance.sendMessage(chatId, "⚠️ *Invalid UTR*: Please enter a valid 12-digit ID.");
+            }
+
+            // Duplicate Check
+            const { data: existing } = await supabase.from('payment_requests').select('*').eq('utr_id', utr).maybeSingle();
+            if (existing) {
+                return botInstance.sendMessage(chatId, "🚨 *FRAUD ALERT*: This UTR is already in use!", mainKeyboard);
+            }
+
+            // Insert to DB
+            const { error } = await supabase.from('payment_requests').insert([{ 
+                user_email: state.email, 
+                utr_id: utr, 
+                plan_name: state.plan, 
+                telegram_id: chatId.toString() 
+            }]);
+
+            if (error) {
+                botInstance.sendMessage(chatId, "❌ *Error*: Email not found or system failure.", mainKeyboard);
+            } else {
+                botInstance.sendMessage(chatId, "✅ *Submission Successful!*\n\nOur admin will verify this within 10-30 minutes. You will be notified here.", mainKeyboard);
+            }
+            userStates.delete(chatId);
+        }
+        else if (state.step === 'check_status') {
+            const email = msg.text.trim();
+            const { data: user } = await supabase.from('site_users').select('*').eq('email', email).maybeSingle();
+            
+            if (user) {
+                const status = user.is_premium ? "✅ ACTIVE" : "⏳ PENDING/NOT PAID";
+                botInstance.sendMessage(chatId, `👤 *Account*: ${email}\n🏆 *Plan*: ${user.current_plan.toUpperCase()}\n💎 *Status*: ${status}\n🔥 *Reveals Used Today*: ${user.daily_reveal_count}`, { parse_mode: 'Markdown' });
+            } else {
+                botInstance.sendMessage(chatId, "❌ No account found with that email.");
+            }
+            userStates.delete(chatId);
+        }
     });
 }
 
