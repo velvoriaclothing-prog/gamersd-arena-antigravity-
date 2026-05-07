@@ -134,6 +134,12 @@
         function renderUI() {
             const timerBox = document.getElementById('timer-box');
             
+            // Fast Check: If premium, show reveal button instantly
+            if (!user.is_premium && user.role !== 'admin') {
+                window.location.href = 'premium_payment.html';
+                return;
+            }
+
             // Load Game Data if not loaded
             if (gameId && !document.getElementById('game-title').innerText) {
                 fetch('/api/games')
@@ -147,29 +153,32 @@
                     });
             }
 
-            if (!user.is_premium && user.role !== 'admin') {
-                window.location.href = 'premium_payment.html';
+            // ULTIMATE SPEED: Auto-reveal for Ultimate users
+            if (user.current_plan === 'ultimate') {
+                revealCreds(); 
                 return;
             }
 
             const limits = { 'starter': 5, 'pro': 12, 'ultimate': '∞' };
             const limit = limits[user.current_plan] || 0;
-            const remaining = limit === '∞' ? '∞' : (limit - user.reveals_today);
+            const remaining = limit === '∞' ? '∞' : (limit - (user.reveals_today || 0));
 
             timerBox.innerHTML = `
                 <div style="background: rgba(255, 0, 85, 0.1); border: 2px solid var(--accent-red); padding: 2rem; border-radius: 20px; text-align: center;">
-                    <div class="badge" style="background: var(--accent-red); margin-bottom: 1rem;">${user.current_plan.toUpperCase()} PLAN</div>
-                    <h2 style="color: #fff; margin-bottom: 0.5rem;">Ready to Play?</h2>
-                    <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Reveals remaining today: <b style="color: var(--accent-red);">${remaining}</b></p>
-                    <button class="btn btn-danger" onclick="revealCreds()" style="width: 100%; justify-content: center;">Reveal Credentials <span class="material-symbols-outlined">key</span></button>
+                    <div class="badge" style="background: var(--accent-red); margin-bottom: 1rem;">${user.current_plan?.toUpperCase()} PLAN</div>
+                    <h2 style="color: #fff; margin-bottom: 0.5rem;">Access Ready</h2>
+                    <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Daily Reveals Left: <b style="color: var(--accent-red);">${remaining}</b></p>
+                    <button class="btn btn-danger" onclick="revealCreds()" style="width: 100%; justify-content: center; font-weight:900;">SHOW CREDENTIALS NOW ⚡</button>
                 </div>
             `;
         }
 
-        async function revealCreds() {
-            const btn = event.target;
-            btn.disabled = true;
-            btn.innerText = "Checking Limits...";
+        async function revealCreds(isAuto = false) {
+            const btn = document.querySelector('.btn-danger');
+            if (btn) {
+                btn.disabled = true;
+                btn.innerText = "⚡ SECURING ACCESS...";
+            }
 
             try {
                 const res = await fetch('/api/games/reveal', {
@@ -186,14 +195,18 @@
                     document.getElementById('res-pass').value = data.game.password;
                     
                     // Update local reveal count
-                    user.reveals_today += 1;
+                    user.reveals_today = (user.reveals_today || 0) + 1;
                     localStorage.setItem('ga_user', JSON.stringify(user));
                 } else if (data.message === 'LIMIT_REACHED') {
                     showLimitPopup();
                 } else {
                     window.location.href = 'premium_payment.html';
                 }
-            } catch (e) { alert("Server error. Try again."); btn.disabled = false; btn.innerText = "Reveal Credentials"; }
+            } catch (e) { 
+                console.error(e);
+                if (!isAuto) alert("Server error. Try again."); 
+                if (btn) { btn.disabled = false; btn.innerText = "SHOW CREDENTIALS NOW ⚡"; }
+            }
         }
 
         function showLimitPopup() {

@@ -79,32 +79,6 @@ function loginAdmin(e) {
     }
 }
 
-// 3. THE 1,000,000% UPGRADE: DRAGON FIRE PARTICLE ENGINE
-const canvas = document.createElement('canvas');
-canvas.id = 'dragon-canvas';
-document.body.appendChild(canvas);
-const ctx = canvas.getContext('2d');
-
-let width, height;
-function resize() {
-    width = canvas.width = window.innerWidth;
-    height = canvas.height = window.innerHeight;
-}
-window.addEventListener('resize', resize);
-resize();
-
-const particles = [];
-let mouse = { x: width/2, y: height/2 };
-let isMoving = false;
-let moveTimer;
-
-window.addEventListener('mousemove', (e) => {
-    mouse.x = e.clientX;
-    mouse.y = e.clientY;
-    isMoving = true;
-    clearTimeout(moveTimer);
-    moveTimer = setTimeout(() => isMoving = false, 100);
-});
 
 class DragonParticle {
     constructor(x, y) {
@@ -137,42 +111,6 @@ class DragonParticle {
         ctx.fill();
         ctx.restore();
     }
-}
-
-let angle = 0;
-function animateDragon() {
-    ctx.clearRect(0, 0, width, height);
-    
-    // Create Dragon Tail following mouse
-    if (isMoving) {
-        for(let i=0; i<5; i++) {
-            particles.push(new DragonParticle(mouse.x + (Math.random()*40-20), mouse.y + (Math.random()*40-20)));
-        }
-    } else {
-        // Idle dragon swirling around screen center
-        angle += 0.05;
-        let dx = width/2 + Math.cos(angle) * 200;
-        let dy = height/2 + Math.sin(angle * 2) * 100;
-        particles.push(new DragonParticle(dx, dy));
-        particles.push(new DragonParticle(dx + 20, dy + 20));
-    }
-
-    for (let i = 0; i < particles.length; i++) {
-        particles[i].update();
-        particles[i].draw();
-        if (particles[i].life <= 0 || particles[i].size <= 0) {
-            particles.splice(i, 1);
-            i--;
-        }
-    }
-    
-    // Connect particles with dragon lightning lines
-    ctx.globalCompositeOperation = 'lighter';
-    for(let i=0; i<particles.length; i++) {
-        for(let j=i; j<particles.length; j++) {
-            let dx = particles[i].x - particles[j].x;
-            let dy = particles[i].y - particles[j].y;
-            let dist = Math.sqrt(dx*dx + dy*dy);
             if(dist < 50) {
                 ctx.beginPath();
                 ctx.strokeStyle = `rgba(0, 229, 255, ${0.2 - dist/250})`;
