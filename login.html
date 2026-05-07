@@ -96,10 +96,10 @@
     <script>
     const SUPABASE_URL = 'https://skfjpuyhhzvjpgqlhkij.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_Xp3kvC0Awma4c2thQvhBKg_Qzs4M2tD';
-    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     async function loginWithGoogle() {
-        const { data, error } = await supabase.auth.signInWithOAuth({
+        const { data, error } = await supabaseClient.auth.signInWithOAuth({
             provider: 'google',
             options: {
                 redirectTo: window.location.origin + '/index.html'
