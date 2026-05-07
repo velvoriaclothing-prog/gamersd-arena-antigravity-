@@ -165,7 +165,21 @@ app.post('/api/content', async (req, res) => {
     res.json({ success: true, message: 'Content updated successfully' });
 });
 
-// API: Auth - Login
+// Helper: Ensure Daily Limit Resets
+async function ensureLimitReset(user) {
+    const today = new Date().toISOString().split('T')[0];
+    const lastReset = user.last_reset_date || '';
+    
+    if (lastReset !== today) {
+        const { data: updated } = await supabase.from('site_users')
+            .update({ daily_reveal_count: 0, last_reset_date: today })
+            .eq('email', user.email)
+            .select()
+            .single();
+        return updated;
+    }
+    return user;
+}
 app.post('/api/auth/login', async (req, res) => {
     const email = req.body.email?.toLowerCase();
     const password = req.body.password;
