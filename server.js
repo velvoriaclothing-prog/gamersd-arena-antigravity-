@@ -284,9 +284,9 @@ app.post('/api/admin/payments/process', async (req, res) => {
     res.json({ success: true, message: `Payment ${status} for plan ${plan}` });
 });
 
-// API: Get All Free Games (Sorted by Game Total - Mega Accounts on Top)
+// API: Get All Free Games (Sorted by Newest First)
 app.get('/api/games', async (req, res) => {
-    const { data, error } = await supabase.from('games').select('id, game, image, game_total').order('game_total', { ascending: false });
+    const { data, error } = await supabase.from('games').select('id, game, image, game_total').order('id', { ascending: false });
     if (error) return res.status(500).json({ success: false });
     res.json({ success: true, games: data });
 });
