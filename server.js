@@ -14,7 +14,7 @@ const PORT = process.env.PORT || 3000;
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE);
 
 // Initialize Telegram Bot (Polling Mode)
-const TG_TOKEN = process.env.TELEGRAM_BOT_TOKEN || '7297371569:AAEoyHlW_XGZ4B8pL0S6u2fVvW7nS8R_6XU';
+const TG_TOKEN = process.env.TELEGRAM_BOT_TOKEN || '8653750659:AAHEjQdPTAMs1TzR11tF2fy_Hon5b8e8_LA';
 const bot = new TelegramBot(TG_TOKEN, { polling: true });
 
 // Error Handling for Bot
