@@ -1,0 +1,23 @@
+{
+  "index": {
+    "hero_tag": "Welcome to the Arena",
+    "hero_title": "Premium Accounts &\nExclusive Bundles",
+    "hero_desc": "Access the highest tier of shared gaming accounts. Claim your free drops instantly or upgrade your arsenal in the Premium Store for permanent access to AAA titles.",
+    "rules_subtitle": "Important Rules",
+    "rules_title": "About Free Drops"
+  },
+  "library": {
+    "badge": "BROWSE",
+    "title": "Account Library",
+    "desc": "Search and filter curated drops across games and apps. Open listing credentials and community notes."
+  },
+  "premium": {
+    "subtitle": "Exclusive Access",
+    "title": "Personal Accounts of Premium Games",
+    "desc": "Secure, permanent access to the highest tier of PC gaming. Select a bundle below to proceed to checkout securely via Telegram."
+  },
+  "ai": {
+    "title": "AI CODEX",
+    "subtitle": "500+ Curated Elite AI Tools Database"
+  }
+}

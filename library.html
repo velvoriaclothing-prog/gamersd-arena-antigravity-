@@ -22,9 +22,9 @@
 
     <div class="container">
         <div class="lib-header">
-            <span class="lib-badge">BROWSE</span>
-            <h1 style="font-size: 2.5rem; font-weight: 900; margin-bottom: 1rem;">Account library</h1>
-            <p style="color: var(--text-muted); max-width: 600px;">Search and filter curated drops across games and apps. Open listing credentials and community notes.</p>
+            <span class="lib-badge" data-content="badge">BROWSE</span>
+            <h1 style="font-size: 2.5rem; font-weight: 900; margin-bottom: 1rem;" data-content="title">Account library</h1>
+            <p style="color: var(--text-muted); max-width: 600px;" data-content="desc">Search and filter curated drops across games and apps. Open listing credentials and community notes.</p>
         </div>
 
         <div class="search-bar-container">
@@ -50,33 +50,28 @@
         </div>
     </div>
 
+    <script src="global.js"></script>
     <script>
-        fetch('http://localhost:3000/api/games')
+        let allGames = [];
+        fetch('/api/games')
             .then(res => res.json())
             .then(data => {
-                if(data.success && data.games) renderGames(data.games);
-            })
-            .catch(() => {
-                // Fallback demo data
-                renderGames([
-                    {id: 1, game: 'Prime Video', desc: '5x Prime Video...', user: 'Emojiman', date: 'May 6, 2026, 08:52 PM'},
-                    {id: 2, game: '57 Crunchyroll', desc: 'Enjoy...', user: 'Emojiman', date: 'May 6, 2026, 08:50 PM'},
-                    {id: 3, game: '140 XBOX ACCOUNTS', desc: 'enjoy and vouch me...', user: 'Emojiman', date: 'May 6, 2026, 08:46 PM'},
-                    {id: 4, game: 'GTA STEAM FRESH', desc: 'By emojiman..', user: 'Emojiman', date: 'May 6, 2026, 08:25 PM'}
-                ]);
+                if(data.success && data.games) {
+                    allGames = data.games;
+                    renderGames(allGames);
+                }
             });
 
         function renderGames(games) {
             document.getElementById('listing-count').innerText = games.length + ' listings';
             const grid = document.getElementById('games-grid');
+            if (games.length === 0) {
+                grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 4rem; color: var(--text-muted);">No accounts found matching your search.</div>';
+                return;
+            }
             grid.innerHTML = games.map((g, i) => {
-                const gradients = [
-                    'linear-gradient(135deg, #3b82f6, #06b6d4)',
-                    'linear-gradient(135deg, #8b5cf6, #3b82f6)',
-                    'linear-gradient(135deg, #10b981, #3b82f6)'
-                ];
+                const gradients = ['linear-gradient(135deg, #3b82f6, #06b6d4)', 'linear-gradient(135deg, #8b5cf6, #3b82f6)', 'linear-gradient(135deg, #10b981, #3b82f6)'];
                 const bg = gradients[i % gradients.length];
-                
                 return `
                 <a href="game.html?id=${g.id}" class="game-card">
                     <div class="card-top" style="background: ${bg};">
@@ -91,9 +86,20 @@
                             <span style="display:flex; align-items:center; gap:0.3rem;"><span class="material-symbols-outlined" style="font-size:14px;">calendar_today</span> Today</span>
                         </div>
                     </div>
-                </a>
-            `}).join('');
+                </a>`;
+            }).join('');
         }
+
+        // Search logic
+        document.getElementById('search').addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            const filtered = allGames.filter(g => 
+                (g.game && g.game.toLowerCase().includes(query)) || 
+                (g.name && g.name.toLowerCase().includes(query)) ||
+                (g.desc && g.desc.toLowerCase().includes(query))
+            );
+            renderGames(filtered);
+        });
     </script>
 </body>
 </html>

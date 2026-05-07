@@ -52,9 +52,9 @@
     <main>
         <section class="section" style="padding-top: 12rem;">
             <div class="section-header">
-                <div class="section-subtitle">Exclusive Access</div>
-                <h1 class="section-title glowing-text" style="font-size: 4rem;">Personal Accounts of Premium Games</h1>
-                <p style="color: var(--text-muted); font-size: 1.2rem; max-width: 600px; margin: 0 auto; margin-bottom: 4rem;">Secure, permanent access to the highest tier of PC gaming. Select a bundle below to proceed to checkout securely via Telegram.</p>
+                <div class="section-subtitle" data-content="subtitle">Exclusive Access</div>
+                <h1 class="section-title glowing-text" style="font-size: 4rem;" data-content="title">Personal Accounts of Premium Games</h1>
+                <p style="color: var(--text-muted); font-size: 1.2rem; max-width: 600px; margin: 0 auto; margin-bottom: 4rem;" data-content="desc">Secure, permanent access to the highest tier of PC gaming. Select a bundle below to proceed to checkout securely via Telegram.</p>
                 
                 <div style="background: rgba(0, 229, 255, 0.05); border: 1px solid var(--accent-blue-dim); padding: 2.5rem; border-radius: 16px; max-width: 800px; margin: 0 auto; text-align: center; backdrop-filter: blur(10px); box-shadow: 0 0 30px rgba(0,0,0,0.5);">
                     <span class="material-symbols-outlined" style="font-size: 3.5rem; color: var(--accent-blue); margin-bottom: 1rem; text-shadow: 0 0 20px var(--accent-blue-dim);" aria-hidden="true">verified_user</span>
@@ -75,7 +75,7 @@
 
     <script src="global.js" defer></script>
     <script>
-        fetch('http://localhost:3000/api/premium')
+        fetch('/api/premium')
             .then(res => res.json())
             .then(data => {
                 if(data.success && data.bundles) renderBundles(data.bundles);

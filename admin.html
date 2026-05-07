@@ -35,6 +35,9 @@
             <button class="sidebar-btn" onclick="switchTab('bundles')">
                 <span class="material-symbols-outlined">workspace_premium</span> Premium Bundles
             </button>
+            <button class="sidebar-btn" onclick="switchTab('content')">
+                <span class="material-symbols-outlined">edit_square</span> Site Designer
+            </button>
         </div>
 
         <div class="admin-content">
@@ -77,11 +80,49 @@
                     </tbody>
                 </table>
             </div>
+
+            <div id="panel-content" class="dashboard-panel">
+                <h1 style="font-size: 2.5rem; font-weight: 900;">Visual Site Designer</h1>
+                <p style="color: var(--text-muted); margin-bottom: 3rem;">Choose a page to edit visually. You will be redirected to that page with editing tools enabled.</p>
+                
+                <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem;">
+                    <a href="index.html?edit=true" class="card-3d" style="padding: 2rem; text-align: center;">
+                        <span class="material-symbols-outlined" style="font-size: 3rem; color: var(--accent-blue); margin-bottom: 1rem;">home</span>
+                        <h3>Home Page</h3>
+                        <p style="font-size: 0.8rem; margin-top: 0.5rem;">Edit Hero titles and descriptions</p>
+                    </a>
+                    <a href="library.html?edit=true" class="card-3d" style="padding: 2rem; text-align: center;">
+                        <span class="material-symbols-outlined" style="font-size: 3rem; color: var(--accent-blue); margin-bottom: 1rem;">library_books</span>
+                        <h3>Library Page</h3>
+                        <p style="font-size: 0.8rem; margin-top: 0.5rem;">Edit library header and text</p>
+                    </a>
+                    <a href="premium.html?edit=true" class="card-3d" style="padding: 2rem; text-align: center;">
+                        <span class="material-symbols-outlined" style="font-size: 3rem; color: var(--accent-blue); margin-bottom: 1rem;">workspace_premium</span>
+                        <h3>Premium Store</h3>
+                        <p style="font-size: 0.8rem; margin-top: 0.5rem;">Edit premium access info</p>
+                    </a>
+                    <a href="ai-directory.html?edit=true" class="card-3d" style="padding: 2rem; text-align: center;">
+                        <span class="material-symbols-outlined" style="font-size: 3rem; color: var(--accent-blue); margin-bottom: 1rem;">psychology</span>
+                        <h3>AI Codex</h3>
+                        <p style="font-size: 0.8rem; margin-top: 0.5rem;">Edit directory title and subtitle</p>
+                    </a>
+                </div>
+                
+                <div style="margin-top: 3rem; background: rgba(0, 229, 255, 0.05); padding: 2rem; border-radius: 12px; border: 1px dashed var(--accent-blue);">
+                    <h3 style="color: var(--accent-blue);">How to use Visual Editor:</h3>
+                    <ul style="color: var(--text-muted); margin-top: 1rem; margin-left: 1.5rem; line-height: 1.8;">
+                        <li>Click on a page above to enter <b>Edit Mode</b>.</li>
+                        <li>Directly click on any text element with a dashed outline to change it.</li>
+                        <li>Click the <b>"Save All Changes"</b> bar at the bottom to push updates live.</li>
+                        <li>Changes apply to all users instantly across the entire site.</li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
-        const API_URL = 'http://localhost:3000';
+        const API_URL = '';
         const CREDS = { id: 'admin', pass: 'aditi0110' };
 
         function switchTab(tabId) {
@@ -109,6 +150,7 @@
                 `).join('');
             });
         }
+        
         loadAdminData();
 
         // ADD GAME

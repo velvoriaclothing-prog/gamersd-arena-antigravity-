@@ -8,6 +8,15 @@ const observer = new IntersectionObserver((entries) => {
 }, { threshold: 0.1 });
 
 document.addEventListener('DOMContentLoaded', () => {
+    // 0. LOGIN WALL (Force login for all pages except login.html)
+    const isLoginPage = window.location.pathname.includes('login.html');
+    const user = JSON.parse(localStorage.getItem('ga_user'));
+    
+    if (!user && !isLoginPage) {
+        window.location.href = 'login.html';
+        return;
+    }
+
     document.querySelectorAll('.card-3d, .section-title, .section-subtitle, .timer-container').forEach(el => {
         el.classList.add('hidden-scroll');
         observer.observe(el);
@@ -177,3 +186,66 @@ function animateDragon() {
     requestAnimationFrame(animateDragon);
 }
 animateDragon();
+
+// 4. DYNAMIC CONTENT LOADING & LIVE EDITOR (Elementor-like feature)
+let siteContent = {};
+async function loadDynamicContent() {
+    try {
+        const r = await fetch('/api/content');
+        const data = await r.json();
+        if (data.success) {
+            siteContent = data.content;
+            const pageName = window.location.pathname.split('/').pop().split('.')[0] || 'index';
+            const urlParams = new URLSearchParams(window.location.search);
+            const isEditMode = urlParams.get('edit') === 'true';
+            
+            if (siteContent[pageName]) {
+                Object.keys(siteContent[pageName]).forEach(key => {
+                    const el = document.querySelector(`[data-content="${key}"]`);
+                    if (el) {
+                        el.innerText = siteContent[pageName][key];
+                        if (isEditMode) {
+                            el.contentEditable = "true";
+                            el.style.outline = "2px dashed var(--accent-blue)";
+                            el.style.cursor = "text";
+                        }
+                    }
+                });
+            }
+
+            if (isEditMode) showEditBar(pageName);
+        }
+    } catch (e) { console.warn("Content system offline", e); }
+}
+
+function showEditBar(pageName) {
+    const bar = document.createElement('div');
+    bar.style = "position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:rgba(0,0,0,0.9); padding:1rem 2rem; border-radius:50px; border:2px solid var(--accent-blue); z-index:99999; display:flex; gap:1.5rem; align-items:center; backdrop-filter:blur(20px); box-shadow:0 0 30px rgba(0,229,255,0.3);";
+    bar.innerHTML = `
+        <span style="color:var(--accent-blue); font-weight:900; font-size:0.8rem; text-transform:uppercase;">Visual Editor Mode: ${pageName.toUpperCase()}</span>
+        <button onclick="saveLiveEdits('${pageName}')" class="btn btn-primary" style="padding:0.5rem 1.5rem; font-size:0.8rem;">Save All Changes</button>
+        <button onclick="window.location.href='admin.html'" class="btn btn-secondary" style="padding:0.5rem 1.5rem; font-size:0.8rem;">Exit Designer</button>
+    `;
+    document.body.appendChild(bar);
+}
+
+async function saveLiveEdits(pageName) {
+    const els = document.querySelectorAll('[data-content]');
+    els.forEach(el => {
+        const key = el.getAttribute('data-content');
+        siteContent[pageName][key] = el.innerText;
+    });
+
+    const res = await fetch('/api/content', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ id: 'admin', pass: 'aditi0110', content: siteContent })
+    });
+    
+    if ((await res.json()).success) {
+        alert("Changes saved LIVE successfully!");
+        window.location.search = ""; // Exit edit mode
+    }
+}
+
+document.addEventListener('DOMContentLoaded', loadDynamicContent);

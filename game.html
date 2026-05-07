@@ -85,7 +85,7 @@
         let gameDataCache = null;
 
         if(gameId) {
-            fetch('http://localhost:3000/api/games/' + gameId)
+            fetch('/api/games/' + gameId)
                 .then(res => res.json())
                 .then(data => {
                     if(data.success) {

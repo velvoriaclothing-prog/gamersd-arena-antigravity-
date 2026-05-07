@@ -49,6 +49,18 @@
             <button onclick="doLogin()" id="login-btn" class="w-full bg-cyan-500 text-black font-bold py-3 rounded-lg hover:shadow-[0_0_20px_rgba(0,242,255,0.6)] transition-all text-sm">
                 Sign In
             </button>
+            
+            <div class="relative flex items-center justify-center my-4">
+                <div class="border-t border-white/10 w-full"></div>
+                <span class="bg-[#050505] px-4 text-xs text-white/30 uppercase tracking-widest">Or</span>
+                <div class="border-t border-white/10 w-full"></div>
+            </div>
+
+            <button onclick="loginWithGoogle()" class="w-full bg-white text-black font-bold py-3 rounded-lg flex items-center justify-center gap-3 hover:bg-white/90 transition-all text-sm">
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18" alt="G">
+                Sign in with Google
+            </button>
+
             <div class="text-center text-xs text-white/40">Admin? Use id: <span class="text-cyan-400">admin</span> with your admin password</div>
         </div>
 
@@ -80,7 +92,22 @@
         </a>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
+    const SUPABASE_URL = 'https://skfjpuyhhzvjpgqlhkij.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_Xp3kvC0Awma4c2thQvhBKg_Qzs4M2tD';
+    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    async function loginWithGoogle() {
+        const { data, error } = await supabase.auth.signInWithOAuth({
+            provider: 'google',
+            options: {
+                redirectTo: window.location.origin + '/index.html'
+            }
+        });
+        if (error) alert(error.message);
+    }
+
     function switchTab(tab) {
         const isLogin = tab === 'login';
         document.getElementById('login-form').classList.toggle('hidden', !isLogin);

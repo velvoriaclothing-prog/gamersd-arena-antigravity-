@@ -78,9 +78,9 @@
             </div>
 
             <div class="hero-content">
-                <div class="hero-tag">Welcome to the Arena</div>
-                <h1 class="glowing-text">Premium Accounts &<br>Exclusive Bundles</h1>
-                <p>Access the highest tier of shared gaming accounts. Claim your free drops instantly or upgrade your arsenal in the Premium Store for permanent access to AAA titles.</p>
+                <div class="hero-tag" data-content="hero_tag">Welcome to the Arena</div>
+                <h1 class="glowing-text" data-content="hero_title">Premium Accounts &<br>Exclusive Bundles</h1>
+                <p data-content="hero_desc">Access the highest tier of shared gaming accounts. Claim your free drops instantly or upgrade your arsenal in the Premium Store for permanent access to AAA titles.</p>
                 
                 <div style="display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap;">
                     <a href="library.html" class="btn btn-secondary" aria-label="Browse Free Drops Library">
@@ -126,6 +126,24 @@
         <p>&copy; 2026 Gamers Arena. All rights reserved. | <a href="library.html" style="color: var(--accent-blue); text-decoration: none;">Free Drops</a> | <a href="premium.html" style="color: var(--accent-blue); text-decoration: none;">Premium Store</a></p>
     </footer>
 
-    <script src="global.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="global.js"></script>
+    <script>
+        async function syncAuth() {
+            const SUPABASE_URL = 'https://skfjpuyhhzvjpgqlhkij.supabase.co';
+            const SUPABASE_KEY = 'sb_publishable_Xp3kvC0Awma4c2thQvhBKg_Qzs4M2tD';
+            const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (session && session.user) {
+                localStorage.setItem('ga_user', JSON.stringify({
+                    name: session.user.user_metadata.full_name || session.user.email.split('@')[0],
+                    email: session.user.email,
+                    role: 'user'
+                }));
+                if (window.location.hash) window.history.replaceState(null, null, window.location.pathname);
+            }
+        }
+        syncAuth();
+    </script>
 </body>
 </html>
