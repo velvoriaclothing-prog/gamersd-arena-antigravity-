@@ -17,6 +17,12 @@ const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SER
 const TG_TOKEN = process.env.TELEGRAM_BOT_TOKEN || '7297371569:AAEoyHlW_XGZ4B8pL0S6u2fVvW7nS8R_6XU';
 const bot = new TelegramBot(TG_TOKEN, { polling: true });
 
+// Error Handling for Bot
+bot.on('polling_error', (error) => console.log('Telegram Polling Error:', error));
+bot.on('error', (error) => console.log('Telegram Bot General Error:', error));
+
+console.log("🚀 Telegram Bot initialized in Polling Mode.");
+
 // State Management for step-by-step verification
 const userStates = new Map();
 
