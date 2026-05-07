@@ -13,25 +13,9 @@ const PORT = process.env.PORT || 3000;
 // Initialize Supabase
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE);
 
-// Initialize Telegram Bot (Webhook Mode for Production)
+// Initialize Telegram Bot (Polling Mode for 100% Reliability)
 const TG_TOKEN = process.env.TELEGRAM_BOT_TOKEN || '7297371569:AAEoyHlW_XGZ4B8pL0S6u2fVvW7nS8R_6XU';
-const WEBHOOK_URL = `https://gamersd-arena-antigravity.onrender.com/bot${TG_TOKEN}`;
-const bot = new TelegramBot(TG_TOKEN);
-
-// Set Webhook (Only if not in dev)
-if (process.env.NODE_ENV === 'production') {
-    bot.setWebHook(WEBHOOK_URL);
-} else {
-    // Fallback to polling for local dev
-    const botDev = new TelegramBot(TG_TOKEN, { polling: true });
-    setupBotLogic(botDev);
-}
-
-// Webhook endpoint
-app.post(`/bot${TG_TOKEN}`, (req, res) => {
-    bot.processUpdate(req.body);
-    res.sendStatus(200);
-});
+const bot = new TelegramBot(TG_TOKEN, { polling: true });
 
 function setupBotLogic(botInstance) {
     const userCooldowns = new Map();
@@ -49,43 +33,33 @@ function setupBotLogic(botInstance) {
         const text = msg.text || '';
 
         if (text.startsWith('EMAIL:')) {
-            // 1. Rate Limiting (Cooldown)
             const lastAttempt = userCooldowns.get(chatId);
-            if (lastAttempt && Date.now() - lastAttempt < 60000) { // 1 min cooldown
-                return botInstance.sendMessage(chatId, "⏳ *Cooldown Active*: Please wait 1 minute before submitting again to prevent spam.");
+            if (lastAttempt && Date.now() - lastAttempt < 60000) {
+                return botInstance.sendMessage(chatId, "⏳ *Cooldown Active*: Please wait 1 minute before submitting again.");
             }
             userCooldowns.set(chatId, Date.now());
 
-            // 2. Parse Data
             const emailMatch = text.match(/EMAIL:\s*(.+)/i);
             const utrMatch = text.match(/UTR:\s*(.+)/i);
             const planMatch = text.match(/PLAN:\s*(.+)/i);
 
             if (!emailMatch || !utrMatch) {
-                return botInstance.sendMessage(chatId, "❌ *Invalid Format*: Please use the format shown in /verify accurately.");
+                return botInstance.sendMessage(chatId, "❌ *Invalid Format*: Use the format shown in /verify accurately.");
             }
 
             const email = emailMatch[1].trim();
             const utr = utrMatch[1].trim();
             const plan = (planMatch ? planMatch[1].trim().toLowerCase() : 'starter');
 
-            // 3. UTR Validation (Length Check)
             if (utr.length < 10 || utr.length > 15) {
-                return botInstance.sendMessage(chatId, "⚠️ *Invalid UTR*: Transaction IDs are usually 12 digits. Please double-check your receipt.");
+                return botInstance.sendMessage(chatId, "⚠️ *Invalid UTR*: Please double-check your transaction ID.");
             }
 
-            // 4. Duplicate Check & Fraud Prevention
             const { data: existingRequest } = await supabase.from('payment_requests').select('*').eq('utr_id', utr).maybeSingle();
-            
             if (existingRequest) {
-                if (existingRequest.user_email === email) {
-                    return botInstance.sendMessage(chatId, "ℹ️ *Already Submitted*: You have already submitted this Transaction ID for this email. Please wait for admin approval.");
-                } else {
-                    return botInstance.sendMessage(chatId, "🚨 *FRAUD ALERT*: This payment transaction ID has already been used with another account. Your account has been flagged for review.", { parse_mode: 'Markdown' });
-                }
+                return botInstance.sendMessage(chatId, "🚨 *FRAUD ALERT*: This UTR has already been used.");
             }
 
-            // 5. Submit to DB
             const { error } = await supabase.from('payment_requests').insert([{ 
                 user_email: email, 
                 utr_id: utr, 
@@ -95,19 +69,18 @@ function setupBotLogic(botInstance) {
             }]);
 
             if (error) {
-                botInstance.sendMessage(chatId, "❌ *System Error*: Could not process request. Please ensure you are using a registered email.");
+                botInstance.sendMessage(chatId, "❌ *System Error*: Ensure you use your registered email.");
             } else {
-                botInstance.sendMessage(chatId, "✅ *Submission Successful!*\n\nPlan: " + plan.toUpperCase() + "\nUTR: " + utr + "\n\nAdmin will verify your payment shortly. This usually takes 10-30 minutes. You will be notified here.", { parse_mode: 'Markdown' });
+                botInstance.sendMessage(chatId, "✅ *Submission Successful!*\n\nAdmin will verify shortly. You will be notified here.");
             }
         }
     });
 
     botInstance.onText(/\/status/, async (msg) => {
-        botInstance.sendMessage(msg.chat.id, "To check status, please send:\n`CHECK: your@email.com`", { parse_mode: 'Markdown' });
+        botInstance.sendMessage(msg.chat.id, "Status checking: `CHECK: your@email.com`", { parse_mode: 'Markdown' });
     });
 }
 
-// Initialize logic for the webhook bot too
 setupBotLogic(bot);
 
 app.use(cors());
