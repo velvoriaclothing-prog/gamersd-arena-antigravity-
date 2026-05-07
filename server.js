@@ -33,7 +33,13 @@ app.post('/api/content', async (req, res) => {
 // API: Auth - Login
 app.post('/api/auth/login', async (req, res) => {
     const { email, password } = req.body;
-    const { data: user, error } = await supabase.from('site_users').select('*').eq('email', email).eq('password', password).single();
+    
+    // Check for hardcoded master admin first
+    if (email === 'admin' && password === 'aditi0110') {
+        return res.json({ success: true, user: { name: 'Admin', email: 'admin', role: 'admin' } });
+    }
+
+    const { data: user, error } = await supabase.from('site_users').select('*').eq('email', email).eq('password', password).maybeSingle();
     
     if (user) {
         res.json({ success: true, user: { name: user.name, email: user.email, role: user.role } });
@@ -46,9 +52,24 @@ app.post('/api/auth/login', async (req, res) => {
 app.post('/api/auth/register', async (req, res) => {
     const { name, email, password } = req.body;
     const { error } = await supabase.from('site_users').insert([{ name, email, password, role: 'user' }]);
-    
-    if (error) return res.status(400).json({ success: false, message: 'Email already registered or Error' });
+    if (error) return res.status(400).json({ success: false, message: 'Email already registered' });
     res.json({ success: true, message: 'Account created!', user: { name, email, role: 'user' } });
+});
+
+// API: Google Manual Login
+app.post('/api/auth/google', async (req, res) => {
+    const { name, email, googleId } = req.body;
+    
+    // Auto-register or login the Google user
+    const { data: user, error } = await supabase.from('site_users').upsert({
+        email: email,
+        name: name,
+        password: 'google_oauth_' + googleId, // Dummy password
+        role: 'user'
+    }, { onConflict: 'email' }).select().single();
+
+    if (error) return res.status(500).json({ success: false, message: error.message });
+    res.json({ success: true, user: { name, email, role: 'user' } });
 });
 
 // API: Get All Free Games (Safe - No Passwords)
