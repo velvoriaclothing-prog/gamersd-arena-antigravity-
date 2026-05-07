@@ -89,39 +89,52 @@
         const gameId = urlParams.get('id');
         let user = JSON.parse(localStorage.getItem('ga_user') || '{}');
 
-        if (!user.email) { window.location.href = 'login.html'; }
+        // 1. Initial UI Load (Instant)
+        function init() {
+            if (!user.email) { window.location.href = 'login.html'; return; }
+            updateUI(); // Show what we have in localStorage first
+            refreshUser(); // Then update from server
+        }
 
-        // Refresh User Data and Update UI
-        function refreshUser() {
-            fetch('/api/auth/login', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ email: user.email, password: user.password })
-            })
-            .then(res => res.json())
-            .then(data => {
+        // 2. Update UI Elements
+        function updateUI() {
+            try {
+                const emailEl = document.getElementById('user-email');
+                const badgeEl = document.getElementById('premium-badge');
+                
+                if (emailEl) emailEl.innerText = user.email || 'Account';
+                if (badgeEl) {
+                    if (user.is_premium) {
+                        const planName = (user.current_plan || 'Premium').toUpperCase();
+                        badgeEl.innerText = "👑 SUBSCRIBED (" + planName + ")";
+                        badgeEl.style.background = "gold";
+                        badgeEl.style.color = "#000";
+                    } else {
+                        badgeEl.innerText = "❌ NOT SUBSCRIBED";
+                        badgeEl.style.background = "var(--accent-red)";
+                    }
+                }
+                renderUI();
+            } catch (e) { console.error("UpdateUI Error:", e); }
+        }
+
+        // 3. Refresh from Server
+        async function refreshUser() {
+            try {
+                const res = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ email: user.email, password: user.password })
+                });
+                const data = await res.json();
                 if (data.success) {
-                    const updatedUser = data.user;
-                    updatedUser.password = user.password;
-                    user = updatedUser;
+                    const password = user.password;
+                    user = data.user;
+                    user.password = password;
                     localStorage.setItem('ga_user', JSON.stringify(user));
                     updateUI();
                 }
-            });
-        }
-
-        function updateUI() {
-            document.getElementById('user-email').innerText = user.email;
-            const badge = document.getElementById('premium-badge');
-            if (user.is_premium) {
-                badge.innerText = "👑 SUBSCRIBED (" + user.current_plan.toUpperCase() + ")";
-                badge.style.background = "gold";
-                badge.style.color = "#000";
-            } else {
-                badge.innerText = "❌ NOT SUBSCRIBED";
-                badge.style.background = "var(--accent-red)";
-            }
-            renderUI(); // Render the game-specific content
+            } catch (e) { console.error("Refresh Error:", e); }
         }
 
         function logout() {
@@ -129,19 +142,20 @@
             window.location.href = 'index.html';
         }
 
-        refreshUser();
+        init();
 
         function renderUI() {
             const timerBox = document.getElementById('timer-box');
+            if (!timerBox) return;
             
             // Fast Check: If premium, show reveal button instantly
-            if (!user.is_premium && user.role !== 'admin') {
+            if (user.email && !user.is_premium && user.role !== 'admin') {
                 window.location.href = 'premium_payment.html';
                 return;
             }
 
-            // Load Game Data if not loaded
-            if (gameId && !document.getElementById('game-title').innerText) {
+            // Load Game Data
+            if (gameId && !document.getElementById('game-title').innerText.includes(gameId)) {
                 fetch('/api/games')
                     .then(res => res.json())
                     .then(data => {
@@ -153,22 +167,26 @@
                     });
             }
 
+            // If we are still refreshing from server, wait a tiny bit for renderUI to be called again
+            if (user.is_premium && !user.current_plan) return;
+
             // ULTIMATE SPEED: Auto-reveal for Ultimate users
             if (user.current_plan === 'ultimate') {
-                revealCreds(); 
+                revealCreds(true); 
                 return;
             }
 
             const limits = { 'starter': 5, 'pro': 12, 'ultimate': '∞' };
-            const limit = limits[user.current_plan] || 0;
+            const plan = user.current_plan || 'starter';
+            const limit = limits[plan] || 0;
             const remaining = limit === '∞' ? '∞' : (limit - (user.reveals_today || 0));
 
             timerBox.innerHTML = `
-                <div style="background: rgba(255, 0, 85, 0.1); border: 2px solid var(--accent-red); padding: 2rem; border-radius: 20px; text-align: center;">
-                    <div class="badge" style="background: var(--accent-red); margin-bottom: 1rem;">${user.current_plan?.toUpperCase()} PLAN</div>
+                <div style="background: rgba(0, 255, 136, 0.1); border: 2px solid #00ff88; padding: 2rem; border-radius: 20px; text-align: center;">
+                    <div class="badge" style="background: #00ff88; color: #000; margin-bottom: 1rem;">${plan.toUpperCase()} PLAN</div>
                     <h2 style="color: #fff; margin-bottom: 0.5rem;">Access Ready</h2>
-                    <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Daily Reveals Left: <b style="color: var(--accent-red);">${remaining}</b></p>
-                    <button class="btn btn-danger" onclick="revealCreds()" style="width: 100%; justify-content: center; font-weight:900;">SHOW CREDENTIALS NOW ⚡</button>
+                    <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Daily Reveals Left: <b style="color: #00ff88;">${remaining}</b></p>
+                    <button class="btn btn-danger" onclick="revealCreds()" style="width: 100%; justify-content: center; font-weight:900; background: #00ff88; color: #000; border: none;">SHOW CREDENTIALS NOW ⚡</button>
                 </div>
             `;
         }
