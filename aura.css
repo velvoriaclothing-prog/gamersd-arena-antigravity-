@@ -433,3 +433,21 @@ body {
 .btn-copy:hover {
     background: rgba(255,255,255,0.1);
 }
+/* --- MOBILE OPTIMIZATION --- */
+@media (max-width: 768px) {
+    .navbar { padding: 1rem; }
+    .logo-text { font-size: 1.1rem; }
+    .container { padding: 1rem; }
+    
+    .lib-header { padding: 1.5rem; }
+    .lib-header h1 { font-size: 1.8rem; }
+    
+    .search-bar-container { flex-direction: column; gap: 0.5rem; }
+    .search-bar-container select { margin-left: 0.8rem; margin-bottom: 0.5rem; }
+    
+    .card-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+    
+    .hero-box { padding: 2rem 1rem; flex-direction: column; text-align: center; }
+    .hero-title { font-size: 2.2rem; }
+    .features-grid { grid-template-columns: 1fr 1fr; }
+}
