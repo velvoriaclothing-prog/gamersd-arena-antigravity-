@@ -89,8 +89,8 @@ function setupBotLogic(botInstance) {
         if (!state) return;
 
         if (state.step === 'email') {
-            state.email = msg.text.trim();
-            state.step = 'plan';
+            const email = msg.text.trim().toLowerCase();
+            userStates.set(chatId, { ...state, email, step: 'plan' });
             botInstance.sendMessage(chatId, "🎯 *Select your Plan:*", {
                 reply_markup: {
                     inline_keyboard: [
@@ -167,7 +167,9 @@ app.post('/api/content', async (req, res) => {
 
 // API: Auth - Login
 app.post('/api/auth/login', async (req, res) => {
-    const { email, password } = req.body;
+    const email = req.body.email?.toLowerCase();
+    const password = req.body.password;
+
     if (email === 'admin' && password === 'aditi0110') {
         return res.json({ success: true, user: { name: 'Admin', email: 'admin', role: 'admin', is_premium: true, current_plan: 'ultimate' } });
     }
@@ -189,7 +191,8 @@ app.post('/api/auth/login', async (req, res) => {
 
 // API: Auth - Register
 app.post('/api/auth/register', async (req, res) => {
-    const { name, email, password } = req.body;
+    const { name, password } = req.body;
+    const email = req.body.email?.toLowerCase();
     const { error } = await supabase.from('site_users').insert([{ name, email, password, role: 'user' }]);
     if (error) return res.status(400).json({ success: false, message: 'Email already registered' });
     res.json({ success: true, message: 'Account created!', user: { name, email, role: 'user' } });
@@ -198,6 +201,7 @@ app.post('/api/auth/register', async (req, res) => {
 // API: Google Manual Login
 app.post('/api/auth/google', async (req, res) => {
     const { name, email, googleId } = req.body;
+    const normalizedEmail = email?.toLowerCase();
     
     // Auto-register or login the Google user
     const { data: user, error } = await supabase.from('site_users').upsert({
