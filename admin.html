@@ -47,19 +47,18 @@
             <div id="panel-drops" class="dashboard-panel active">
                 <h1 style="font-size: 2.5rem; font-weight: 900;">Manage Free Drops</h1>
                 <p style="color: var(--text-muted);">View and manage the games and accounts database.</p>
-                <div style="margin-top: 2rem; background: rgba(0,0,0,0.5); padding: 1.5rem; border-radius: 8px;">
-                    <h3>Add New Game Account</h3>
-                    <div style="display: flex; gap: 1rem; margin-top: 1rem;">
-                        <input type="text" id="new-game-title" class="admin-input" placeholder="Game Title">
-                        <input type="text" id="new-game-user" class="admin-input" placeholder="Username">
-                        <input type="text" id="new-game-pass" class="admin-input" placeholder="Password">
-                        <button class="btn btn-primary" onclick="addGame()">+ Add</button>
+                    <div style="display: flex; gap: 1rem; margin-top: 1rem; flex-wrap: wrap;">
+                        <input type="text" id="new-game-title" class="admin-input" placeholder="Main Game Name" style="flex: 2;">
+                        <input type="number" id="new-game-total" class="admin-input" placeholder="Total Games (e.g. 700)" style="flex: 1;">
+                        <input type="text" id="new-game-user" class="admin-input" placeholder="Username" style="flex: 1;">
+                        <input type="text" id="new-game-pass" class="admin-input" placeholder="Password" style="flex: 1;">
+                        <button class="btn btn-primary" onclick="addGame()">+ Add Drop</button>
                     </div>
                 </div>
                 <table>
-                    <thead><tr><th>ID</th><th>Game Name</th><th>Action</th></tr></thead>
+                    <thead><tr><th>ID</th><th>Game Name</th><th>Games</th><th>Action</th></tr></thead>
                     <tbody id="admin-games-list">
-                        <tr><td colspan="3">Loading...</td></tr>
+                        <tr><td colspan="4">Loading...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -140,11 +139,10 @@
             fetch(API_URL + '/api/games').then(r=>r.json()).then(data => {
                 const tbody = document.getElementById('admin-games-list');
                 tbody.innerHTML = data.games.map(g => `
-                    <tr><td>${g.id}</td><td>${g.game || g.name}</td>
+                    <tr><td>${g.id}</td><td>${g.game}</td><td>${g.game_total || 1}</td>
                     <td><button class="btn-secondary" style="padding: 0.5rem;" onclick="deleteGame('${g.id}')">Delete</button></td></tr>
                 `).join('');
             });
-
             fetch(API_URL + '/api/premium').then(r=>r.json()).then(data => {
                 const tbody = document.getElementById('admin-bundles-list');
                 tbody.innerHTML = data.bundles.map(b => `
@@ -160,6 +158,7 @@
         function addGame() {
             const gameData = {
                 game: document.getElementById('new-game-title').value,
+                game_total: document.getElementById('new-game-total').value,
                 username: document.getElementById('new-game-user').value,
                 password: document.getElementById('new-game-pass').value
             };

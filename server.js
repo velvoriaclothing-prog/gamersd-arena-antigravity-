@@ -284,14 +284,14 @@ app.post('/api/admin/payments/process', async (req, res) => {
     res.json({ success: true, message: `Payment ${status} for plan ${plan}` });
 });
 
-// API: Get All Free Games (Safe - No Passwords)
+// API: Get All Free Games (Sorted by Game Total)
 app.get('/api/games', async (req, res) => {
-    const { data, error } = await supabase.from('games').select('id, game, image').order('created_at', { ascending: false });
+    const { data, error } = await supabase.from('games').select('id, game, image, game_total').order('game_total', { ascending: false });
     if (error) return res.status(500).json({ success: false });
     res.json({ success: true, games: data });
 });
 
-// API: Get Specific Game Credentials (Tiered Protection)
+// API: Get Specific Game Credentials
 app.post('/api/games/reveal', async (req, res) => {
     const { gameId, email } = req.body;
     
@@ -305,10 +305,8 @@ app.post('/api/games/reveal', async (req, res) => {
     let { data: user } = await supabase.from('site_users').select('*').eq('email', email).single();
     if (!user || !user.is_premium) return res.status(403).json({ success: false, message: 'PREMIUM_REQUIRED' });
 
-    // 3. Reset Limits if needed
     user = await ensureLimitReset(user);
 
-    // 4. Validate Tiered Limits
     const limits = { 'starter': 5, 'pro': 12, 'ultimate': Infinity };
     const maxReveals = limits[user.current_plan] || 0;
 
@@ -316,7 +314,6 @@ app.post('/api/games/reveal', async (req, res) => {
         return res.status(403).json({ success: false, message: 'LIMIT_REACHED' });
     }
 
-    // 5. Reveal & Log
     const { data: game } = await supabase.from('games').select('*').eq('id', gameId).single();
     if (game) {
         await supabase.from('site_users').update({ daily_reveal_count: user.daily_reveal_count + 1 }).eq('email', email);
@@ -327,7 +324,7 @@ app.post('/api/games/reveal', async (req, res) => {
     }
 });
 
-// API: Admin Add Game
+// API: Admin Add Game (with Game Total)
 app.post('/api/admin/games', async (req, res) => {
     const { id, pass, gameData } = req.body;
     if (id !== 'admin' || pass !== 'aditi0110') return res.status(401).json({ success: false, message: 'Unauthorized' });
@@ -337,6 +334,7 @@ app.post('/api/admin/games', async (req, res) => {
         game: gameData.game,
         username: gameData.username,
         password: gameData.password,
+        game_total: parseInt(gameData.game_total || 1),
         image: 'logo.png'
     };
     
