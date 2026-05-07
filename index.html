@@ -52,19 +52,22 @@
     </script>
 </head>
 <body>
-    <nav class="navbar" aria-label="Main Navigation">
-        <a href="index.html" class="logo-container" id="ga-logo" aria-label="Gamers Arena Home">
-            <img src="logo.png" alt="Gamers Arena Logo" class="logo-img" onerror="this.src='https://via.placeholder.com/50/000/fff?text=GA'" width="50" height="50">
-            <div>
-                <div class="logo-text">GAMERS ARENA</div>
-                <span class="logo-sub">PC GAMES ACCOUNTS STORE</span>
+    <nav class="navbar">
+        <div class="logo">GAMERS <span style="color: var(--accent-red);">ARENA</span></div>
+        <div class="nav-links" id="nav-links">
+            <a href="index.html">Home</a>
+            <a href="premium_payment.html">Premium</a>
+        </div>
+        <div class="user-profile" id="user-display" style="display: none; align-items: center; gap: 1rem;">
+            <div style="text-align: right;">
+                <div id="user-email" style="font-size: 0.8rem; font-weight: 700;">user@example.com</div>
+                <div id="premium-badge" class="badge">Checking...</div>
             </div>
-        </a>
-        <div class="nav-links">
-            <a href="index.html" style="color: var(--accent-blue);" aria-current="page">HOME</a>
-            <a href="library.html">FREE DROPS</a>
-            <a href="premium.html">PREMIUM STORE</a>
-            <a href="ai-directory.html">AI CODEX</a>
+            <button onclick="logout()" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.8rem;">Logout</button>
+        </div>
+        <div class="auth-buttons" id="auth-btns">
+            <a href="login.html" class="btn btn-secondary">Login</a>
+            <a href="signup.html" class="btn btn-danger">Join Elite</a>
         </div>
     </nav>
 
@@ -149,8 +152,46 @@
     <script src="global.js"></script>
     <script>
         const user = JSON.parse(localStorage.getItem('ga_user') || '{}');
-        if (user.email && !user.is_premium && user.role !== 'admin') {
-            document.getElementById('premium-cta-section').style.display = 'block';
+        const authBtns = document.getElementById('auth-btns');
+        const userDisplay = document.getElementById('user-display');
+        const emailEl = document.getElementById('user-email');
+        const badgeEl = document.getElementById('premium-badge');
+
+        if (user.email) {
+            authBtns.style.display = 'none';
+            userDisplay.style.display = 'flex';
+            emailEl.innerText = user.email;
+
+            // Refresh Status from Server
+            fetch('/api/auth/login', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ email: user.email, password: user.password })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    const updatedUser = data.user;
+                    updatedUser.password = user.password; // Keep password for future refreshes
+                    localStorage.setItem('ga_user', JSON.stringify(updatedUser));
+                    
+                    if (updatedUser.is_premium) {
+                        badgeEl.innerText = "👑 SUBSCRIBED (" + (updatedUser.current_plan?.toUpperCase()) + ")";
+                        badgeEl.style.background = "gold";
+                        badgeEl.style.color = "#000";
+                        document.getElementById('premium-cta-section').style.display = 'none';
+                    } else {
+                        badgeEl.innerText = "❌ NOT SUBSCRIBED";
+                        badgeEl.style.background = "var(--accent-red)";
+                        document.getElementById('premium-cta-section').style.display = 'block';
+                    }
+                }
+            });
+        }
+
+        function logout() {
+            localStorage.removeItem('ga_user');
+            window.location.reload();
         }
     </script>
 </body>

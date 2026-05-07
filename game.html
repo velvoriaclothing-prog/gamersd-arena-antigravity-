@@ -10,14 +10,18 @@
 </head>
 <body>
     <nav class="navbar">
-        <a href="index.html" class="logo-container">
-            <img src="logo.png" alt="Logo" class="logo-icon" onerror="this.src='https://via.placeholder.com/40/000/fff?text=GA'">
-            <div>
-                <div class="logo-text">GAMERS ARENA</div>
-                <div class="logo-sub">FREE TO USE</div>
+        <div class="logo" onclick="window.location.href='index.html'">GAMERS <span style="color: var(--accent-red);">ARENA</span></div>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="premium_payment.html">Premium</a>
+        </div>
+        <div class="user-profile" id="user-display" style="display: flex; align-items: center; gap: 1rem;">
+            <div style="text-align: right;">
+                <div id="user-email" style="font-size: 0.8rem; font-weight: 700;">user@example.com</div>
+                <div id="premium-badge" class="badge">Checking...</div>
             </div>
-        </a>
-        <button class="nav-menu-btn"><span class="material-symbols-outlined">menu</span></button>
+            <button onclick="logout()" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.8rem;">Logout</button>
+        </div>
     </nav>
 
     <div class="container">
@@ -87,22 +91,62 @@
 
         if (!user.email) { window.location.href = 'login.html'; }
 
-        // Load Basic Info
-        if(gameId) {
-            fetch('/api/games')
-                .then(res => res.json())
-                .then(data => {
-                    const game = data.games.find(g => g.id === gameId);
-                    if(game) {
-                        document.getElementById('game-title').innerText = game.game || game.name;
-                        if(game.image) document.getElementById('game-img').src = game.image;
-                        renderUI();
-                    }
-                });
+        // Refresh User Data and Update UI
+        function refreshUser() {
+            fetch('/api/auth/login', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ email: user.email, password: user.password })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    const updatedUser = data.user;
+                    updatedUser.password = user.password;
+                    user = updatedUser;
+                    localStorage.setItem('ga_user', JSON.stringify(user));
+                    updateUI();
+                }
+            });
         }
+
+        function updateUI() {
+            document.getElementById('user-email').innerText = user.email;
+            const badge = document.getElementById('premium-badge');
+            if (user.is_premium) {
+                badge.innerText = "👑 SUBSCRIBED (" + user.current_plan.toUpperCase() + ")";
+                badge.style.background = "gold";
+                badge.style.color = "#000";
+            } else {
+                badge.innerText = "❌ NOT SUBSCRIBED";
+                badge.style.background = "var(--accent-red)";
+            }
+            renderUI(); // Render the game-specific content
+        }
+
+        function logout() {
+            localStorage.removeItem('ga_user');
+            window.location.href = 'index.html';
+        }
+
+        refreshUser();
 
         function renderUI() {
             const timerBox = document.getElementById('timer-box');
+            
+            // Load Game Data if not loaded
+            if (gameId && !document.getElementById('game-title').innerText) {
+                fetch('/api/games')
+                    .then(res => res.json())
+                    .then(data => {
+                        const game = data.games.find(g => g.id === gameId);
+                        if(game) {
+                            document.getElementById('game-title').innerText = game.game || game.name;
+                            if(game.image) document.getElementById('game-img').src = game.image;
+                        }
+                    });
+            }
+
             if (!user.is_premium && user.role !== 'admin') {
                 window.location.href = 'premium_payment.html';
                 return;
