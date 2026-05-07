@@ -79,54 +79,73 @@
         </div>
     </div>
 
+    <script src="global.js"></script>
     <script>
         const urlParams = new URLSearchParams(window.location.search);
         const gameId = urlParams.get('id');
-        let gameDataCache = null;
+        const user = JSON.parse(localStorage.getItem('ga_user') || '{}');
 
+        if (!user.email) {
+            window.location.href = 'login.html';
+        }
+
+        // Load Basic Info
         if(gameId) {
-            fetch('/api/games/' + gameId)
+            fetch('/api/games')
                 .then(res => res.json())
                 .then(data => {
-                    if(data.success) {
-                        document.getElementById('game-title').innerText = data.game.game || data.game.name;
-                        if(data.game.image) document.getElementById('game-img').src = data.game.image;
-                        gameDataCache = data.game;
+                    const game = data.games.find(g => g.id === gameId);
+                    if(game) {
+                        document.getElementById('game-title').innerText = game.game || game.name;
+                        if(game.image) document.getElementById('game-img').src = game.image;
+                        checkPremiumStatus();
                     } else {
                         document.getElementById('game-title').innerText = "Game Not Found";
                     }
-                })
-                .catch(() => document.getElementById('game-title').innerText = "Database Error");
-        } else {
-            document.getElementById('game-title').innerText = "Invalid ID";
+                });
         }
 
-        function startTimer() {
-            document.getElementById('btn-start').disabled = true;
-            let timeLeft = 30;
-            const display = document.getElementById('countdown');
+        function checkPremiumStatus() {
+            if (!user.is_premium && user.role !== 'admin') {
+                // REDIRECT TO PAYMENT IF NOT PREMIUM
+                window.location.href = 'premium_payment.html';
+                return;
+            }
             
-            const timer = setInterval(() => {
-                timeLeft--;
-                display.innerText = timeLeft;
-                
-                if (timeLeft <= 0) {
-                    clearInterval(timer);
-                    revealCreds();
-                }
-            }, 1000);
+            const timerBox = document.getElementById('timer-box');
+            timerBox.innerHTML = `
+                <div style="background: rgba(0, 255, 136, 0.1); border: 2px solid #00ff88; padding: 2rem; border-radius: 15px;">
+                    <h2 style="color: #00ff88;">Premium Unlocked</h2>
+                    <p style="color: #fff; margin-bottom: 1.5rem;">You have full access to this account. Enjoy!</p>
+                    <button class="btn btn-primary" onclick="revealCreds()" style="background: #00ff88; color: #000; border: none;">Instant Reveal <span class="material-symbols-outlined">key</span></button>
+                </div>
+            `;
         }
 
-        function revealCreds() {
-            document.getElementById('timer-box').style.display = 'none';
-            document.getElementById('creds-box').style.display = 'block';
-
-            if(gameDataCache) {
-                document.getElementById('res-user').value = gameDataCache.username;
-                document.getElementById('res-pass').value = gameDataCache.password;
-            } else {
-                document.getElementById('res-user').value = "ERROR";
-                document.getElementById('res-pass').value = "Failed to load credentials.";
+        async function revealCreds() {
+            const btn = event.target;
+            btn.disabled = true;
+            btn.innerText = "Revealing...";
+            
+            try {
+                const res = await fetch('/api/games/reveal', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ gameId, email: user.email })
+                });
+                const data = await res.json();
+                
+                if (data.success) {
+                    document.getElementById('timer-box').style.display = 'none';
+                    document.getElementById('creds-box').style.display = 'block';
+                    document.getElementById('res-user').value = data.game.username;
+                    document.getElementById('res-pass').value = data.game.password;
+                } else {
+                    alert("Access Denied: Please upgrade to Premium.");
+                    window.location.href = 'premium_payment.html';
+                }
+            } catch (e) {
+                alert("Server error. Please try again.");
             }
         }
 

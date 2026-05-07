@@ -4,15 +4,55 @@ const cors = require('cors');
 const path = require('path');
 const { createClient } = require('@supabase/supabase-js');
 
+const TelegramBot = require('node-telegram-bot-api');
+const crypto = require('crypto');
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Initialize Supabase (Use service role for admin tasks)
+// Initialize Supabase
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE);
+
+// Initialize Telegram Bot
+const TG_TOKEN = process.env.TELEGRAM_BOT_TOKEN || '7297371569:AAEoyHlW_XGZ4B8pL0S6u2fVvW7nS8R_6XU';
+const bot = new TelegramBot(TG_TOKEN, { polling: true });
 
 app.use(cors());
 app.use(express.json());
 app.use(express.static(__dirname));
+
+// --- TELEGRAM BOT LOGIC ---
+bot.onText(/\/start/, (msg) => {
+    bot.sendMessage(msg.chat.id, "🚀 Welcome to Gamers Arena Verification Bot!\n\nUse /verify to submit your payment details.");
+});
+
+bot.onText(/\/verify/, (msg) => {
+    bot.sendMessage(msg.chat.id, "Please send your registered website EMAIL and UTR/Transaction ID in this format:\n\n`EMAIL: your@email.com` \n`UTR: 1234567890`", { parse_mode: 'Markdown' });
+});
+
+bot.on('message', async (msg) => {
+    const text = msg.text || '';
+    if (text.startsWith('EMAIL:')) {
+        const emailMatch = text.match(/EMAIL:\s*(.+)/i);
+        const utrMatch = text.match(/UTR:\s*(.+)/i);
+        
+        if (emailMatch && utrMatch) {
+            const email = emailMatch[1].trim();
+            const utr = utrMatch[1].trim();
+            
+            const { error } = await supabase.from('payment_requests').insert([{ user_email: email, utr_id: utr, status: 'pending' }]);
+            if (error) {
+                bot.sendMessage(msg.chat.id, "❌ Error: This UTR might already be submitted or email not found.");
+            } else {
+                bot.sendMessage(msg.chat.id, "✅ Payment submitted! Admin will verify it shortly. You can check status with /status");
+            }
+        }
+    }
+});
+
+bot.onText(/\/status/, async (msg) => {
+    bot.sendMessage(msg.chat.id, "Please provide your email to check status:\n`CHECK: your@email.com`", { parse_mode: 'Markdown' });
+});
 
 // API: Content Management
 app.get('/api/content', async (req, res) => {
@@ -36,13 +76,13 @@ app.post('/api/auth/login', async (req, res) => {
     
     // Check for hardcoded master admin first
     if (email === 'admin' && password === 'aditi0110') {
-        return res.json({ success: true, user: { name: 'Admin', email: 'admin', role: 'admin' } });
+        return res.json({ success: true, user: { name: 'Admin', email: 'admin', role: 'admin', is_premium: true } });
     }
 
     const { data: user, error } = await supabase.from('site_users').select('*').eq('email', email).eq('password', password).maybeSingle();
     
     if (user) {
-        res.json({ success: true, user: { name: user.name, email: user.email, role: user.role } });
+        res.json({ success: true, user: { name: user.name, email: user.email, role: user.role, is_premium: user.is_premium } });
     } else {
         res.status(401).json({ success: false, message: 'Invalid credentials' });
     }
@@ -72,6 +112,26 @@ app.post('/api/auth/google', async (req, res) => {
     res.json({ success: true, user: { name, email, role: 'user' } });
 });
 
+// API: Admin - Get All Payment Requests
+app.get('/api/admin/payments', async (req, res) => {
+    const { data, error } = await supabase.from('payment_requests').select('*, site_users(name)').order('created_at', { ascending: false });
+    res.json({ success: true, payments: data });
+});
+
+// API: Admin - Approve/Reject Payment
+app.post('/api/admin/payments/process', async (req, res) => {
+    const { id, pass, requestId, status } = req.body;
+    if (id !== 'admin' || pass !== 'aditi0110') return res.status(401).json({ success: false });
+
+    const { data: request } = await supabase.from('payment_requests').update({ status }).eq('id', requestId).select().single();
+    
+    if (status === 'approved') {
+        await supabase.from('site_users').update({ is_premium: true }).eq('email', request.user_email);
+    }
+    
+    res.json({ success: true, message: `Payment ${status}` });
+});
+
 // API: Get All Free Games (Safe - No Passwords)
 app.get('/api/games', async (req, res) => {
     const { data, error } = await supabase.from('games').select('id, game, image').order('created_at', { ascending: false });
@@ -80,8 +140,18 @@ app.get('/api/games', async (req, res) => {
 });
 
 // API: Get Specific Game Credentials (Secure)
-app.get('/api/games/:id', async (req, res) => {
-    const { data, error } = await supabase.from('games').select('*').eq('id', req.params.id).single();
+app.post('/api/games/reveal', async (req, res) => {
+    const { gameId, email } = req.body;
+    
+    // Check if user is premium or admin
+    if (email !== 'admin') {
+        const { data: user } = await supabase.from('site_users').select('is_premium').eq('email', email).single();
+        if (!user || !user.is_premium) {
+            return res.status(403).json({ success: false, message: 'PREMIUM_REQUIRED' });
+        }
+    }
+
+    const { data, error } = await supabase.from('games').select('*').eq('id', gameId).single();
     if (data) res.json({ success: true, game: data });
     else res.status(404).json({ success: false, message: 'Game not found' });
 });
