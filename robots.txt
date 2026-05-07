@@ -1,7 +1,7 @@
 User-agent: *
 Allow: /
-Disallow: /api/
 Disallow: /admin.html
-Disallow: /admin
+Disallow: /admin_verify.html
+Disallow: /api/
 
-Sitemap: https://gamersarena.com/sitemap.xml
+Sitemap: https://gamersd-arena-antigravity.onrender.com/sitemap.xml

@@ -1,25 +1,17 @@
 # Gamers Arena
 
-Elite Gaming Hub for Premium Account Reveals and Curated AI Tools.
+> The ultimate hub for shared premium PC gaming accounts and AAA game bundles.
 
-## Core Services
-- **Free Reveals**: Instant access to premium gaming accounts (Steam, Epic, etc.).
-- **Premium Store**: Lifetime access to high-performance gaming accounts.
-- **AI Directory**: A curated list of 500+ AI tools categorized by use case (Text, Image, Video, Coding, etc.).
-- **Daily Intel**: Automated AI tech feed and blog for gamers.
+## Core Features
+- **Daily Game Drops**: New shared accounts added every 24 hours.
+- **Mega Accounts**: High-value logins featuring up to 700+ titles in a single account.
+- **Instant Verification**: automated Telegram-based payment verification.
+- **Premium Tier**: Tiered access levels (Starter, Pro, Ultimate) for unlimited game reveals.
 
-## Key Links
-- [Home](https://gamersarena.shop/index.html)
-- [Free Reveals](https://gamersarena.shop/free-games.html)
-- [Premium Store](https://gamersarena.shop/premium-games.html)
-- [AI Directory](https://gamersarena.shop/ai-directory.html)
-- [Daily Intel (Blog)](https://gamersarena.shop/blog.html)
+## Keywords
+PC Games, Shared Accounts, Steam Accounts, AAA Games, Game Drops, Gaming Community, Cheap PC Games.
 
-## Technology Stack
-- Frontend: HTML5, Tailwind CSS, JavaScript (Vanilla)
-- Backend: Node.js (Express), Supabase (PostgreSQL)
-- Animations: Custom CSS3, Space-themed JS Canvas background
-
-## Contact & Support
-- Email: support@gamersarena.shop
-- Telegram: @gamersarena_shop
+## Navigation
+- [Home Page](https://gamersd-arena-antigravity.onrender.com/index.html)
+- [Account Library](https://gamersd-arena-antigravity.onrender.com/library.html)
+- [Premium Plans](https://gamersd-arena-antigravity.onrender.com/premium_payment.html)
