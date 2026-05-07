@@ -198,21 +198,42 @@ app.post('/api/auth/register', async (req, res) => {
     res.json({ success: true, message: 'Account created!', user: { name, email, role: 'user' } });
 });
 
-// API: Google Manual Login
+// API: Google Manual Login (Fixed to preserve Premium status)
 app.post('/api/auth/google', async (req, res) => {
-    const { name, email, googleId } = req.body;
-    const normalizedEmail = email?.toLowerCase();
+    const { name, googleId } = req.body;
+    const email = req.body.email?.toLowerCase();
     
-    // Auto-register or login the Google user
-    const { data: user, error } = await supabase.from('site_users').upsert({
-        email: email,
-        name: name,
-        password: 'google_oauth_' + googleId, // Dummy password
-        role: 'user'
-    }, { onConflict: 'email' }).select().single();
+    // 1. Check if user already exists
+    const { data: existingUser } = await supabase.from('site_users').select('*').eq('email', email).maybeSingle();
 
-    if (error) return res.status(500).json({ success: false, message: error.message });
-    res.json({ success: true, user: { name, email, role: 'user' } });
+    let user;
+    if (existingUser) {
+        // Update only name/id, preserve everything else
+        const { data: updated } = await supabase.from('site_users').update({ 
+            name: name,
+            password: 'google_oauth_' + googleId 
+        }).eq('email', email).select().single();
+        user = updated;
+    } else {
+        // Create new user
+        const { data: created } = await supabase.from('site_users').insert([{
+            email: email,
+            name: name,
+            password: 'google_oauth_' + googleId,
+            role: 'user',
+            is_premium: false,
+            current_plan: 'starter'
+        }]).select().single();
+        user = created;
+    }
+
+    res.json({ success: true, user: { 
+        name: user.name, 
+        email: user.email, 
+        role: user.role, 
+        is_premium: user.is_premium, 
+        current_plan: user.current_plan 
+    }});
 });
 
 // API: Admin - Get All Payment Requests
