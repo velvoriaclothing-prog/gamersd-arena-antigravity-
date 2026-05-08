@@ -284,7 +284,7 @@ app.post('/api/admin/payments/process', async (req, res) => {
     res.json({ success: true, message: `Payment ${status} for plan ${plan}` });
 });
 
-// API: Get All Free Games (Sorted by Newest First)
+// API: Get All Free Games (Newest First)
 app.get('/api/games', async (req, res) => {
     const { data, error } = await supabase.from('games').select('id, game, image, game_total').order('id', { ascending: false });
     if (error) return res.status(500).json({ success: false });
@@ -318,13 +318,19 @@ app.post('/api/games/reveal', async (req, res) => {
     if (game) {
         await supabase.from('site_users').update({ daily_reveal_count: user.daily_reveal_count + 1 }).eq('email', email);
         await supabase.from('reveal_logs').insert([{ user_email: email, game_id: gameId }]);
+        
+        // Backward compatibility: If credentials don't exist in JSON but singular fields do
+        if (!game.credentials && game.username) {
+            game.credentials = [{ user: game.username, pass: game.password }];
+        }
+        
         res.json({ success: true, game });
     } else {
         res.status(404).json({ success: false, message: 'Game not found' });
     }
 });
 
-// API: Admin Add Game (with Game Total)
+// API: Admin Add Game (with Multiple Credentials Support)
 app.post('/api/admin/games', async (req, res) => {
     const { id, pass, gameData } = req.body;
     if (id !== 'admin' || pass !== 'aditi0110') return res.status(401).json({ success: false, message: 'Unauthorized' });
@@ -332,10 +338,9 @@ app.post('/api/admin/games', async (req, res) => {
     const newGame = {
         id: 'G' + Date.now(),
         game: gameData.game,
-        username: gameData.username,
-        password: gameData.password,
         game_total: parseInt(gameData.game_total || 1),
-        image: 'logo.png'
+        image: 'logo.png',
+        credentials: gameData.credentials || [{ user: gameData.username, pass: gameData.password }]
     };
     
     const { error } = await supabase.from('games').insert([newGame]);

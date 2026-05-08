@@ -47,12 +47,21 @@
             <div id="panel-drops" class="dashboard-panel active">
                 <h1 style="font-size: 2.5rem; font-weight: 900;">Manage Free Drops</h1>
                 <p style="color: var(--text-muted);">View and manage the games and accounts database.</p>
-                    <div style="display: flex; gap: 1rem; margin-top: 1rem; flex-wrap: wrap;">
-                        <input type="text" id="new-game-title" class="admin-input" placeholder="Main Game Name" style="flex: 2;">
-                        <input type="number" id="new-game-total" class="admin-input" placeholder="Games (e.g. 700)" style="flex: 1;">
-                        <input type="text" id="new-game-user" class="admin-input" placeholder="Username" style="flex: 1;">
-                        <input type="text" id="new-game-pass" class="admin-input" placeholder="Password" style="flex: 1;">
-                        <button class="btn btn-primary" onclick="addGame()">+ Add Drop</button>
+                    <div style="background: rgba(0,0,0,0.3); padding: 1.5rem; border-radius: 12px; margin-top: 2rem;">
+                        <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                            <input type="text" id="new-game-title" class="admin-input" placeholder="Main Game Name" style="flex: 2;">
+                            <input type="number" id="new-game-total" class="admin-input" placeholder="Games (e.g. 700)" style="flex: 1;">
+                        </div>
+                        
+                        <div id="credentials-container">
+                            <div class="cred-row" style="display: flex; gap: 1rem; margin-bottom: 0.5rem;">
+                                <input type="text" class="admin-input cred-user" placeholder="Username" style="flex: 1;">
+                                <input type="text" class="admin-input cred-pass" placeholder="Password" style="flex: 1;">
+                                <button class="btn btn-secondary" onclick="addCredRow()" style="padding: 0.5rem 1rem;">+</button>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-primary" onclick="addGame()" style="width: 100%; margin-top: 1rem; padding: 1rem;">+ Add Drop with all Credentials</button>
                     </div>
                 </div>
                 <table>
@@ -136,36 +145,91 @@
 
         // LOAD DATA
         function loadAdminData() {
+            // Load Free Games
             fetch(API_URL + '/api/games').then(r=>r.json()).then(data => {
                 const tbody = document.getElementById('admin-games-list');
+                if (!data.games || data.games.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4">No games found.</td></tr>';
+                    return;
+                }
                 tbody.innerHTML = data.games.map(g => `
-                    <tr><td>${g.id}</td><td>${g.game}</td><td>${g.game_total || 1}</td>
-                    <td><button class="btn-secondary" style="padding: 0.5rem;" onclick="deleteGame('${g.id}')">Delete</button></td></tr>
+                    <tr>
+                        <td>${g.id}</td>
+                        <td>${g.game}</td>
+                        <td style="color: var(--accent-blue); font-weight: bold;">${g.game_total || 1}</td>
+                        <td><button class="btn-secondary" style="padding: 0.5rem; background: rgba(255,0,85,0.1); color: var(--accent-red);" onclick="deleteGame('${g.id}')">Delete</button></td>
+                    </tr>
                 `).join('');
             });
+
+            // Load Premium Bundles
             fetch(API_URL + '/api/premium').then(r=>r.json()).then(data => {
                 const tbody = document.getElementById('admin-bundles-list');
+                if (!data.bundles || data.bundles.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4">No bundles found.</td></tr>';
+                    return;
+                }
                 tbody.innerHTML = data.bundles.map(b => `
-                    <tr><td>${b.id}</td><td>${b.name}</td><td>${b.price}</td>
-                    <td><button class="btn-secondary" style="padding: 0.5rem;" onclick="deleteBundle('${b.id}')">Delete</button></td></tr>
+                    <tr>
+                        <td>${b.id}</td>
+                        <td>${b.name}</td>
+                        <td style="color: #00ff88; font-weight: bold;">${b.price}</td>
+                        <td><button class="btn-secondary" style="padding: 0.5rem;" onclick="deleteBundle('${b.id}')">Delete</button></td>
+                    </tr>
                 `).join('');
             });
         }
         
         loadAdminData();
 
+        function addCredRow() {
+            const container = document.getElementById('credentials-container');
+            const row = document.createElement('div');
+            row.className = 'cred-row';
+            row.style = 'display: flex; gap: 1rem; margin-bottom: 0.5rem;';
+            row.innerHTML = `
+                <input type="text" class="admin-input cred-user" placeholder="Username" style="flex: 1;">
+                <input type="text" class="admin-input cred-pass" placeholder="Password" style="flex: 1;">
+                <button class="btn btn-secondary" onclick="this.parentElement.remove()" style="padding: 0.5rem 1rem; background: rgba(255,0,0,0.1); border-color: rgba(255,0,0,0.2);">×</button>
+            `;
+            container.appendChild(row);
+        }
+
         // ADD GAME
         function addGame() {
+            const credRows = document.querySelectorAll('.cred-row');
+            const credentials = Array.from(credRows).map(row => ({
+                user: row.querySelector('.cred-user').value,
+                pass: row.querySelector('.cred-pass').value
+            })).filter(c => c.user && c.pass);
+
             const gameData = {
                 game: document.getElementById('new-game-title').value,
                 game_total: document.getElementById('new-game-total').value,
-                username: document.getElementById('new-game-user').value,
-                password: document.getElementById('new-game-pass').value
+                credentials: credentials
             };
+
+            if (!gameData.game || credentials.length === 0) {
+                alert("Please add Game Title and at least one set of Credentials.");
+                return;
+            }
+
             fetch(API_URL + '/api/admin/games', {
                 method: 'POST', headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({ ...CREDS, gameData })
-            }).then(() => { alert("Added!"); loadAdminData(); });
+            }).then(() => { 
+                alert("Game Drop Added with " + credentials.length + " accounts!"); 
+                document.getElementById('new-game-title').value = '';
+                document.getElementById('new-game-total').value = '';
+                document.getElementById('credentials-container').innerHTML = `
+                    <div class="cred-row" style="display: flex; gap: 1rem; margin-bottom: 0.5rem;">
+                        <input type="text" class="admin-input cred-user" placeholder="Username" style="flex: 1;">
+                        <input type="text" class="admin-input cred-pass" placeholder="Password" style="flex: 1;">
+                        <button class="btn btn-secondary" onclick="addCredRow()" style="padding: 0.5rem 1rem;">+</button>
+                    </div>
+                `;
+                loadAdminData(); 
+            });
         }
 
         // DELETE GAME

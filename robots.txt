@@ -4,4 +4,4 @@ Disallow: /admin.html
 Disallow: /admin_verify.html
 Disallow: /api/
 
-Sitemap: https://gamersd-arena-antigravity.onrender.com/sitemap.xml
+Sitemap: https://gamersarena.store/sitemap.xml

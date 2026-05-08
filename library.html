@@ -7,7 +7,7 @@
     <meta name="description" content="Explore our massive library of premium shared PC game accounts. Search for your favorite AAA titles and get instant access to verified drops.">
     <meta property="og:title" content="Gamers Arena Library | 700+ Verified Game Drops">
     <meta property="og:description" content="Search and browse our elite collection of shared gaming accounts. Ready to play?">
-    <meta property="og:image" content="https://gamersd-arena-antigravity.onrender.com/logo.png">
+    <meta property="og:image" content="https://gamersarena.store/logo.png">
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
@@ -55,6 +55,31 @@
         </div>
     </div>
 
+    <footer style="padding: 4rem 5%; border-top: 1px solid var(--glass-border); background: var(--bg-dark); color: var(--text-muted); text-align: center; margin-top: 4rem;">
+        <div style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 3rem; margin-bottom: 3rem;">
+            <div>
+                <h3 style="color: #fff; margin-bottom: 1rem;">Gamers Arena</h3>
+                <p style="font-size: 0.9rem;">The premier destination for AAA game drops and shared premium accounts.</p>
+            </div>
+            <div>
+                <h3 style="color: #fff; margin-bottom: 1rem;">Company</h3>
+                <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.5rem; padding: 0;">
+                    <li><a href="about.html" style="color: var(--accent-blue); text-decoration: none;">About Us</a></li>
+                    <li><a href="terms.html" style="color: var(--accent-blue); text-decoration: none;">Terms & Conditions</a></li>
+                    <li><a href="privacy.html" style="color: var(--accent-blue); text-decoration: none;">Privacy Policy</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3 style="color: #fff; margin-bottom: 1rem;">Support</h3>
+                <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.5rem; padding: 0;">
+                    <li><a href="https://t.me/gamersarena_support" style="color: var(--accent-blue); text-decoration: none;">Telegram Support</a></li>
+                    <li><a href="mailto:support@gamersarena.store" style="color: var(--accent-blue); text-decoration: none;">Email Support</a></li>
+                </ul>
+            </div>
+        </div>
+        <p style="border-top: 1px solid var(--glass-border); padding-top: 2rem;">&copy; 2026 Gamers Arena. Based in Online Arena, IN.</p>
+    </footer>
+
     <script src="global.js"></script>
     <script>
         let allGames = [];
@@ -68,16 +93,13 @@
             });
 
         function renderGames(games) {
-            // SORTING: Multi-game accounts on top
-            const sortedGames = [...games].sort((a, b) => (b.game_total || 0) - (a.game_total || 0));
-            
-            document.getElementById('listing-count').innerText = sortedGames.length + ' listings';
+            document.getElementById('listing-count').innerText = games.length + ' listings';
             const grid = document.getElementById('games-grid');
-            if (sortedGames.length === 0) {
+            if (games.length === 0) {
                 grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 4rem; color: var(--text-muted);">No accounts found matching your search.</div>';
                 return;
             }
-            grid.innerHTML = sortedGames.map((g, i) => {
+            grid.innerHTML = games.map((g, i) => {
                 const gradients = ['linear-gradient(135deg, #3b82f6, #06b6d4)', 'linear-gradient(135deg, #8b5cf6, #3b82f6)', 'linear-gradient(135deg, #10b981, #3b82f6)'];
                 const bg = gradients[i % gradients.length];
                 const isMega = (g.game_total || 0) >= 25;
