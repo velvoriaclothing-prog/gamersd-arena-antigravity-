@@ -286,9 +286,28 @@ app.post('/api/admin/payments/process', async (req, res) => {
 
 // API: Get All Free Games (Newest First)
 app.get('/api/games', async (req, res) => {
-    const { data, error } = await supabase.from('games').select('id, game, image, game_total').order('id', { ascending: false });
-    if (error) return res.status(500).json({ success: false });
-    res.json({ success: true, games: data });
+    let allData = [];
+    let from = 0;
+    const step = 1000;
+    
+    while (true) {
+        const { data, error } = await supabase.from('games')
+            .select('id, game, image, game_total')
+            .order('id', { ascending: false })
+            .range(from, from + step - 1);
+            
+        if (error) return res.status(500).json({ success: false });
+        
+        if (data && data.length > 0) {
+            allData = allData.concat(data);
+            from += step;
+            if (data.length < step) break;
+        } else {
+            break;
+        }
+    }
+    
+    res.json({ success: true, games: allData });
 });
 
 // API: Get Specific Game Credentials

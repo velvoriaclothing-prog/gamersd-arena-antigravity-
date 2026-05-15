@@ -83,25 +83,43 @@
     <script src="global.js"></script>
     <script>
         let allGames = [];
+        let filteredGames = [];
+        let currentlyDisplayed = 0;
+        const BATCH_SIZE = 50;
+
         fetch('/api/games')
             .then(res => res.json())
             .then(data => {
                 if(data.success && data.games) {
                     allGames = data.games;
-                    renderGames(allGames);
+                    filteredGames = allGames;
+                    renderInitialGames();
                 }
             });
 
-        function renderGames(games) {
-            document.getElementById('listing-count').innerText = games.length + ' listings';
+        function renderInitialGames() {
+            document.getElementById('listing-count').innerText = filteredGames.length + ' listings';
             const grid = document.getElementById('games-grid');
-            if (games.length === 0) {
+            grid.innerHTML = '';
+            currentlyDisplayed = 0;
+            
+            if (filteredGames.length === 0) {
                 grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 4rem; color: var(--text-muted);">No accounts found matching your search.</div>';
+                updateLoadMoreBtn();
                 return;
             }
-            grid.innerHTML = games.map((g, i) => {
+            renderMoreGames();
+        }
+
+        function renderMoreGames() {
+            if (currentlyDisplayed >= filteredGames.length) return;
+            
+            const grid = document.getElementById('games-grid');
+            const toRender = filteredGames.slice(currentlyDisplayed, currentlyDisplayed + BATCH_SIZE);
+            
+            const html = toRender.map((g, i) => {
                 const gradients = ['linear-gradient(135deg, #3b82f6, #06b6d4)', 'linear-gradient(135deg, #8b5cf6, #3b82f6)', 'linear-gradient(135deg, #10b981, #3b82f6)'];
-                const bg = gradients[i % gradients.length];
+                const bg = gradients[(currentlyDisplayed + i) % gradients.length];
                 const isMega = (g.game_total || 0) >= 25;
                 const hasMultiple = (g.game_total || 0) > 1;
                 
@@ -123,17 +141,41 @@
                     </div>
                 </a>`;
             }).join('');
+            
+            grid.insertAdjacentHTML('beforeend', html);
+            currentlyDisplayed += toRender.length;
+            updateLoadMoreBtn();
+        }
+
+        function updateLoadMoreBtn() {
+            let loadMoreBtn = document.getElementById('load-more-btn');
+            if (currentlyDisplayed < filteredGames.length) {
+                if (!loadMoreBtn) {
+                    loadMoreBtn = document.createElement('button');
+                    loadMoreBtn.id = 'load-more-btn';
+                    loadMoreBtn.innerText = 'Load More Games';
+                    loadMoreBtn.style = 'grid-column: 1/-1; margin: 2rem auto; display: block; padding: 1rem 3rem; background: var(--accent-blue); color: #fff; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1rem; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4); transition: transform 0.2s;';
+                    loadMoreBtn.onmouseover = () => loadMoreBtn.style.transform = 'translateY(-2px)';
+                    loadMoreBtn.onmouseout = () => loadMoreBtn.style.transform = 'translateY(0)';
+                    loadMoreBtn.onclick = renderMoreGames;
+                    const grid = document.getElementById('games-grid');
+                    grid.parentNode.insertBefore(loadMoreBtn, grid.nextSibling);
+                }
+                loadMoreBtn.style.display = 'block';
+            } else if (loadMoreBtn) {
+                loadMoreBtn.style.display = 'none';
+            }
         }
 
         // Search logic
         document.getElementById('search').addEventListener('input', (e) => {
             const query = e.target.value.toLowerCase();
-            const filtered = allGames.filter(g => 
+            filteredGames = allGames.filter(g => 
                 (g.game && g.game.toLowerCase().includes(query)) || 
                 (g.name && g.name.toLowerCase().includes(query)) ||
                 (g.desc && g.desc.toLowerCase().includes(query))
             );
-            renderGames(filtered);
+            renderInitialGames();
         });
     </script>
 </body>
