@@ -223,7 +223,11 @@
                 const res = await fetch('/api/games/reveal', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ gameId, email: user.email })
+                    body: JSON.stringify({ 
+                        gameId, 
+                        email: user.email,
+                        password: user.password 
+                    })
                 });
                 const data = await res.json();
 

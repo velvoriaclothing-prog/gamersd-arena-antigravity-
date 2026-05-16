@@ -215,9 +215,21 @@ async function saveLiveEdits(pageName) {
     }
 }
 
+// 6. SECURITY: Discourage Inspection
+function discourageInspection() {
+    if (window.location.pathname.includes('game.html')) {
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.addEventListener('keydown', e => {
+            if (e.ctrlKey && (e.key === 'u' || e.key === 's' || e.key === 'i' || e.key === 'j')) e.preventDefault();
+            if (e.key === 'F12') e.preventDefault();
+        });
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     loadDynamicContent();
     updateGlobalUserDisplay();
+    discourageInspection();
 });
 
 // 5. GLOBAL USER DISPLAY & AUTH

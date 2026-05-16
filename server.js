@@ -327,9 +327,19 @@ app.get('/api/games', async (req, res) => {
     res.json({ success: true, games: allData });
 });
 
+const revealLimiter = new Map();
+
 // API: Get Specific Game Credentials
 app.post('/api/games/reveal', async (req, res) => {
-    const { gameId, email, adminId, adminPass } = req.body;
+    const ip = req.ip;
+    const now = Date.now();
+    const last = revealLimiter.get(ip) || 0;
+    if (now - last < 2000) { // 2 second cool down per IP
+        return res.status(429).json({ success: false, message: 'SLOW_DOWN' });
+    }
+    revealLimiter.set(ip, now);
+
+    const { gameId, email, password, adminId, adminPass } = req.body;
     
     // 1. Check Admin (Strict Verification)
     if (adminId === process.env.ADMIN_ID && adminPass === process.env.ADMIN_PASS) {
@@ -338,9 +348,10 @@ app.post('/api/games/reveal', async (req, res) => {
         return res.json({ success: true, game: data });
     }
 
-    // 2. Check User & Plan
-    let { data: user } = await supabase.from('site_users').select('*').eq('email', email).single();
-    if (!user || !user.is_premium) return res.status(403).json({ success: false, message: 'PREMIUM_REQUIRED' });
+    // 2. Check User Identity & Plan
+    let { data: user } = await supabase.from('site_users').select('*').eq('email', email?.toLowerCase()).eq('password', password).single();
+    if (!user) return res.status(401).json({ success: false, message: 'AUTHENTICATION_FAILED' });
+    if (!user.is_premium) return res.status(403).json({ success: false, message: 'PREMIUM_REQUIRED' });
 
     user = await ensureLimitReset(user);
 
