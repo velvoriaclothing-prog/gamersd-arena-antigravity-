@@ -163,8 +163,11 @@ async function notifyAdmin(request) {
         }
     };
 
-    if (request.screenshot_url) {
-        bot.sendPhoto(ADMIN_CHAT_ID, request.screenshot_url, { caption: message, ...opts });
+    if (request.screenshot_url && request.screenshot_url.startsWith('data:image')) {
+        // Convert base64 to Buffer for Telegram
+        const base64Data = request.screenshot_url.split(',')[1];
+        const buffer = Buffer.from(base64Data, 'base64');
+        bot.sendPhoto(ADMIN_CHAT_ID, buffer, { caption: message, ...opts });
     } else {
         bot.sendMessage(ADMIN_CHAT_ID, message, opts);
     }
