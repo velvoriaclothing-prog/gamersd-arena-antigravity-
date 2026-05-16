@@ -73,7 +73,7 @@ function setupBotLogic(botInstance) {
         }
 
         if (data === "instructions") {
-            botInstance.sendMessage(chatId, "📋 *Payment Instructions*\n\n1. Scan the QR on our website.\n2. Pay the exact amount for your plan.\n3. Note down the 12-digit UTR/Ref ID.\n4. Click 'Verify Payment' here to submit.", { parse_mode: 'Markdown' });
+            botInstance.sendMessage(chatId, "📋 *Payment Instructions*\n\n1. Scan the QR on our website.\n2. Pay the exact amount for your plan.\n3. Note down the UTR or Transaction ID.\n4. Click 'Verify Payment' here to submit.", { parse_mode: 'Markdown' });
         }
 
         if (data === "verify") {
@@ -92,7 +92,7 @@ function setupBotLogic(botInstance) {
             if (state) {
                 state.plan = plan;
                 state.step = 'utr';
-                botInstance.sendMessage(chatId, `✅ Plan selected: *${plan.toUpperCase()}*\n\nNow, please enter your *12-digit UTR/Transaction ID*:`, { parse_mode: 'Markdown' });
+                botInstance.sendMessage(chatId, `✅ Plan selected: *${plan.toUpperCase()}*\n\nNow, please enter your *UTR or Transaction ID* (8-25 characters):`, { parse_mode: 'Markdown' });
             }
         }
     });
@@ -119,8 +119,8 @@ function setupBotLogic(botInstance) {
         } 
         else if (state.step === 'utr') {
             const utr = msg.text.trim();
-            if (utr.length < 10 || utr.length > 15) {
-                return botInstance.sendMessage(chatId, "⚠️ *Invalid UTR*: Please enter a valid 12-digit ID.");
+            if (utr.length < 8 || utr.length > 25) {
+                return botInstance.sendMessage(chatId, "⚠️ *Invalid ID*: Please enter a valid UTR or Transaction ID (8-25 characters).");
             }
 
             // Duplicate Check
