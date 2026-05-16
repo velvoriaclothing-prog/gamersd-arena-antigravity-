@@ -3,85 +3,108 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Terms & Conditions | Gamers Arena</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800;900&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+    <meta name="theme-color" content="#030305">
+    <link rel="icon" type="image/png" href="logo.png">
+    
+    <title>Terms of Service | Usage Protocols | Gamers Arena</title>
+    <meta name="description" content="Official Terms of Service for Gamers Arena. Understand our usage protocols, security rules, and community guidelines for shared PC gaming accounts.">
+    <link rel="canonical" href="https://gamersarena.store/terms">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" media="print" onload="this.media='all'">
     <link rel="stylesheet" href="cinematic.css">
+    
     <style>
         .legal-container { max-width: 900px; margin: 12rem auto 6rem; padding: 0 5%; }
-        .legal-card { background: rgba(20, 22, 28, 0.6); border: 1px solid var(--glass-border); padding: 4rem; border-radius: 30px; backdrop-filter: blur(20px); }
-        .legal-content h2 { color: var(--accent-red); margin: 2rem 0 1rem; font-size: 1.5rem; text-transform: uppercase; letter-spacing: 1px; }
-        .legal-content p { color: var(--text-muted); line-height: 1.8; margin-bottom: 1.5rem; }
-        .legal-content ul { color: var(--text-muted); margin-bottom: 1.5rem; margin-left: 1.5rem; }
-        .legal-content li { margin-bottom: 0.5rem; }
+        .legal-card { background: rgba(20, 22, 28, 0.6); border: 1px solid var(--glass-border); padding: clamp(2rem, 5vw, 4rem); border-radius: 30px; backdrop-filter: blur(20px); }
+        .legal-content h2 { color: var(--accent-red); margin: 2.5rem 0 1.2rem; font-size: 1.6rem; text-transform: uppercase; letter-spacing: 2px; font-weight: 900; }
+        .legal-content p { color: var(--text-muted); line-height: 1.8; margin-bottom: 1.5rem; font-size: 1.05rem; }
+        .legal-content ul { color: var(--text-muted); margin-bottom: 2rem; padding-left: 1.5rem; }
+        .legal-content li { margin-bottom: 0.8rem; line-height: 1.6; }
+        .legal-content strong { color: #fff; }
     </style>
 </head>
 <body>
-    <nav class="navbar">
-        <a href="/" class="logo-container">
-            <img src="logo.png" alt="Logo" class="logo-img">
-            <div>
-                <div class="logo-text">GAMERS ARENA</div>
-                <div class="logo-sub">EST. 2024</div>
-            </div>
-        </a>
-        <div class="nav-links">
-            <a href="/">HOME</a>
-            <a href="library">FREE DROPS</a>
-            <a href="premium_payment">MEMBERSHIPS</a>
-        </div>
-        <div class="navbar-right">
-            <div class="user-profile" id="user-display" style="display: none; align-items: center; gap: 1rem;">
-                <div style="text-align: right;">
-                    <div id="user-email" style="font-size: 0.8rem; font-weight: 700;">user@example.com</div>
-                    <div id="premium-badge" class="badge">Checking...</div>
+    <header>
+        <nav class="navbar">
+            <a href="/" class="logo-container">
+                <img src="logo.png" alt="Gamers Arena Official" class="logo-img" width="50" height="50">
+                <div>
+                    <div class="logo-text">GAMERS ARENA</div>
+                    <div class="logo-sub">LEGAL COMPLIANCE</div>
                 </div>
-                <button onclick="logout()" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.8rem;">Logout</button>
+            </a>
+            <div class="nav-links">
+                <a href="/">HOME</a>
+                <a href="library">LIBRARY</a>
+                <a href="premium_payment">MEMBERSHIPS</a>
             </div>
-            <div class="auth-buttons" id="auth-btns">
-                <a href="login" class="btn btn-secondary">Login</a>
-                <a href="login" class="btn btn-danger">Join Elite</a>
+            <div class="navbar-right">
+                <div class="user-profile" id="user-display" style="display: none; align-items: center; gap: 1rem;">
+                    <div style="text-align: right;">
+                        <div id="user-email" style="font-size: 0.8rem; font-weight: 700;">user@example.com</div>
+                        <div id="premium-badge" class="badge">Checking...</div>
+                    </div>
+                    <button onclick="logout()" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.8rem;">Logout</button>
+                </div>
+                <div class="auth-buttons" id="auth-btns">
+                    <a href="login" class="btn btn-secondary">Login</a>
+                </div>
             </div>
-        </div>
-    </nav>
-    <script src="global.js"></script>
+        </nav>
+    </header>
 
     <main class="legal-container">
-        <div class="legal-card">
-            <div class="hero-tag" style="border-color: var(--accent-red); color: var(--accent-red);">Legal Framework</div>
-            <h1 class="glowing-text" style="font-size: 3.5rem; margin-bottom: 2rem;">Terms of Service</h1>
+        <article class="legal-card">
+            <div class="hero-tag" style="border-color: var(--accent-red); color: var(--accent-red);">Legal Protocol v2.6</div>
+            <h1 class="glowing-text" style="font-size: clamp(2.5rem, 8vw, 3.5rem); margin-bottom: 2rem; font-weight: 900;">Terms of Service</h1>
             
             <div class="legal-content">
-                <p>Last Updated: May 2026</p>
-                <p>By accessing Gamers Arena, you agree to abide by the following terms and conditions. Please read them carefully before using our services.</p>
+                <p><strong>Effective Date: May 16, 2026</strong></p>
+                <p>By accessing and utilizing the Gamers Arena platform, you entering into a binding agreement to adhere to these Terms of Service. Our protocols are designed to ensure a fair, stable, and secure gaming environment for our entire global community.</p>
                 
-                <h2>1. Account Usage</h2>
-                <p>Users are provided access to shared accounts. You strictly agree to:</p>
+                <h2>1. Deployment & Usage Protocols</h2>
+                <p>Members are granted access to shared account assets. By revealing credentials, you strictly agree to the following operational mandates:</p>
                 <ul>
-                    <li>Play in <strong>OFFLINE MODE</strong> at all times.</li>
-                    <li>Never attempt to change passwords or security settings.</li>
-                    <li>Never enable Steam Guard or two-factor authentication on shared accounts.</li>
-                    <li>Use the credentials only for the intended purpose of playing games.</li>
+                    <li><strong>Mandatory Offline Mode:</strong> You must set your game client (Steam, Epic, etc.) to Offline Mode immediately after logging in. Online play is strictly prohibited.</li>
+                    <li><strong>Account Integrity:</strong> You shall never attempt to change passwords, recovery emails, or security settings of any shared account.</li>
+                    <li><strong>No MFA/Steam Guard:</strong> Attempting to enable two-factor authentication or Steam Guard on a shared resource is a violation of these terms.</li>
+                    <li><strong>Session Privacy:</strong> Revealed credentials are for your personal use only. Redistribution of session keys is prohibited.</li>
                 </ul>
                 
-                <h2>2. Termination of Access</h2>
-                <p>Violation of any usage rules (especially attempting to change passwords) will result in an <strong>immediate and permanent ban</strong> from Gamers Arena. No refunds will be provided for banned accounts.</p>
+                <h2>2. Enforcement & Revocation</h2>
+                <p>Gamers Arena utilizes automated monitoring to track account health. Any violation of the usage protocols mentioned in Section 1 will result in <strong>immediate and permanent revocation of your membership</strong>. Hardware-level bans may be enforced to protect the community from malicious actors. No refunds or appeals will be considered for protocol violations.</p>
                 
-                <h2>3. Payments and Refunds</h2>
-                <p>All payments for Premium memberships are one-time fees. Due to the nature of digital account access, we do not offer refunds once the credentials have been revealed.</p>
+                <h2>3. Financial Terms</h2>
+                <p>The ₹99 Ultimate Membership is a one-time activation fee. Due to the immediate delivery of digital session keys and the nature of shared assets, all transactions are final. Refunds are not provided once a credential reveal has been performed on your profile.</p>
                 
-                <h2>5. Intellectual Property</h2>
-                <p>All game titles, logos, and brands are property of their respective owners. Gamers Arena provides a platform for shared access to legally acquired software licenses and does not claim ownership over the software itself.</p>
+                <h2>4. Intellectual Property Notice</h2>
+                <p>All video game titles, publisher logos, and third-party trademarks are the exclusive property of their respective owners. Gamers Arena operates as a managed service provider for shared access to legally acquired software licenses and does not claim ownership over the software assets themselves.</p>
                 
-                <h2>6. Modification of Terms</h2>
-                <p>We reserve the right to modify these terms at any time. Continued use of the platform after changes constitutes acceptance of the new terms.</p>
-    
+                <h2>5. Limitation of Liability</h2>
+                <p>Gamers Arena provides assets "as is" and does not guarantee 100% uptime of third-party game clients. We are not liable for any account locks or service interruptions caused by the developers or publishers of the games in our library.</p>
             </div>
-        </div>
+        </article>
     </main>
 
-    <footer style="padding: 4rem 5%; border-top: 1px solid var(--glass-border); background: var(--bg-dark); color: var(--text-muted); text-align: center;">
-        <p>&copy; 2026 Gamers Arena. Play by the rules.</p>
+    <footer style="padding: 6rem 5% 4rem; border-top: 1px solid var(--glass-border); background: var(--bg-dark); color: var(--text-muted); text-align: center;">
+        <div style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 4rem; margin-bottom: 4rem;">
+            <div style="text-align: left;">
+                <h3 style="color: #fff; margin-bottom: 1.5rem; font-weight: 900;">GAMERS ARENA</h3>
+                <p style="font-size: 0.9rem; line-height: 1.8;">The premier destination for AAA game drops and secure shared access. Join the future of gaming today.</p>
+            </div>
+            <div style="text-align: left;">
+                <h3 style="color: #fff; margin-bottom: 1.5rem;">DIRECT LINKS</h3>
+                <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 1rem;">
+                    <li><a href="about" style="color: var(--text-muted); text-decoration: none;">About Mission</a></li>
+                    <li><a href="privacy" style="color: var(--text-muted); text-decoration: none;">Privacy Protocol</a></li>
+                    <li><a href="library" style="color: var(--text-muted); text-decoration: none;">Game Library</a></li>
+                </ul>
+            </div>
+        </div>
+        <p style="border-top: 1px solid var(--glass-border); padding-top: 3rem; font-size: 0.85rem;">&copy; 2026 Gamers Arena HQ. All rights reserved. | <a href="llms.txt" style="color: var(--accent-blue);">AI Policy</a></p>
     </footer>
 
     <script src="global.js"></script>

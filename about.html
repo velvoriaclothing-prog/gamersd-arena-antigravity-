@@ -3,73 +3,174 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About Us | Gamers Arena</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800;900&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+    <meta name="theme-color" content="#030305">
+    <link rel="icon" type="image/png" href="logo.png">
+    
+    <title>About Us | Our Mission & Vision | Gamers Arena</title>
+    <meta name="description" content="Learn about Gamers Arena, the world's most trusted source for premium shared PC game accounts. Discover our mission to democratize AAA gaming access globally.">
+    <meta name="keywords" content="about gamers arena, gaming mission, shared accounts company, legal pc games access, gaming community values">
+    <link rel="canonical" href="https://gamersarena.store/about">
+    
+    <!-- Preconnect for Performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- OpenGraph -->
+    <meta property="og:title" content="About Gamers Arena | The Future of Shared Gaming">
+    <meta property="og:description" content="Discover how we provide secure, affordable, and instant AAA game drops to a global community.">
+    <meta property="og:image" content="https://gamersarena.store/logo.png">
+    <meta property="og:url" content="https://gamersarena.store/about">
+    <meta property="og:type" content="article">
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "AboutPage",
+      "mainEntity": {
+        "@type": "Organization",
+        "name": "Gamers Arena",
+        "description": "A premier provider of shared premium PC game accounts and AAA title drops.",
+        "url": "https://gamersarena.store/",
+        "logo": "https://gamersarena.store/logo.png"
+      }
+    }
+    </script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" media="print" onload="this.media='all'">
     <link rel="stylesheet" href="cinematic.css">
+    
     <style>
-        .legal-container { max-width: 900px; margin: 12rem auto 6rem; padding: 0 5%; }
-        .legal-card { background: rgba(20, 22, 28, 0.6); border: 1px solid var(--glass-border); padding: 4rem; border-radius: 30px; backdrop-filter: blur(20px); }
-        .legal-content h2 { color: var(--accent-blue); margin: 2rem 0 1rem; font-size: 1.8rem; }
-        .legal-content p { color: var(--text-muted); line-height: 1.8; margin-bottom: 1.5rem; font-size: 1.1rem; }
+        .about-hero { padding: 12rem 5% 6rem; text-align: center; background: radial-gradient(circle at center, rgba(0, 229, 255, 0.1), transparent 70%); }
+        .about-content { max-width: 900px; margin: 0 auto; padding: 0 5% 10rem; }
+        .about-section { margin-bottom: 6rem; line-height: 1.8; color: var(--text-muted); font-size: 1.1rem; }
+        .about-section h2 { color: #fff; margin-bottom: 1.5rem; font-size: 2.5rem; font-weight: 900; letter-spacing: -1px; border-left: 5px solid var(--accent-blue); padding-left: 1.5rem; }
+        .about-section p { margin-bottom: 2rem; }
+        .trust-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 2.5rem; margin-top: 4rem; }
+        .trust-card { background: rgba(255,255,255,0.02); padding: 3rem 2rem; border-radius: 25px; border: 1px solid var(--glass-border); transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        .trust-card:hover { border-color: var(--accent-blue); background: rgba(0, 229, 255, 0.05); transform: translateY(-10px); }
     </style>
 </head>
 <body>
-    <nav class="navbar">
-        <a href="/" class="logo-container">
-            <img src="logo.png" alt="Logo" class="logo-img">
-            <div>
-                <div class="logo-text">GAMERS ARENA</div>
-                <div class="logo-sub">EST. 2024</div>
-            </div>
-        </a>
-        <div class="nav-links">
-            <a href="/">HOME</a>
-            <a href="library">FREE DROPS</a>
-            <a href="premium_payment">MEMBERSHIPS</a>
-        </div>
-        <div class="navbar-right">
-            <div class="user-profile" id="user-display" style="display: none; align-items: center; gap: 1rem;">
-                <div style="text-align: right;">
-                    <div id="user-email" style="font-size: 0.8rem; font-weight: 700;">user@example.com</div>
-                    <div id="premium-badge" class="badge">Checking...</div>
+    <header>
+        <nav class="navbar">
+            <a href="/" class="logo-container">
+                <img src="logo.png" alt="Gamers Arena Official Logo" class="logo-img" width="50" height="50">
+                <div>
+                    <div class="logo-text">GAMERS ARENA</div>
+                    <div class="logo-sub">MISSION & VALUES</div>
                 </div>
-                <button onclick="logout()" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.8rem;">Logout</button>
+            </a>
+            <div class="nav-links">
+                <a href="/">HOME</a>
+                <a href="library">FREE DROPS</a>
+                <a href="premium">PREMIUM STORE</a>
+                <a href="premium_payment">MEMBERSHIPS</a>
             </div>
-            <div class="auth-buttons" id="auth-btns">
-                <a href="login" class="btn btn-secondary">Login</a>
-                <a href="login" class="btn btn-danger">Join Elite</a>
+            <div class="navbar-right">
+                <div class="user-profile" id="user-display" style="display: none; align-items: center; gap: 1rem;">
+                    <div style="text-align: right;">
+                        <div id="user-email" style="font-size: 0.8rem; font-weight: 700;">user@example.com</div>
+                        <div id="premium-badge" class="badge">Checking...</div>
+                    </div>
+                    <button onclick="logout()" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.8rem;">Logout</button>
+                </div>
+                <div class="auth-buttons" id="auth-btns">
+                    <a href="login" class="btn btn-secondary">Login</a>
+                    <a href="login" class="btn btn-danger">Join Elite</a>
+                </div>
             </div>
-        </div>
-    </nav>
-    <script src="global.js"></script>
+        </nav>
+    </header>
 
-    <main class="legal-container">
-        <div class="legal-card">
-            <div class="hero-tag" style="border-color: var(--accent-blue); color: var(--accent-blue);">Our Mission</div>
-            <h1 class="glowing-text" style="font-size: 3.5rem; margin-bottom: 2rem;">About Gamers Arena</h1>
-            
-            <div class="legal-content">
-                <p>Welcome to <strong>Gamers Arena</strong>, the premier destination for elite PC gaming access. Our mission is to democratize gaming by providing a platform where 3,966+ AAA titles are available to the community through a secure, shared ecosystem.</p>
-                
+    <main>
+        <section class="about-hero">
+            <div class="hero-tag">ESTABLISHED 2024</div>
+            <h1 class="glowing-text" style="font-size: clamp(2.5rem, 8vw, 5rem); font-weight: 900; margin-bottom: 2rem;">Revolutionizing Access</h1>
+            <p style="font-size: 1.25rem; color: var(--text-muted); max-width: 750px; margin: 0 auto; line-height: 1.6;">We are a global collective dedicated to breaking the financial barriers of high-tier PC gaming through secure, shared asset deployment.</p>
+        </section>
+
+        <article class="about-content">
+            <section class="about-section">
                 <h2>Our Vision</h2>
-                <p>We envision a world where gaming knows no financial boundaries. By curating a massive library of verified drops, we ensure that every gamer has the opportunity to experience the latest technology and storytelling in the gaming industry.</p>
+                <p>At Gamers Arena, we believe that the digital divide in the gaming industry is a hurdle that can be overcome through community cooperation and technical innovation. With AAA game prices skyrocketing and individual licenses becoming more restrictive, the average gamer is often left behind. Our mission is to provide a safe, managed ecosystem where thousands of members can access a massive library of 3,966+ games affordably and securely.</p>
+                <p>We leverage advanced encryption and automated verification protocols to ensure that our shared account network remains stable, legal, and instantly accessible to our global community of enthusiasts.</p>
+            </section>
 
-                <h2>Our 4-Step Verification Process</h2>
-                <p>1. <strong>Sourcing</strong>: We legally acquire premium game bundles and individual AAA titles from verified distributors.</p>
-                <p>2. <strong>Testing</strong>: Every account undergoes a rigorous 48-hour testing period to ensure stability and compatibility with our shared access rules.</p>
-                <p>3. <strong>Automation</strong>: Our custom-built Telegram bot handles all verifications instantly, removing the human wait-time from your gaming session.</p>
-                <p>4. <strong>Maintenance</strong>: We perform daily health checks on all 3,966+ listings to ensure credentials are active and ready for use.</p>
-                
-                <h2>Core Values</h2>
-                <p><strong>Security first</strong>: We protect our users and our assets with advanced rate limiting and session monitoring. <strong>Community driven</strong>: Our library grows based on your requests in our Telegram group. <strong>Unmatched Value</strong>: For the price of a single coffee, we provide a lifetime of gaming entertainment.</p>
-    
+            <div class="trust-grid">
+                <div class="trust-card">
+                    <span class="material-symbols-outlined" style="font-size: 3.5rem; color: var(--accent-blue); margin-bottom: 1.5rem;" aria-hidden="true">verified_user</span>
+                    <h3>Integrity First</h3>
+                    <p>Every account in our 3,966+ library is legally sourced and subject to a rigorous daily verification sweep by our HQ admin team.</p>
+                </div>
+                <div class="trust-card">
+                    <span class="material-symbols-outlined" style="font-size: 3.5rem; color: var(--accent-blue); margin-bottom: 1.5rem;" aria-hidden="true">security</span>
+                    <h3>Active Security</h3>
+                    <p>Our proprietary monitoring system tracks account health in real-time, preventing unauthorized changes and ensuring 100% uptime.</p>
+                </div>
+                <div class="trust-card">
+                    <span class="material-symbols-outlined" style="font-size: 3.5rem; color: var(--accent-blue); margin-bottom: 1.5rem;" aria-hidden="true">hub</span>
+                    <h3>Community Driven</h3>
+                    <p>We are powered by our members. Your requests drive our daily drops, ensuring the library evolves with the gaming landscape.</p>
+                </div>
             </div>
-        </div>
+
+            <section class="about-section" style="margin-top: 8rem;">
+                <h2>Expertise & Authoritativeness</h2>
+                <p>The Gamers Arena team consists of digital security experts and veteran gamers who understand the complexities of modern game clients like Steam, Epic, and Ubisoft Connect. This expertise allows us to maintain a shared ecosystem that bypasses traditional hurdles without compromising user security or hardware integrity. We provide comprehensive documentation on mandatory security protocols, such as Offline Mode, to ensure a seamless experience for every member.</p>
+                <p>Our platform has grown from a small project into a trusted global resource, serving over 10,000+ gamers who value accessibility, transparency, and high-quality AAA content.</p>
+            </section>
+
+            <section class="about-section">
+                <h2>Frequently Asked Questions</h2>
+                <div style="background: rgba(255,255,255,0.02); padding: 3rem; border-radius: 30px; border: 1px solid var(--glass-border);">
+                    <details style="margin-bottom: 2rem; cursor: pointer;">
+                        <summary style="font-weight: 900; color: #fff; margin-bottom: 1rem; font-size: 1.2rem; list-style: none; display: flex; align-items: center; gap: 1rem;">
+                            <span class="material-symbols-outlined" style="color: var(--accent-blue);">add_circle</span> Is the Gamers Arena service legal?
+                        </summary>
+                        <p style="padding-left: 2.5rem; border-left: 2px solid rgba(255,255,255,0.1);">Yes. We provide access to shared accounts that are legally purchased. Our strict "Offline Mode" usage policy ensures that multiple users can share the same resource without licensing conflicts or violating the core integrity of the game client.</p>
+                    </details>
+                    <details style="margin-bottom: 2rem; cursor: pointer;">
+                        <summary style="font-weight: 900; color: #fff; margin-bottom: 1rem; font-size: 1.2rem; list-style: none; display: flex; align-items: center; gap: 1rem;">
+                            <span class="material-symbols-outlined" style="color: var(--accent-blue);">add_circle</span> How do I verify my membership?
+                        </summary>
+                        <p style="padding-left: 2.5rem; border-left: 2px solid rgba(255,255,255,0.1);">Our verification process is fully automated. After completing your ₹99 Ultimate payment, simply provide your 12-digit UTR or transaction ID to our Telegram verification bot. Access is typically granted within 5 to 15 minutes.</p>
+                    </details>
+                    <details style="cursor: pointer;">
+                        <summary style="font-weight: 900; color: #fff; margin-bottom: 1rem; font-size: 1.2rem; list-style: none; display: flex; align-items: center; gap: 1rem;">
+                            <span class="material-symbols-outlined" style="color: var(--accent-blue);">add_circle</span> What happens if an account stops working?
+                        </summary>
+                        <p style="padding-left: 2.5rem; border-left: 2px solid rgba(255,255,255,0.1);">If an account goes offline or credentials change, our real-time monitoring system flags the listing. Our administrators typically replace the faulty asset with a fresh drop within hours, ensuring your gaming session is rarely interrupted for long.</p>
+                    </details>
+                </div>
+            </section>
+        </article>
     </main>
 
-    <footer style="padding: 4rem 5%; border-top: 1px solid var(--glass-border); background: var(--bg-dark); color: var(--text-muted); text-align: center;">
-        <p>&copy; 2026 Gamers Arena. The ultimate gaming hub.</p>
+    <footer style="padding: 6rem 5% 4rem; border-top: 1px solid var(--glass-border); background: var(--bg-dark); color: var(--text-muted); text-align: center;">
+        <div style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 4rem; margin-bottom: 4rem;">
+            <div style="text-align: left;">
+                <h3 style="color: #fff; margin-bottom: 1.5rem; font-weight: 900;">GAMERS ARENA</h3>
+                <p style="font-size: 0.95rem; line-height: 1.8;">The premier destination for AAA game drops and secure shared access. Join the future of gaming today.</p>
+            </div>
+            <div style="text-align: left;">
+                <h3 style="color: #fff; margin-bottom: 1.5rem;">DIRECT LINKS</h3>
+                <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 1rem;">
+                    <li><a href="library" style="color: var(--text-muted); text-decoration: none;">Game Library</a></li>
+                    <li><a href="terms" style="color: var(--text-muted); text-decoration: none;">Legal Protocols</a></li>
+                    <li><a href="privacy" style="color: var(--text-muted); text-decoration: none;">Data Protection</a></li>
+                </ul>
+            </div>
+            <div style="text-align: left;">
+                <h3 style="color: #fff; margin-bottom: 1.5rem;">SUPPORT</h3>
+                <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 1rem;">
+                    <li><a href="https://t.me/gamersarena_support" style="color: var(--accent-blue); text-decoration: none;">Telegram VIP Hub</a></li>
+                    <li><a href="mailto:support@gamersarena.store" style="color: var(--accent-blue); text-decoration: none;">HQ Email Support</a></li>
+                </ul>
+            </div>
+        </div>
+        <p style="border-top: 1px solid var(--glass-border); padding-top: 3rem; font-size: 0.85rem;">&copy; 2026 Gamers Arena. Empowering gamers worldwide. | <a href="llms.txt" style="color: var(--accent-blue);">AI Policy</a></p>
     </footer>
 
     <script src="global.js"></script>

@@ -4,108 +4,147 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#030305">
+    <link rel="icon" type="image/png" href="logo.png">
     
-    <title>Buy Premium PC Games | Personal Accounts | Gamers Arena</title>
-    <meta name="description" content="Purchase permanent, personal Steam accounts for premium PC games like GTA V, Cyberpunk 2077, and Elden Ring at unbeatable prices on Gamers Arena.">
-    <meta name="keywords" content="buy premium PC games, cheap GTA V account, buy Cyberpunk 2077 cheap, Elden ring Steam account, Gamers Arena premium">
-    <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://gamersarena.store/premium.html">
+    <title>Buy Premium PC Games | Permanent Personal Accounts | Gamers Arena</title>
+    <meta name="description" content="Purchase permanent, personal Steam accounts for premium PC games like GTA V, Cyberpunk 2077, and Elden Ring at unbeatable prices on Gamers Arena. Secure and verified.">
+    <meta name="keywords" content="buy pc games, cheap steam accounts, personal game accounts, gta v steam account, gamers arena shop">
+    <link rel="canonical" href="https://gamersarena.store/premium">
     
-    <meta property="og:title" content="Buy Premium PC Games | Gamers Arena">
-    <meta property="og:description" content="Purchase permanent, personal Steam accounts for premium PC games at unbeatable prices.">
-    <meta property="og:image" content="https://gamersarena.store/logo.png">
-    <meta property="twitter:card" content="summary_large_image">
-
+    <!-- Preconnect for Performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-    <link rel="stylesheet" href="cinematic.css">
 
-    <!-- STRUCTURED DATA (JSON-LD) for Products -->
+    <!-- OpenGraph -->
+    <meta property="og:title" content="Gamers Arena Premium Store | Permanent Access">
+    <meta property="og:description" content="Purchase permanent, personal Steam accounts for premium PC games at unbeatable prices.">
+    <meta property="og:image" content="https://gamersarena.store/logo.png">
+    <meta property="og:url" content="https://gamersarena.store/premium">
+    <meta property="og:type" content="website">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Gamers Arena Premium Game Store">
+    <meta name="twitter:description" content="Secure, permanent personal accounts for the world's best AAA titles.">
+
+    <!-- Structured Data (JSON-LD) -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "Store",
       "name": "Gamers Arena Premium Store",
-      "url": "https://gamersarena.store/premium.html",
-      "image": "https://gamersarena.store/logo.png",
-      "priceRange": "$$"
+      "url": "https://gamersarena.store/premium",
+      "logo": "https://gamersarena.store/logo.png",
+      "description": "Secure, permanent personal Steam accounts for premium PC games.",
+      "priceRange": "₹₹"
     }
     </script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="cinematic.css">
+    
+    <style>
+        .store-info-section { max-width: 1100px; margin: 8rem auto; padding: 4rem 2rem; border-top: 1px solid var(--glass-border); color: var(--text-muted); line-height: 1.8; }
+        .store-info-section h2 { color: #fff; font-size: 1.8rem; margin-bottom: 1.2rem; font-weight: 900; }
+        .store-info-section p { margin-bottom: 1.5rem; }
+    </style>
 </head>
 <body>
-    <nav class="navbar" aria-label="Main Navigation">
-        <a href="index.html" class="logo-container" id="ga-logo" aria-label="Gamers Arena Home">
-            <img src="logo.png" alt="Gamers Arena Logo" class="logo-img" onerror="this.src='https://via.placeholder.com/50/000/fff?text=GA'" width="50" height="50">
-            <div>
-                <div class="logo-text">GAMERS ARENA</div>
-                <span class="logo-sub">PC GAMES ACCOUNTS STORE</span>
-            </div>
-        </a>
-        <div class="nav-links">
-            <a href="/">HOME</a>
-            <a href="library">FREE DROPS</a>
-            <a href="premium" style="color: var(--accent-blue);" aria-current="page">PREMIUM STORE</a>
-            <a href="premium_payment">MEMBERSHIPS</a>
-        </div>
-        <div class="navbar-right">
-            <div class="user-profile" id="user-display" style="display: none; align-items: center; gap: 1rem;">
-                <div style="text-align: right;">
-                    <div id="user-email" style="font-size: 0.8rem; font-weight: 700;">user@example.com</div>
-                    <div id="premium-badge" class="badge">Checking...</div>
+    <header>
+        <nav class="navbar" aria-label="Main Navigation">
+            <a href="/" class="logo-container" id="ga-logo">
+                <img src="logo.png" alt="Gamers Arena Official Logo" class="logo-img" width="50" height="50">
+                <div>
+                    <div class="logo-text">GAMERS ARENA</div>
+                    <span class="logo-sub">PREMIUM ACCOUNT STORE</span>
                 </div>
-                <button onclick="logout()" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.8rem;">Logout</button>
+            </a>
+            <div class="nav-links">
+                <a href="/">HOME</a>
+                <a href="library">FREE DROPS</a>
+                <a href="premium" style="color: var(--accent-blue);" aria-current="page">PREMIUM STORE</a>
+                <a href="premium_payment">MEMBERSHIPS</a>
             </div>
-            <div class="auth-buttons" id="auth-btns">
-                <a href="login" class="btn btn-secondary">Login</a>
-                <a href="login" class="btn btn-danger">Join Elite</a>
+            <div class="navbar-right">
+                <div class="user-profile" id="user-display" style="display: none; align-items: center; gap: 1rem;">
+                    <div style="text-align: right;">
+                        <div id="user-email" style="font-size: 0.8rem; font-weight: 700;">user@example.com</div>
+                        <div id="premium-badge" class="badge">Checking...</div>
+                    </div>
+                    <button onclick="logout()" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.8rem;">Logout</button>
+                </div>
+                <div class="auth-buttons" id="auth-btns">
+                    <a href="login" class="btn btn-secondary">Login</a>
+                    <a href="login" class="btn btn-danger">Join Elite</a>
+                </div>
             </div>
-        </div>
-    </nav>
+        </nav>
+    </header>
 
     <main>
         <section class="section" style="padding-top: 12rem;">
             <div class="section-header">
-                <div class="section-subtitle" data-content="subtitle">Exclusive Access</div>
-                <h1 class="section-title glowing-text" style="font-size: 4rem;" data-content="title">Personal Accounts of Premium Games</h1>
-                <p style="color: var(--text-muted); font-size: 1.2rem; max-width: 600px; margin: 0 auto; margin-bottom: 4rem;" data-content="desc">Secure, permanent access to the highest tier of PC gaming. Select a bundle below to proceed to checkout securely via Telegram.</p>
+                <div class="section-subtitle">Personal Ownership</div>
+                <h1 class="section-title glowing-text" style="font-size: clamp(2.5rem, 8vw, 4rem); font-weight: 900; margin-bottom: 1rem;">Premium Personal Accounts</h1>
+                <p style="color: var(--text-muted); font-size: 1.1rem; max-width: 650px; margin: 0 auto; margin-bottom: 4rem;">Secure permanent, personal Steam and Epic accounts for the industry's most sought-after titles. These are NOT shared accounts; they are yours to keep forever.</p>
                 
-                <div style="background: rgba(0, 229, 255, 0.05); border: 1px solid var(--accent-blue-dim); padding: 2.5rem; border-radius: 16px; max-width: 800px; margin: 0 auto; text-align: center; backdrop-filter: blur(10px); box-shadow: 0 0 30px rgba(0,0,0,0.5);">
-                    <span class="material-symbols-outlined" style="font-size: 3.5rem; color: var(--accent-blue); margin-bottom: 1rem; text-shadow: 0 0 20px var(--accent-blue-dim);" aria-hidden="true">verified_user</span>
-                    <h2 style="font-size: 1.8rem; margin-bottom: 1rem; color: #fff;">100% Personal & Secure</h2>
-                    <p style="color: var(--text-muted); font-size: 1.1rem; line-height: 1.6;">All the games purchased here will come directly to your <strong>personal Steam account</strong>. You can access all the games permanently in your own library.</p>
+                <div style="background: rgba(0, 229, 255, 0.05); border: 1px solid var(--accent-blue-dim); padding: 3rem 2rem; border-radius: 25px; max-width: 850px; margin: 0 auto; text-align: center; backdrop-filter: blur(15px); box-shadow: 0 20px 50px rgba(0,0,0,0.3);">
+                    <span class="material-symbols-outlined" style="font-size: 4rem; color: var(--accent-blue); margin-bottom: 1.5rem;" aria-hidden="true">verified</span>
+                    <h2 style="font-size: 2rem; margin-bottom: 1rem; color: #fff; font-weight: 900;">Complete Account Control</h2>
+                    <p style="color: var(--text-muted); font-size: 1.1rem; line-height: 1.8;">Every purchase from our Premium Store grants you a **unique, fresh account** with the game pre-loaded. Change emails, passwords, and enable 2FA for ultimate security. Play online, offline, and earn achievements on your own terms.</p>
                 </div>
             </div>
 
-            <div class="grid" id="premium-grid" aria-label="Premium Game Bundles">
-                <!-- Dynamically loaded premium bundles -->
+            <div class="grid" id="premium-grid" style="max-width: 1200px; margin: 6rem auto 0;" aria-label="Premium Product List">
+                <!-- Bundles loaded via JS -->
             </div>
+        </section>
+        
+        <!-- SEO Content Expansion (300+ Words) -->
+        <section class="store-info-section">
+            <article>
+                <h2>Premium Personal Accounts vs. Shared Drops</h2>
+                <p>While Gamers Arena is famous for our high-quality shared library, our Premium Store is dedicated to players who want absolute ownership. When you buy a personal account from this section, you are receiving a dedicated license that belongs only to you. Unlike the shared drops which require "Offline Mode" protocols, these premium accounts allow for full online functionality, multiplayer sessions, cloud saves, and achievement tracking on Steam or Epic Games. It's the ultimate way to own AAA titles like GTA V or Elden Ring without paying full retail price.</p>
+            </article>
+            <article>
+                <h2>Security & Account Integrity</h2>
+                <p>We understand that security is the top priority for premium buyers. Every account in our store is created using clean, verified methods. Upon purchase, you receive full login credentials and recovery information. We strongly recommend that all users change the linked email and enable two-factor authentication (2FA) immediately after deployment. This ensures that you have 100% control over your new digital asset. Our automated Telegram bot handles the delivery process to ensure your keys are transferred securely and instantly.</p>
+            </article>
+            <article>
+                <h2>Lifetime Access Guarantee</h2>
+                <p>Our commitment to quality means we only source accounts from trusted global partners. Every premium purchase is backed by our lifetime access guarantee. If you encounter any issues with the account login or license validity, our support team is available 24/7 to resolve the problem or provide a replacement asset. We specialize in "Mega Bundles"—combinations of top-tier games in a single account—to provide the best value for your gaming budget.</p>
+            </article>
+            <article>
+                <h2>Why Choose the Gamers Arena Store?</h2>
+                <p>The gaming market is flooded with unreliable account sellers. Gamers Arena sets itself apart through transparency and community trust. We are a verified ecosystem with over 10,000 active members. Our premium listings are curated based on community demand, ensuring that you always find the latest blockbuster releases and timeless classics in our store. By cutting out the middleman and leveraging our global network, we provide you with high-tier gaming experiences at a fraction of the standard cost.</p>
+            </article>
         </section>
     </main>
 
-    <footer style="padding: 4rem 5%; border-top: 1px solid var(--glass-border); background: var(--bg-dark); color: var(--text-muted); text-align: center;">
-        <div style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 3rem; margin-bottom: 3rem;">
-            <div>
-                <h3 style="color: #fff; margin-bottom: 1rem;">Gamers Arena</h3>
-                <p style="font-size: 0.9rem;">The premier destination for AAA game drops and shared premium accounts.</p>
+    <footer style="padding: 6rem 5% 4rem; border-top: 1px solid var(--glass-border); background: var(--bg-dark); color: var(--text-muted); text-align: center;">
+        <div style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 4rem; margin-bottom: 4rem;">
+            <div style="text-align: left;">
+                <h3 style="color: #fff; margin-bottom: 1.5rem; font-weight: 900;">GAMERS ARENA</h3>
+                <p style="font-size: 0.95rem; line-height: 1.8;">The world's premier destination for high-quality shared access and permanent personal gaming accounts.</p>
             </div>
-            <div>
-                <h3 style="color: #fff; margin-bottom: 1rem;">Company</h3>
-                <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.5rem; padding: 0;">
-                    <li><a href="about.html" style="color: var(--accent-blue); text-decoration: none;">About Us</a></li>
-                    <li><a href="terms.html" style="color: var(--accent-blue); text-decoration: none;">Terms & Conditions</a></li>
-                    <li><a href="privacy.html" style="color: var(--accent-blue); text-decoration: none;">Privacy Policy</a></li>
+            <div style="text-align: left;">
+                <h3 style="color: #fff; margin-bottom: 1.5rem;">STORE LINKS</h3>
+                <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 1rem;">
+                    <li><a href="about" style="color: var(--text-muted); text-decoration: none;">About Our Security</a></li>
+                    <li><a href="terms" style="color: var(--text-muted); text-decoration: none;">Terms of Purchase</a></li>
+                    <li><a href="privacy" style="color: var(--text-muted); text-decoration: none;">Data Protection</a></li>
                 </ul>
             </div>
-            <div>
-                <h3 style="color: #fff; margin-bottom: 1rem;">Resources</h3>
-                <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.5rem; padding: 0;">
-                    <li><a href="premium" style="color: var(--accent-blue); text-decoration: none;">Premium Store</a></li>
-                    <li><a href="premium_payment" style="color: var(--accent-blue); text-decoration: none;">Memberships</a></li>
+            <div style="text-align: left;">
+                <h3 style="color: #fff; margin-bottom: 1.5rem;">DIRECT HELP</h3>
+                <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 1rem;">
+                    <li><a href="https://t.me/gamersarena_support" style="color: var(--accent-blue); text-decoration: none;">Telegram Sales Hub</a></li>
+                    <li><a href="mailto:support@gamersarena.store" style="color: var(--accent-blue); text-decoration: none;">Official Email Support</a></li>
                 </ul>
             </div>
         </div>
-        <p style="border-top: 1px solid var(--glass-border); padding-top: 2rem;">&copy; 2026 Gamers Arena. Prices listed in INR (₹).</p>
+        <p style="border-top: 1px solid var(--glass-border); padding-top: 3rem; font-size: 0.85rem;">&copy; 2026 Gamers Arena HQ. All transactions are encrypted. | <a href="llms.txt" style="color: var(--accent-blue);">AI Policy</a></p>
     </footer>
 
     <script src="global.js" defer></script>
@@ -114,28 +153,26 @@
             .then(res => res.json())
             .then(data => {
                 if(data.success && data.bundles) renderBundles(data.bundles);
-                else throw new Error("Fallback required");
+                else throw new Error("API Fallback");
             })
             .catch(() => {
-                const premiumBundles = [
-                    { id: 'b1', name: 'GTA V + RDR2 Ultimate', price: '₹1499', image: 'logo.png', desc: 'Full permanent access to Rockstar\'s best open-world masterpieces.' }
-                ];
-                renderBundles(premiumBundles);
+                const fallback = [{ id: 'b1', name: 'Rockstar Masters Bundle', price: '₹1499', image: 'logo.png', desc: 'GTA V + RDR2 + GTA IV. Complete Rockstar experience on your personal account.' }];
+                renderBundles(fallback);
             });
 
         function renderBundles(bundles) {
             const grid = document.getElementById('premium-grid');
             grid.innerHTML = bundles.map(b => `
-                <a href="cart.html?bundle=${encodeURIComponent(b.name)}&price=${encodeURIComponent(b.price)}" class="card-3d" aria-label="Buy ${b.name} for ${b.price}">
-                    <div class="card-image-wrapper">
-                        <img src="${b.image || 'logo.png'}" alt="Cover art for ${b.name}" loading="lazy" onerror="this.src='logo.png'">
+                <a href="cart.html?bundle=${encodeURIComponent(b.name)}&price=${encodeURIComponent(b.price)}" class="card-3d" style="text-decoration:none;" aria-label="Purchase ${b.name}">
+                    <div class="card-image-wrapper" style="position:relative; aspect-ratio:16/9; overflow:hidden; border-radius:15px; margin-bottom:1.5rem;">
+                        <img src="${b.image || 'logo.png'}" alt="Cover for ${b.name}" style="width:100%; height:100%; object-fit:cover; transition:0.5s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'" loading="lazy" onerror="this.src='logo.png'">
                     </div>
-                    <div class="card-content">
-                        <h3 class="card-title">${b.name}</h3>
-                        <p class="card-desc">${b.desc || ''}</p>
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: auto;">
-                            <span class="card-price">${b.price}</span>
-                            <span class="material-symbols-outlined" style="color: var(--accent-blue);" aria-hidden="true">shopping_cart_checkout</span>
+                    <div class="card-content" style="padding:0 1rem;">
+                        <h3 class="card-title" style="color:#fff; font-size:1.4rem; margin-bottom:0.8rem; font-weight:900;">${b.name}</h3>
+                        <p class="card-desc" style="color:var(--text-muted); font-size:0.95rem; margin-bottom:1.5rem; line-height:1.5;">${b.desc || 'Exclusive personal account access. Permanent library inclusion.'}</p>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span class="card-price" style="color:var(--accent-blue); font-size:1.5rem; font-weight:900;">${b.price}</span>
+                            <span class="btn btn-secondary" style="padding:0.5rem 1rem; font-size:0.8rem;">SECURE BUY</span>
                         </div>
                     </div>
                 </a>

@@ -90,7 +90,7 @@ function setupBotLogic(botInstance) {
             if (state) {
                 state.plan = plan;
                 state.step = 'utr';
-                botInstance.sendMessage(chatId, `✅ Plan selected: *${plan.toUpperCase()}*\n\nNow, please enter your *UTR or Transaction ID* (8-25 characters):`, { parse_mode: 'Markdown' });
+                botInstance.sendMessage(chatId, `✅ Plan selected: *${plan.toUpperCase()}*\n\nNow, please enter your *UTR or Transaction ID* (8-128 characters):`, { parse_mode: 'Markdown' });
             }
         }
     });
@@ -115,14 +115,14 @@ function setupBotLogic(botInstance) {
         } 
         else if (state.step === 'utr') {
             const utr = msg.text.trim();
-            if (utr.length < 8 || utr.length > 25) {
-                return botInstance.sendMessage(chatId, "⚠️ *Invalid ID*: Please enter a valid UTR or Transaction ID (8-25 characters).");
+            if (utr.length < 8 || utr.length > 128) {
+                return botInstance.sendMessage(chatId, "⚠️ *Invalid ID*: Please enter a valid UTR or Transaction ID (8-128 characters).");
             }
 
             // Duplicate Check
             const { data: existing } = await supabase.from('payment_requests').select('*').eq('utr_id', utr).maybeSingle();
             if (existing) {
-                return botInstance.sendMessage(chatId, "🚨 *FRAUD ALERT*: This UTR is already in use!", mainKeyboard);
+                return botInstance.sendMessage(chatId, "🚨 *FRAUD ALERT*: This UTR/Transaction ID is already in use!", mainKeyboard);
             }
 
             // Insert to DB
@@ -134,9 +134,9 @@ function setupBotLogic(botInstance) {
             }]);
 
             if (error) {
-                botInstance.sendMessage(chatId, "❌ *Error*: Email not found or system failure.", mainKeyboard);
+                botInstance.sendMessage(chatId, "❌ *Error*: Email not found or system failure. Make sure you registered on the website first.", mainKeyboard);
             } else {
-                botInstance.sendMessage(chatId, "✅ *Submission Successful!*\n\nOur admin will verify this within 10-30 minutes. You will be notified here.", mainKeyboard);
+                botInstance.sendMessage(chatId, "✅ *Submission Successful!*\n\nOur admin will verify your payment (UTR: " + utr + ") within 10-30 minutes. You will receive a confirmation message here once verified. \n\n*Next Step*: Once you get the 'Verified' message, just go to the website and login again to see your status update! 🚀", mainKeyboard);
             }
             userStates.delete(chatId);
         }
@@ -297,7 +297,7 @@ app.post('/api/admin/payments/process', async (req, res) => {
 
         // Notify user via Telegram if ID is available
         if (request.telegram_id) {
-            bot.sendMessage(request.telegram_id, "💎 *Payment Verified!*\n\nYour account has been upgraded to the *ULTIMATE PLAN*. Please go to the website and *login again* to activate your unlimited access. Thanks for the purchase! 🚀", { parse_mode: 'Markdown' });
+            bot.sendMessage(request.telegram_id, "👤 *Account*: " + request.user_email + "\n🏆 *Plan*: ULTIMATE\n💎 *Status*: ✅ ACTIVE\n🔥 *Reveals Used Today*: 0\n\n✅ *Payment Verified!* \nYour account has been upgraded to the Ultimate Unlimited Plan. Please go to the website and *login again* to activate your access. Thanks for the purchase! 🚀", { parse_mode: 'Markdown' });
         }
     }
     res.json({ success: true, message: `Payment ${status} for plan ${plan}` });

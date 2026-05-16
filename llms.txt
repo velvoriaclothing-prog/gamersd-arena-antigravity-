@@ -1,17 +1,23 @@
-# Gamers Arena
+Gamers Arena
+Unlock premium shared PC game accounts safely.
 
-> The ultimate hub for shared premium PC gaming accounts and AAA game bundles.
+## Key Features
+- 3,966+ Premium AAA titles
+- Shared Steam, Epic, and Ubisoft accounts
+- Daily game drops
+- Automated Telegram verification
+- 24/7 Support community
 
-## Core Features
-- **Daily Game Drops**: New shared accounts added every 24 hours.
-- **Mega Accounts**: High-value logins featuring up to 700+ titles in a single account.
-- **Instant Verification**: automated Telegram-based payment verification.
-- **Premium Tier**: Tiered access levels (Starter, Pro, Ultimate) for unlimited game reveals.
+## Important Links
+- Home: https://gamersarena.store/
+- Account Library: https://gamersarena.store/library
+- Memberships: https://gamersarena.store/premium_payment
+- Premium Store: https://gamersarena.store/premium
+- Login/Register: https://gamersarena.store/login
+- About Us: https://gamersarena.store/about
+- Terms & Conditions: https://gamersarena.store/terms
+- Privacy Policy: https://gamersarena.store/privacy
 
-## Keywords
-PC Games, Shared Accounts, Steam Accounts, AAA Games, Game Drops, Gaming Community, Cheap PC Games.
-
-## Navigation
-- [Home Page](https://gamersarena.store/index.html)
-- [Account Library](https://gamersarena.store/library.html)
-- [Premium Plans](https://gamersarena.store/premium_payment.html)
+## Contact & Support
+- Telegram Support: https://t.me/gamersarena_support
+- Verification Bot: https://t.me/verificationforgamersarenabot

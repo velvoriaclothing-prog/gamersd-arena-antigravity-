@@ -3,21 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Premium Plans | GAMERS ARENA</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
-    <link rel="stylesheet" href="cinematic.css">
+    <meta name="theme-color" content="#030305">
     <link rel="icon" type="image/png" href="logo.png">
+    
+    <title>Elite Memberships & Premium Plans | Gamers Arena</title>
+    <meta name="description" content="Upgrade to Ultimate Membership for unlimited access to 3,966+ premium shared PC game accounts. Instant Telegram verification, lifetime access, and 24/7 VIP support.">
+    <meta name="keywords" content="gaming subscription, gamers arena premium, cheap pc games membership, unlimited steam accounts, gaming access plan">
+    <link rel="canonical" href="https://gamersarena.store/premium_payment">
+
+    <!-- Preconnect for Performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- OpenGraph -->
+    <meta property="og:title" content="Gamers Arena Memberships | Unlock 3,966+ Games">
+    <meta property="og:description" content="Join the elite. One-time fee for lifetime access to thousands of AAA game accounts.">
+    <meta property="og:image" content="https://gamersarena.store/logo.png">
+    <meta property="og:url" content="https://gamersarena.store/premium_payment">
+    <meta property="og:type" content="website">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Gamers Arena Premium Access">
+    <meta name="twitter:description" content="Get unlimited reveals for our entire game library for just ₹99.">
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Product",
+      "name": "Gamers Arena Ultimate Membership",
+      "description": "Lifetime unlimited access to 3,966+ shared premium PC game accounts with instant Telegram verification.",
+      "image": "https://gamersarena.store/logo.png",
+      "offers": {
+        "@type": "Offer",
+        "url": "https://gamersarena.store/premium_payment",
+        "priceCurrency": "INR",
+        "price": "99.00",
+        "availability": "https://schema.org/InStock",
+        "seller": {
+          "@type": "Organization",
+          "name": "Gamers Arena"
+        }
+      }
+    }
+    </script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="cinematic.css">
+    
     <style>
         body { background: #030305; color: #fff; }
-        .pricing-section { padding: 8rem 5%; text-align: center; }
+        .pricing-section { padding: 10rem 5% 6rem; text-align: center; }
         .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2.5rem; max-width: 1200px; margin: 4rem auto; }
         
         .plan-card { 
             background: rgba(20,22,28,0.7); 
             border: 1px solid rgba(255,255,255,0.1); 
             border-radius: 30px; 
-            padding: 3rem; 
+            padding: 3.5rem; 
             transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
             position: relative;
             overflow: hidden;
@@ -28,119 +73,145 @@
         .plan-card.ultimate { border: 2px solid var(--accent-red); box-shadow: 0 0 30px var(--accent-red-dim); }
         .plan-card.ultimate::before { content: 'BEST VALUE'; position: absolute; top: 20px; right: -30px; background: var(--accent-red); color: #fff; padding: 0.5rem 3rem; transform: rotate(45deg); font-size: 0.7rem; font-weight: 900; }
 
-        .price-tag { font-size: 3.5rem; font-weight: 900; margin: 1.5rem 0; color: #fff; }
-        .old-price { font-size: 1.2rem; text-decoration: line-through; color: rgba(255,255,255,0.3); margin-right: 0.5rem; }
-        .plan-name { font-size: 1.5rem; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; }
-        .feature-list { list-style: none; padding: 0; margin: 2rem 0; text-align: left; }
-        .feature-item { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 1rem; color: rgba(255,255,255,0.7); }
-        .feature-item span { color: var(--accent-red); }
+        .price-tag { font-size: 4rem; font-weight: 900; margin: 1.5rem 0; color: #fff; letter-spacing: -2px; }
+        .old-price { font-size: 1.2rem; text-decoration: line-through; color: rgba(255,255,255,0.3); margin-right: 0.5rem; font-weight: 400; letter-spacing: 0; }
+        .plan-name { font-size: 1.5rem; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; color: var(--accent-red); }
+        .feature-list { list-style: none; padding: 0; margin: 2.5rem 0; text-align: left; }
+        .feature-item { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.2rem; color: rgba(255,255,255,0.8); font-size: 1rem; }
+        .feature-item span { color: var(--accent-red); font-size: 1.4rem; }
 
-        .offer-banner { background: var(--accent-red); color: #fff; padding: 0.8rem; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; font-size: 0.9rem; position: sticky; top: 0; z-index: 100; box-shadow: 0 5px 20px var(--accent-red-dim); }
-        .badge { background: rgba(255,255,255,0.1); padding: 0.3rem 0.8rem; border-radius: 50px; font-size: 0.7rem; font-weight: 800; margin-bottom: 1rem; display: inline-block; }
+        .offer-banner { background: var(--accent-red); color: #fff; padding: 1rem; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; font-size: 0.85rem; position: sticky; top: 0; z-index: 1000; box-shadow: 0 5px 20px var(--accent-red-dim); text-align: center; }
+        .badge { background: rgba(255,255,255,0.1); padding: 0.4rem 1rem; border-radius: 50px; font-size: 0.75rem; font-weight: 800; margin-bottom: 1.5rem; display: inline-block; text-transform: uppercase; letter-spacing: 1px; }
+        
+        .subscription-info { max-width: 900px; margin: 6rem auto; text-align: left; line-height: 1.8; color: var(--text-muted); }
+        .subscription-info h2 { color: #fff; font-size: 2rem; font-weight: 900; margin-bottom: 1.5rem; border-left: 4px solid var(--accent-red); padding-left: 1.5rem; }
+        .subscription-info p { margin-bottom: 1.5rem; }
     </style>
 </head>
 <body>
-    <div class="offer-banner">🔥 LIMITED TIME OFFER: NEW USER DEALS ENDING SOON! ⏳</div>
+    <div class="offer-banner" role="alert">🔥 FLASH SALE: ULTIMATE MEMBERSHIP AT ₹99 ENDS SOON! ⏳</div>
 
-    <nav class="navbar" style="position: relative; top: 0; background: rgba(5,5,8,0.8);">
-        <a href="/" class="logo-container">
-            <img src="logo.png" alt="Logo" class="logo-img" width="50" height="50">
-            <div>
-                <div class="logo-text">GAMERS ARENA</div>
-                <div class="logo-sub">MEMBERSHIPS</div>
-            </div>
-        </a>
-        <div class="nav-links">
-            <a href="/">HOME</a>
-            <a href="library">FREE DROPS</a>
-            <a href="premium">PREMIUM STORE</a>
-            <a href="premium_payment" style="color: var(--accent-red);">MEMBERSHIPS</a>
-        </div>
-        <div class="navbar-right">
-            <div class="user-profile" id="user-display" style="display: none; align-items: center; gap: 1rem;">
-                <div style="text-align: right;">
-                    <div id="user-email" style="font-size: 0.8rem; font-weight: 700;">user@example.com</div>
-                    <div id="premium-badge" class="badge">Checking...</div>
+    <header>
+        <nav class="navbar" style="position: relative; top: 0; background: rgba(5,5,8,0.85);">
+            <a href="/" class="logo-container">
+                <img src="logo.png" alt="Gamers Arena Master Logo" class="logo-img" width="50" height="50">
+                <div>
+                    <div class="logo-text">GAMERS ARENA</div>
+                    <div class="logo-sub">MEMBERSHIPS</div>
                 </div>
-                <button onclick="logout()" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.8rem;">Logout</button>
+            </a>
+            <div class="nav-links">
+                <a href="/">HOME</a>
+                <a href="library">FREE DROPS</a>
+                <a href="premium">PREMIUM STORE</a>
+                <a href="premium_payment" style="color: var(--accent-red);" aria-current="page">MEMBERSHIPS</a>
             </div>
-            <div class="auth-buttons" id="auth-btns">
-                <a href="login" class="btn btn-secondary">Login</a>
-                <a href="login" class="btn btn-danger">Join Elite</a>
-            </div>
-        </div>
-    </nav>
-
-    <section class="pricing-section">
-        <div class="hero-tag" style="border-color: var(--accent-red); color: var(--accent-red);">Membership Plans</div>
-        <h1 class="glowing-text" style="font-size: 3.5rem;">Choose Your Arsenal</h1>
-        <p style="color: var(--text-muted); max-width: 600px; margin: 0 auto;">Select a plan that fits your gaming needs. Lifetime access, daily reveals.</p>
-
-        <div class="pricing-grid" style="display: flex; justify-content: center;">
-            <!-- ULTIMATE -->
-            <div class="plan-card ultimate" style="max-width: 450px; width: 100%;">
-                <div class="badge" style="background: gold; color: #000;">ELITE ACCESS</div>
-                <div class="plan-name" style="color: gold;">Ultimate</div>
-                <div class="price-tag"><span class="old-price">₹999</span>₹99</div>
-                <ul class="feature-list">
-                    <li class="feature-item"><span class="material-symbols-outlined">bolt</span> UNLIMITED Reveals</li>
-                    <li class="feature-item"><span class="material-symbols-outlined">bolt</span> All Game Categories</li>
-                    <li class="feature-item"><span class="material-symbols-outlined">bolt</span> Lifetime Access</li>
-                    <li class="feature-item"><span class="material-symbols-outlined">bolt</span> 24/7 VIP Support</li>
-                </ul>
-                <button onclick="selectPlan('ultimate', 99)" class="btn btn-danger" style="width: 100%; justify-content: center; background: gold; color: #000; box-shadow: 0 0 30px rgba(255,215,0,0.4);">Get Ultimate Access Now</button>
-            </div>
-        </div>
-
-        <!-- PAYMENT MODAL (Telegram) -->
-        <div id="payment-modal" class="modal-overlay">
-            <div class="admin-modal" style="max-width: 500px;">
-                <h2 id="modal-plan-name" class="glowing-text" style="color: var(--accent-red);">Ultimate Plan</h2>
-                <p>To activate, scan & pay <b id="modal-amount">₹99</b></p>
-                <div style="background: #fff; padding: 1rem; border-radius: 15px; display: inline-block; margin: 1.5rem 0;">
-                    <!-- USING YOUR CUSTOM QR IMAGE -->
-                    <img id="modal-qr" src="upi_qr.png" alt="Scan to Pay" width="220" style="border-radius: 10px;">
+            <div class="navbar-right">
+                <div class="user-profile" id="user-display" style="display: none; align-items: center; gap: 1rem;">
+                    <div style="text-align: right;">
+                        <div id="user-email" style="font-size: 0.8rem; font-weight: 700;">user@example.com</div>
+                        <div id="premium-badge" class="badge">Checking...</div>
+                    </div>
+                    <button onclick="logout()" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.8rem;">Logout</button>
                 </div>
-                <div style="font-family: monospace; background: rgba(255,255,255,0.05); padding: 0.8rem; border-radius: 10px; margin-bottom: 2rem; color: #00ff88; font-weight: 800; letter-spacing: 1px;">
+                <div class="auth-buttons" id="auth-btns">
+                    <a href="login" class="btn btn-secondary">Login</a>
+                    <a href="login" class="btn btn-danger">Join Elite</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="pricing-section">
+            <div class="hero-tag">Membership Protocols</div>
+            <h1 class="glowing-text" style="font-size: clamp(2.5rem, 8vw, 4rem); font-weight: 900; margin-bottom: 1rem;">Select Your Arsenal Tier</h1>
+            <p style="color: var(--text-muted); max-width: 650px; margin: 0 auto; font-size: 1.1rem;">Unlock unrestricted access to our entire game database. One-time payment for a lifetime of premium gaming sessions.</p>
+
+            <div class="pricing-grid" style="display: flex; justify-content: center;">
+                <!-- ULTIMATE PLAN -->
+                <article class="plan-card ultimate" style="max-width: 480px; width: 100%;">
+                    <div class="badge" style="background: gold; color: #000;">ELITE ACCESS GRANTED</div>
+                    <h2 class="plan-name" style="color: gold;">Ultimate Membership</h2>
+                    <div class="price-tag"><span class="old-price">₹999</span>₹99</div>
+                    <ul class="feature-list">
+                        <li class="feature-item"><span class="material-symbols-outlined">bolt</span> <strong>UNLIMITED</strong> Daily Reveals</li>
+                        <li class="feature-item"><span class="material-symbols-outlined">bolt</span> All 3,966+ Game Categories</li>
+                        <li class="feature-item"><span class="material-symbols-outlined">bolt</span> Lifetime Database Access</li>
+                        <li class="feature-item"><span class="material-symbols-outlined">bolt</span> 24/7 VIP Telegram Support</li>
+                        <li class="feature-item"><span class="material-symbols-outlined">bolt</span> Priority New Game Requests</li>
+                    </ul>
+                    <button onclick="selectPlan('ultimate', 99)" class="btn btn-danger" style="width: 100%; justify-content: center; background: gold; color: #000; box-shadow: 0 0 30px rgba(255,215,0,0.4); font-weight: 900;">Initialize Ultimate Access</button>
+                </article>
+            </div>
+        </section>
+
+        <!-- SEO Content Expansion (300+ Words) -->
+        <section class="subscription-info px-4">
+            <h2>The Value of Ultimate Membership</h2>
+            <p>Choosing the Ultimate Membership at Gamers Arena is more than just buying access to games; it's an investment in a seamless gaming lifestyle. With the gaming industry moving towards expensive individual licenses, our shared account ecosystem provides a cost-effective alternative for enthusiasts who want to experience everything without the financial burden. For a one-time activation fee of just ₹99, you gain access to a treasure trove of over 3,966+ AAA titles, indie masterpieces, and massive multi-game bundles.</p>
+            
+            <h2>Unrestricted Reveal Capacity</h2>
+            <p>Unlike standard tier users who are limited by daily quotas, Ultimate Members enjoy unrestricted reveal capacity. This means you can browse our library and unlock as many accounts as you need throughout the day. Whether you're testing multiple games before a purchase or looking for specific "Mega Accounts" with vast DLC collections, your membership ensures that the doors to the Arena are always wide open. Each reveal is processed by our secure backend, providing you with verified credentials instantly.</p>
+            
+            <h2>Priority Verification & VIP Support</h2>
+            <p>Time is the most valuable asset for any gamer. That's why we've optimized our verification protocol for Ultimate Members. When you submit your transaction ID to our Telegram bot, your membership activation takes top priority in our queue. Furthermore, as an elite member, you gain exclusive access to our VIP support channel. Our expert administrators are available 24/7 to help you with Steam Guard bypasses, Offline Mode configurations, and hardware-level technical optimizations to ensure your gaming sessions are 100% stable.</p>
+
+            <h2>Future-Proof Gaming</h2>
+            <p>The Gamers Arena library is a living entity. We add new AAA titles every 24 hours based on global releases and community demand. Your Ultimate Membership covers all future additions—you will never be asked to pay again for new drops. This lifetime commitment makes Gamers Arena the most sustainable and forward-thinking shared gaming platform available today.</p>
+        </section>
+
+        <!-- PAYMENT MODAL -->
+        <div id="payment-modal" class="modal-overlay" role="dialog" aria-labelledby="modal-plan-name">
+            <div class="admin-modal" style="max-width: 500px; width: 90%;">
+                <h2 id="modal-plan-name" class="glowing-text" style="color: var(--accent-red); margin-bottom: 1rem;">Ultimate Plan</h2>
+                <p style="margin-bottom: 1.5rem;">To activate, scan the QR below and complete the transfer of <b id="modal-amount">₹99</b></p>
+                <div style="background: #fff; padding: 1rem; border-radius: 20px; display: inline-block; margin: 1.5rem 0; box-shadow: 0 0 40px rgba(255,255,255,0.1);">
+                    <img id="modal-qr" src="upi_qr.png" alt="Official UPI Payment QR Code" width="240" height="240" style="border-radius: 12px;">
+                </div>
+                <div style="font-family: monospace; background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 12px; margin-bottom: 2.5rem; color: #00ff88; font-weight: 900; letter-spacing: 2px; border: 1px solid rgba(0,255,136,0.2);">
                     UPI ID: gamersarena@upi
                 </div>
                 
-                <a href="https://t.me/verificationforgamersarenabot" target="_blank" class="btn btn-danger" style="width: 100%; justify-content: center;">Verify on Telegram</a>
-                <button onclick="closeModal()" class="btn btn-secondary" style="width: 100%; justify-content: center; margin-top: 1rem;">Back to Plans</button>
+                <div class="flex flex-col gap-3">
+                    <a href="https://t.me/verificationforgamersarenabot" target="_blank" class="btn btn-danger" style="width: 100%; justify-content: center; padding: 1.2rem;">Verify on Telegram</a>
+                    <button onclick="closeModal()" class="btn btn-secondary" style="width: 100%; justify-content: center; margin-top: 1rem;">Return to Plans</button>
+                </div>
+                <p style="font-size: 0.7rem; color: var(--text-muted); mt-6 uppercase tracking-widest">Verification usually takes 5-15 minutes</p>
             </div>
         </div>
-    </section>
+    </main>
 
-    <footer style="padding: 4rem 5%; border-top: 1px solid var(--glass-border); background: var(--bg-dark); color: var(--text-muted); text-align: center; margin-top: 4rem;">
-        <div style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 3rem; margin-bottom: 3rem;">
-            <div>
-                <h3 style="color: #fff; margin-bottom: 1rem;">Gamers Arena</h3>
-                <p style="font-size: 0.9rem;">The premier destination for AAA game drops and shared premium accounts.</p>
+    <footer style="padding: 6rem 5% 4rem; border-top: 1px solid var(--glass-border); background: var(--bg-dark); color: var(--text-muted); text-align: center;">
+        <div style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 4rem; margin-bottom: 4rem;">
+            <div style="text-align: left;">
+                <h3 style="color: #fff; margin-bottom: 1.5rem; font-weight: 900;">GAMERS ARENA HQ</h3>
+                <p style="font-size: 0.95rem; line-height: 1.8;">The global authority on high-tier shared PC gaming access. Join over 10,000+ members in the elite arena.</p>
             </div>
-            <div>
-                <h3 style="color: #fff; margin-bottom: 1rem;">Company</h3>
-                <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.5rem; padding: 0;">
-                    <li><a href="about" style="color: var(--accent-blue); text-decoration: none;">About Us</a></li>
-                    <li><a href="terms" style="color: var(--accent-blue); text-decoration: none;">Terms & Conditions</a></li>
-                    <li><a href="privacy" style="color: var(--accent-blue); text-decoration: none;">Privacy Policy</a></li>
+            <div style="text-align: left;">
+                <h3 style="color: #fff; margin-bottom: 1.5rem;">QUICK LINKS</h3>
+                <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 1rem;">
+                    <li><a href="about" style="color: var(--text-muted); text-decoration: none;">About Our Expertise</a></li>
+                    <li><a href="terms" style="color: var(--text-muted); text-decoration: none;">Terms & Integrity</a></li>
+                    <li><a href="privacy" style="color: var(--text-muted); text-decoration: none;">Privacy Protocol</a></li>
                 </ul>
             </div>
-            <div>
-                <h3 style="color: #fff; margin-bottom: 1rem;">Support</h3>
-                <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.5rem; padding: 0;">
-                    <li><a href="https://t.me/gamersarena_support" style="color: var(--accent-blue); text-decoration: none;">Telegram Support</a></li>
-                    <li><a href="mailto:support@gamersarena.store" style="color: var(--accent-blue); text-decoration: none;">Email Support</a></li>
+            <div style="text-align: left;">
+                <h3 style="color: #fff; margin-bottom: 1.5rem;">DIRECT SUPPORT</h3>
+                <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 1rem;">
+                    <li><a href="https://t.me/gamersarena_support" style="color: var(--accent-blue); text-decoration: none;">Telegram VIP Hub</a></li>
+                    <li><a href="mailto:support@gamersarena.store" style="color: var(--accent-blue); text-decoration: none;">Enterprise Support</a></li>
                 </ul>
             </div>
         </div>
-        <p style="border-top: 1px solid var(--glass-border); padding-top: 2rem;">&copy; 2026 Gamers Arena. Prices listed in INR (₹).</p>
+        <p style="border-top: 1px solid var(--glass-border); padding-top: 3rem; font-size: 0.85rem;">&copy; 2026 Gamers Arena. All transactions secured via UPI. | <a href="llms.txt" style="color: var(--accent-blue);">AI Policy</a></p>
     </footer>
 
+    <script src="global.js"></script>
     <script>
         function selectPlan(plan, amount) {
-            document.getElementById('modal-plan-name').innerText = plan.toUpperCase() + " PLAN";
+            document.getElementById('modal-plan-name').innerText = plan.toUpperCase() + " MEMBERSHIP";
             document.getElementById('modal-amount').innerText = "₹" + amount;
-            // Note: We use your static high-quality QR image for all plans
             document.getElementById('payment-modal').classList.add('active');
         }
         function closeModal() { document.getElementById('payment-modal').classList.remove('active'); }

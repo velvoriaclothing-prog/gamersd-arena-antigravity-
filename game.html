@@ -3,105 +3,174 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game Details | GAMERS ARENA</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+    <meta name="theme-color" content="#030305">
+    <link rel="icon" type="image/png" href="logo.png">
+    
+    <title>Game Deployment Access | Gamers Arena Official</title>
+    <meta name="description" content="Securely reveal credentials for premium shared PC game accounts. Verified access for AAA titles including Steam and Epic Games drops. Instant deployment protocol.">
+    <meta name="keywords" content="game reveal, steam credentials, epic games login, shared account access, gaming deployment">
+    <link rel="canonical" href="https://gamersarena.store/game">
+
+    <!-- Preconnect for Performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- OpenGraph -->
+    <meta property="og:title" content="Verified Game Access | Gamers Arena">
+    <meta property="og:description" content="Reveal credentials for your selected AAA title. Secure and verified shared account access.">
+    <meta property="og:image" content="https://gamersarena.store/logo.png">
+    <meta property="og:url" content="https://gamersarena.store/game">
+    <meta property="og:type" content="website">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Secure Game Credential Reveal">
+    <meta name="twitter:description" content="Instant access to verified shared gaming accounts.">
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": "Game Deployment Portal",
+      "description": "The official interface for revealing shared account credentials for members of Gamers Arena.",
+      "breadcrumb": "Home > Library > Game Reveal"
+    }
+    </script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" media="print" onload="this.media='all'">
     <link rel="stylesheet" href="aura.css">
+    
+    <style>
+        .reveal-info-section { max-width: 1000px; margin: 6rem auto; padding: 4rem 2rem; border-top: 1px solid var(--glass-border); color: var(--text-muted); line-height: 1.8; }
+        .reveal-info-section h2 { color: #fff; font-size: 1.8rem; margin-bottom: 1.2rem; font-weight: 900; }
+        .reveal-info-section p { margin-bottom: 1.5rem; }
+    </style>
 </head>
 <body>
-    <nav class="navbar">
-        <a href="/" class="logo-container">
-            <img src="logo.png" alt="Logo" class="logo-img" width="50" height="50">
-            <div>
-                <div class="logo-text">GAMERS ARENA</div>
-                <div class="logo-sub">PREMIUM DROPS</div>
+    <header>
+        <nav class="navbar">
+            <a href="/" class="logo-container">
+                <img src="logo.png" alt="Gamers Arena Official" class="logo-img" width="50" height="50">
+                <div>
+                    <div class="logo-text">GAMERS ARENA</div>
+                    <div class="logo-sub">SECURE ACCESS</div>
+                </div>
+            </a>
+            <div class="nav-links">
+                <a href="/">HOME</a>
+                <a href="library">LIBRARY</a>
+                <a href="premium">PREMIUM STORE</a>
+                <a href="premium_payment">MEMBERSHIPS</a>
             </div>
-        </a>
-        <div class="nav-links">
-            <a href="/">Home</a>
-            <a href="library">Library</a>
-            <a href="premium">Premium Store</a>
-            <a href="premium_payment">Memberships</a>
-        </div>
-        <div class="user-profile" id="user-display" style="display: flex; align-items: center; gap: 1rem;">
-            <div style="text-align: right;">
-                <div id="user-email" style="font-size: 0.8rem; font-weight: 700;">user@example.com</div>
-                <div id="premium-badge" class="badge">Checking...</div>
+            <div class="user-profile" id="user-display" style="display: flex; align-items: center; gap: 1rem;">
+                <div style="text-align: right;">
+                    <div id="user-email" style="font-size: 0.8rem; font-weight: 700;">user@example.com</div>
+                    <div id="premium-badge" class="badge">Checking...</div>
+                </div>
+                <button onclick="logout()" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.8rem;">Logout</button>
             </div>
-            <button onclick="logout()" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.8rem;">Logout</button>
-        </div>
-    </nav>
+        </nav>
+    </header>
 
-    <div class="container">
-        <a href="library.html" class="btn btn-outline" style="display: inline-block; margin-bottom: 2rem;">← Back to library</a>
+    <main class="container">
+        <a href="library.html" class="btn btn-outline" style="display: inline-flex; align-items: center; gap: 0.5rem; margin-bottom: 2.5rem;">
+            <span class="material-symbols-outlined">arrow_back</span> Return to Library
+        </a>
         
-        <div class="game-details-layout">
-            <img src="logo.png" id="game-img" class="game-cover" alt="Game Cover">
+        <section class="game-details-layout">
+            <img src="logo.png" id="game-img" class="game-cover" alt="Official Asset Cover" width="300" height="400">
             
             <div class="game-info">
-                <h1 id="game-title" style="font-size: 2rem; font-weight: 900; margin-bottom: 0.5rem;">Loading...</h1>
-                <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Enjoy</p>
+                <h1 id="game-title" style="font-size: clamp(2rem, 5vw, 2.5rem); font-weight: 900; margin-bottom: 1rem;">Initializing Asset...</h1>
+                <p style="color: var(--text-muted); margin-bottom: 2rem; font-size: 1.1rem;">Verified AAA Deployment Protocol Active.</p>
                 
-                <div style="display: flex; gap: 1.5rem; color: var(--text-muted); font-size: 0.85rem; margin-bottom: 2rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
-                    <span style="display: flex; align-items: center; gap: 0.5rem;"><span class="material-symbols-outlined" style="font-size: 16px;">person</span> Posted by admin</span>
-                    <span style="display: flex; align-items: center; gap: 0.5rem;"><span class="material-symbols-outlined" style="font-size: 16px;">calendar_today</span> Today</span>
+                <div style="display: flex; gap: 2rem; color: var(--text-muted); font-size: 0.85rem; margin-bottom: 2rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1.5rem; flex-wrap: wrap;">
+                    <span style="display: flex; align-items: center; gap: 0.5rem;"><span class="material-symbols-outlined" style="font-size: 16px; color: var(--accent-blue);">verified_user</span> Authenticated by HQ Admin</span>
+                    <span style="display: flex; align-items: center; gap: 0.5rem;"><span class="material-symbols-outlined" style="font-size: 16px; color: var(--accent-blue);">history</span> Database Status: Current</span>
                 </div>
 
-                <div class="alert-box">
-                    <div class="alert-title"><span class="material-symbols-outlined">warning</span> Important notice</div>
-                    <div class="alert-text">If you see a "Something went wrong" message pop up, don't worry — that doesn't mean the account isn't working. The account is fine, but too many people are trying at once. Wait a moment and try again later.</div>
+                <div class="alert-box" role="alert">
+                    <div class="alert-title"><span class="material-symbols-outlined">info</span> System Traffic Notice</div>
+                    <div class="alert-text">High concurrent usage may cause temporary login delays. If you encounter a "Something went wrong" message on the client, wait 60 seconds for the session pool to refresh and try again. The account status is verified active.</div>
                 </div>
 
-                <div class="alert-box" style="border-color: rgba(255, 100, 150, 0.3);">
-                    <div class="alert-title" style="color: #ff8fa3;"><span class="material-symbols-outlined">lock</span> Shared access</div>
-                    <div class="alert-text">Do not change passwords, enable Steam Guard, or alter account settings. Modifications can lock accounts for everyone. Use responsibly.</div>
+                <div class="alert-box" style="border-color: rgba(255, 100, 150, 0.3);" role="alert">
+                    <div class="alert-title" style="color: #ff8fa3;"><span class="material-symbols-outlined">policy</span> Usage Integrity Policy</div>
+                    <div class="alert-text">Access is granted for personal gameplay in <b>Offline Mode</b> only. Attempting to change credentials, activate Steam Guard, or modify recovery settings will result in an automated hardware ban and permanent account revocation.</div>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <div class="reveal-banner" id="timer-box">
-            <h2>Unlock credentials</h2>
-            <p style="color: rgba(255,255,255,0.7);">Reveal the username and password when you are ready.</p>
-            <button class="btn-reveal" onclick="startTimer()" id="btn-start"><span class="material-symbols-outlined" style="vertical-align: middle; margin-right: 0.5rem;">lock_open</span> Show credentials (<span id="countdown">30</span>s)</button>
-        </div>
+        <section class="reveal-banner" id="timer-box">
+            <h2>Deployment Authorization</h2>
+            <p style="color: rgba(255,255,255,0.7); margin-bottom: 2rem;">Click to reveal the encrypted session keys for your selected asset.</p>
+            <button class="btn-reveal" onclick="startTimer()" id="btn-start" style="padding: 1.2rem 3rem;">
+                <span class="material-symbols-outlined" style="vertical-align: middle; margin-right: 0.5rem;">lock_open</span> Authorize Reveal (<span id="countdown">30</span>s)
+            </button>
+        </section>
 
-        <div class="creds-container" id="creds-box" style="display: none;">
-            <h3 style="font-size: 1.5rem; font-weight: bold; margin-bottom: 1.5rem; color: #00ff88;">✓ Credentials Unlocked</h3>
+        <section class="creds-container" id="creds-box" style="display: none;">
+            <div style="text-align: center; margin-bottom: 3rem;">
+                <h3 style="font-size: 1.8rem; font-weight: 900; color: #00ff88; letter-spacing: 1px;">✓ SESSION KEYS REVEALED</h3>
+                <p style="color: var(--text-muted); margin-top: 0.5rem;">Copy and paste into your game client. Secure your session immediately.</p>
+            </div>
             
             <div id="credentials-list-display">
-                <!-- Multiple accounts will be injected here -->
+                <!-- Accounts injected via JS -->
             </div>
 
-            <div class="alert-box" style="border-color: rgba(255, 100, 150, 0.3); margin-top: 2rem; margin-bottom: 0;">
-                <div class="alert-title" style="color: #ff8fa3;"><span class="material-symbols-outlined">lock</span> Keep private</div>
-                <div class="alert-text">Don't redistribute these credentials. Misuse hurts the whole community.</div>
+            <div class="alert-box" style="border-color: rgba(255, 100, 150, 0.3); margin-top: 3rem; margin-bottom: 0;">
+                <div class="alert-title" style="color: #ff8fa3;"><span class="material-symbols-outlined">security</span> Community Trust</div>
+                <div class="alert-text">Keep these session keys strictly private. Redistribution of Arena assets compromises the security of the entire shared ecosystem.</div>
             </div>
-        </div>
-    </div>
+        </section>
+        
+        <!-- SEO Content Expansion (300+ Words) -->
+        <section class="reveal-info-section">
+            <article>
+                <h2>Understanding the Deployment Process</h2>
+                <p>When you authorize a credential reveal on Gamers Arena, you are accessing a managed session from our verified account pool. Our system is designed to provide seamless access to high-tier AAA titles while maintaining the security and integrity of the original software license. This process involves a secure handshake between your member profile and our encrypted database, ensuring that session keys are delivered only to authorized elite members.</p>
+            </article>
+            <article>
+                <h2>Mandatory Offline Security Protocol</h2>
+                <p>The most critical step in using our shared accounts is the transition to Offline Mode. Once you have logged into the Steam or Epic Games client using the provided session keys, you must immediately set the client to offline. This protocol prevents licensing conflicts between community members and ensures that your gameplay remains 100% stable and uninterrupted. Playing online on a shared account is a violation of our community standards and can lead to account locks that affect all users in the arena.</p>
+            </article>
+            <article>
+                <h2>Account Maintenance & Reliability</h2>
+                <p>We pride ourselves on the reliability of our drops. Each account is subjected to a rigorous verification sweep every 24 hours. Our administrators check for credential validity, regional locks, and game availability. If an account is found to be malfunctioning or locked, it is immediately removed from the library and replaced with a fresh asset. This continuous maintenance cycle is what makes Gamers Arena the most trusted name in the shared gaming industry.</p>
+            </article>
+            <article>
+                <h2>Troubleshooting Common Access Issues</h2>
+                <p>Due to the high demand for AAA titles, users may occasionally see "Something went wrong" or "Login limit reached" messages on the game client. This is a standard security feature of major gaming platforms to prevent botting. If this occurs, do not panic. Your membership is still active, and the account is functional. Simply wait for the session pool to refresh (usually 1-2 minutes) and try again. Our Telegram support team is also available 24/7 to assist with any persistent deployment hurdles.</p>
+            </article>
+        </section>
+    </main>
 
-    <footer style="padding: 4rem 5%; border-top: 1px solid var(--glass-border); background: var(--bg-dark); color: var(--text-muted); text-align: center; margin-top: 4rem;">
-        <div style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 3rem; margin-bottom: 3rem;">
-            <div>
-                <h3 style="color: #fff; margin-bottom: 1rem;">Gamers Arena</h3>
-                <p style="font-size: 0.9rem;">The premier destination for AAA game drops and shared premium accounts.</p>
+    <footer style="padding: 6rem 5% 4rem; border-top: 1px solid var(--glass-border); background: var(--bg-dark); color: var(--text-muted); text-align: center;">
+        <div style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 4rem; margin-bottom: 4rem;">
+            <div style="text-align: left;">
+                <h3 style="color: #fff; margin-bottom: 1.5rem; font-weight: 900;">GAMERS ARENA</h3>
+                <p style="font-size: 0.95rem; line-height: 1.8;">The world's premier destination for high-quality shared PC gaming access. Join the elite community today.</p>
             </div>
-            <div>
-                <h3 style="color: #fff; margin-bottom: 1rem;">Company</h3>
-                <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.5rem; padding: 0;">
-                    <li><a href="about.html" style="color: var(--accent-blue); text-decoration: none;">About Us</a></li>
-                    <li><a href="terms.html" style="color: var(--accent-blue); text-decoration: none;">Terms & Conditions</a></li>
-                    <li><a href="privacy.html" style="color: var(--accent-blue); text-decoration: none;">Privacy Policy</a></li>
+            <div style="text-align: left;">
+                <h3 style="color: #fff; margin-bottom: 1.5rem;">INTERNAL LINKS</h3>
+                <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 0.8rem;">
+                    <li><a href="library" style="color: var(--text-muted); text-decoration: none;">Browse Library</a></li>
+                    <li><a href="about" style="color: var(--text-muted); text-decoration: none;">About Our Security</a></li>
+                    <li><a href="terms" style="color: var(--text-muted); text-decoration: none;">Legal Protocols</a></li>
                 </ul>
             </div>
-            <div>
-                <h3 style="color: #fff; margin-bottom: 1rem;">Resources</h3>
-                <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.5rem; padding: 0;">
-                    <li><a href="premium" style="color: var(--accent-blue); text-decoration: none;">Premium Store</a></li>
-                    <li><a href="premium_payment" style="color: var(--accent-blue); text-decoration: none;">Memberships</a></li>
+            <div style="text-align: left;">
+                <h3 style="color: #fff; margin-bottom: 1.5rem;">SUPPORT HUB</h3>
+                <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 0.8rem;">
+                    <li><a href="https://t.me/gamersarena_support" style="color: var(--accent-blue); text-decoration: none;">Telegram VIP Portal</a></li>
+                    <li><a href="mailto:support@gamersarena.store" style="color: var(--accent-blue); text-decoration: none;">Direct Email Support</a></li>
                 </ul>
             </div>
         </div>
-        <p style="border-top: 1px solid var(--glass-border); padding-top: 2rem;">&copy; 2026 Gamers Arena. Prices listed in INR (₹).</p>
+        <p style="border-top: 1px solid var(--glass-border); padding-top: 3rem; font-size: 0.8rem;">&copy; 2026 Gamers Arena HQ. All assets verified for deployment. | <a href="llms.txt" style="color: var(--accent-blue);">AI Policy</a></p>
     </footer>
 
     <script src="global.js"></script>
@@ -110,52 +179,46 @@
         const gameId = urlParams.get('id');
         let user = JSON.parse(localStorage.getItem('ga_user') || '{}');
 
-        // 1. Initial UI Load (Instant)
         function init() {
             if (!user.email) { window.location.href = 'login.html'; return; }
-            updateUI(); // Show what we have in localStorage first
-            refreshUser(); // Then update from server
+            updateUI(); 
+            refreshUser();
         }
 
-        // 2. Update UI Elements
         function updateUI() {
             try {
                 const emailEl = document.getElementById('user-email');
                 const badgeEl = document.getElementById('premium-badge');
-                
-                if (emailEl) emailEl.innerText = user.email || 'Account';
+                if (emailEl) emailEl.innerText = user.email || 'User';
                 if (badgeEl) {
                     if (user.is_premium) {
                         const planName = (user.current_plan || 'Premium').toUpperCase();
-                        badgeEl.innerText = "👑 SUBSCRIBED (" + planName + ")";
+                        badgeEl.innerText = "👑 " + planName;
                         badgeEl.style.background = "gold";
                         badgeEl.style.color = "#000";
                     } else {
-                        badgeEl.innerText = "❌ NOT SUBSCRIBED";
+                        badgeEl.innerText = "❌ INACTIVE";
                         badgeEl.style.background = "var(--accent-red)";
                     }
                 }
                 renderUI();
-            } catch (e) { console.error("UpdateUI Error:", e); }
+            } catch (e) { console.error("UI Error:", e); }
         }
 
-        // 3. Refresh from Server
         async function refreshUser() {
             try {
                 const res = await fetch('/api/auth/login', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
+                    method: 'POST', headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({ email: user.email, password: user.password })
                 });
                 const data = await res.json();
                 if (data.success) {
-                    const password = user.password;
-                    user = data.user;
-                    user.password = password;
+                    const pass = user.password;
+                    user = data.user; user.password = pass;
                     localStorage.setItem('ga_user', JSON.stringify(user));
                     updateUI();
                 }
-            } catch (e) { console.error("Refresh Error:", e); }
+            } catch (e) {}
         }
 
         function logout() {
@@ -169,14 +232,11 @@
             const timerBox = document.getElementById('timer-box');
             if (!timerBox) return;
             
-            // Fast Check: If premium, show reveal button instantly
             const isAdmin = user.role === 'admin' || user.email === 'admin@gamersarena.store';
             if (user.email && !user.is_premium && !isAdmin) {
-                window.location.href = 'premium_payment.html';
-                return;
+                window.location.href = 'premium_payment.html'; return;
             }
 
-            // Load Game Data
             if (gameId && !document.getElementById('game-title').innerText.includes(gameId)) {
                 fetch('/api/games')
                     .then(res => res.json())
@@ -191,23 +251,20 @@
 
             if (isAdmin) {
                 timerBox.innerHTML = `
-                    <div style="background: rgba(0, 229, 255, 0.1); border: 2px solid #00e5ff; padding: 2rem; border-radius: 20px; text-align: center;">
-                        <div class="badge" style="background: #00e5ff; color: #000; margin-bottom: 1rem;">⚡ ADMIN ACCESS</div>
-                        <h2 style="color: #fff; margin-bottom: 0.5rem;">Privileged Mode</h2>
-                        <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Daily Reveals Left: <b style="color: #00e5ff;">UNLIMITED</b></p>
-                        <button class="btn btn-danger" onclick="revealCreds()" style="width: 100%; justify-content: center; font-weight:900; background: #00e5ff; color: #000; border: none;">REVEAL NOW (ADMIN) ⚡</button>
+                    <div style="background: rgba(0, 229, 255, 0.1); border: 2px solid #00e5ff; padding: 2.5rem; border-radius: 20px;">
+                        <div class="badge" style="background: #00e5ff; color: #000; margin-bottom: 1.5rem;">⚡ ADMIN OVERRIDE</div>
+                        <h2 style="margin-bottom: 0.5rem;">Access Privilege Granted</h2>
+                        <p style="color: var(--text-muted); margin-bottom: 2rem;">Authorized for unlimited session reveal.</p>
+                        <button class="btn btn-danger" onclick="revealCreds()" style="width: 100%; justify-content: center; background: #00e5ff; color: #000; border: none; font-weight: 900;">IMMEDIATE REVEAL ⚡</button>
                     </div>
                 `;
                 return;
             }
 
-            // If we are still refreshing from server, wait a tiny bit for renderUI to be called again
             if (user.is_premium && !user.current_plan) return;
 
-            // ULTIMATE SPEED: Auto-reveal for Ultimate users
             if (user.current_plan === 'ultimate') {
-                revealCreds(true); 
-                return;
+                revealCreds(true); return;
             }
 
             const limits = { 'starter': 5, 'pro': 12, 'ultimate': '∞' };
@@ -216,77 +273,60 @@
             const remaining = limit === '∞' ? '∞' : (limit - (user.reveals_today || 0));
 
             timerBox.innerHTML = `
-                <div style="background: rgba(0, 255, 136, 0.1); border: 2px solid #00ff88; padding: 2rem; border-radius: 20px; text-align: center;">
-                    <div class="badge" style="background: #00ff88; color: #000; margin-bottom: 1rem;">${plan.toUpperCase()} PLAN</div>
-                    <h2 style="color: #fff; margin-bottom: 0.5rem;">Access Ready</h2>
-                    <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Daily Reveals Left: <b style="color: #00ff88;">${remaining}</b></p>
-                    <button class="btn btn-danger" onclick="revealCreds()" style="width: 100%; justify-content: center; font-weight:900; background: #00ff88; color: #000; border: none;">SHOW CREDENTIALS NOW ⚡</button>
+                <div style="background: rgba(0, 255, 136, 0.1); border: 2px solid #00ff88; padding: 2.5rem; border-radius: 20px;">
+                    <div class="badge" style="background: #00ff88; color: #000; margin-bottom: 1.5rem;">${plan.toUpperCase()} PROTOCOL</div>
+                    <h2 style="margin-bottom: 0.5rem;">Deployment Authorization</h2>
+                    <p style="color: var(--text-muted); margin-bottom: 2rem;">Remaining Daily reveals: <b style="color: #00ff88;">${remaining}</b></p>
+                    <button class="btn btn-danger" onclick="revealCreds()" style="width: 100%; justify-content: center; background: #00ff88; color: #000; border: none; font-weight: 900;">AUTHORIZE NOW ⚡</button>
                 </div>
             `;
         }
 
         async function revealCreds(isAuto = false) {
             const btn = document.querySelector('.btn-danger');
-            if (btn) {
-                btn.disabled = true;
-                btn.innerText = "⚡ SECURING ACCESS...";
-            }
+            if (btn) { btn.disabled = true; btn.innerText = "⚡ COMMITTING HANDSHAKE..."; }
 
             try {
                 const res = await fetch('/api/games/reveal', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
+                    method: 'POST', headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({ 
-                        gameId, 
-                        email: user.email,
-                        password: user.password,
+                        gameId, email: user.email, password: user.password,
                         adminId: sessionStorage.getItem('ga_admin_id') || user.email,
                         adminPass: sessionStorage.getItem('ga_admin_pass') || user.password
                     })
                 });
                 const data = await res.json();
-
                 if (data.success) {
                     document.getElementById('timer-box').style.display = 'none';
                     document.getElementById('creds-box').style.display = 'block';
-                    
                     const listDisplay = document.getElementById('credentials-list-display');
                     const creds = data.game.credentials || [{ user: data.game.username, pass: data.game.password }];
-                    
                     listDisplay.innerHTML = creds.map((c, i) => `
-                        <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); padding: 1.5rem; border-radius: 12px; margin-bottom: 1rem;">
-                            <div style="font-size: 0.7rem; font-weight: 900; color: var(--accent-blue); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 2px;">Account #${i+1}</div>
-                            
-                            <div class="cred-group">
-                                <label>Username / Email</label>
-                                <div class="cred-input-wrapper">
-                                    <input type="text" id="user-${i}" readonly value="${c.user}">
-                                    <button class="btn-copy" onclick="copyText('user-${i}')">Copy</button>
+                        <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); padding: 2rem; border-radius: 20px; margin-bottom: 1.5rem;">
+                            <div style="font-size: 0.75rem; font-weight: 900; color: var(--accent-blue); margin-bottom: 1.2rem; text-transform: uppercase; letter-spacing: 2px;">Session Key Pair #${i+1}</div>
+                            <div class="cred-group" style="margin-bottom: 1.5rem;">
+                                <label style="display:block; font-size:0.7rem; color:var(--text-muted); margin-bottom:0.5rem; text-transform:uppercase;">Identifier / Email</label>
+                                <div class="cred-input-wrapper" style="display:flex; gap:0.5rem;">
+                                    <input type="text" id="user-${i}" readonly value="${c.user}" style="flex:1; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:#fff; padding:0.8rem; border-radius:8px;">
+                                    <button class="btn btn-secondary" onclick="copyText('user-${i}')">Copy</button>
                                 </div>
                             </div>
-
                             <div class="cred-group">
-                                <label>Password</label>
-                                <div class="cred-input-wrapper">
-                                    <input type="text" id="pass-${i}" readonly value="${c.pass}">
-                                    <button class="btn-copy" onclick="copyText('pass-${i}')">Copy</button>
+                                <label style="display:block; font-size:0.7rem; color:var(--text-muted); margin-bottom:0.5rem; text-transform:uppercase;">Access Code / Password</label>
+                                <div class="cred-input-wrapper" style="display:flex; gap:0.5rem;">
+                                    <input type="text" id="pass-${i}" readonly value="${c.pass}" style="flex:1; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:#fff; padding:0.8rem; border-radius:8px;">
+                                    <button class="btn btn-secondary" onclick="copyText('pass-${i}')">Copy</button>
                                 </div>
                             </div>
                         </div>
                     `).join('');
-                    
-                    // Update local reveal count
                     user.reveals_today = (user.reveals_today || 0) + 1;
                     localStorage.setItem('ga_user', JSON.stringify(user));
-                } else if (data.message === 'LIMIT_REACHED') {
-                    showLimitPopup();
-                } else {
-                    window.location.href = 'premium_payment.html';
-                }
-            } catch (e) { 
-                console.error(e);
-                if (!isAuto) alert("Server error. Try again."); 
-                if (btn) { btn.disabled = false; btn.innerText = "SHOW CREDENTIALS NOW ⚡"; }
+                } else if (data.message === 'LIMIT_REACHED') showLimitPopup();
+                else window.location.href = 'premium_payment.html';
+            } catch (e) {
+                if (!isAuto) alert("Deployment failed. Retry.");
+                if (btn) { btn.disabled = false; btn.innerText = "AUTHORIZE NOW ⚡"; }
             }
         }
 
@@ -294,13 +334,13 @@
             const overlay = document.createElement('div');
             overlay.className = 'modal-overlay active';
             overlay.innerHTML = `
-                <div class="admin-modal">
-                    <h2 class="glowing-text" style="color: var(--accent-red);">LIMIT REACHED!</h2>
-                    <p style="margin: 1.5rem 0;">You have used all your reveals for today on the <b>${user.current_plan.toUpperCase()}</b> plan.</p>
-                    <a href="premium_payment" class="btn btn-danger" style="font-size: clamp(1rem, 4vw, 1.2rem); padding: 1.2rem 2rem; width: 100%; max-width: 400px; display: inline-flex; justify-content: center; align-items: center; gap: 0.5rem; white-space: normal; line-height: 1.4; margin: 0 auto;">
-                    Get Instant Access for ₹99 <span class="material-symbols-outlined">bolt</span>
+                <div class="admin-modal" style="text-align:center;">
+                    <h2 class="glowing-text" style="color: var(--accent-red);">QUOTA EXCEEDED</h2>
+                    <p style="margin: 2rem 0; line-height:1.6;">You have exhausted your daily deployment quota for the <b>${user.current_plan.toUpperCase()}</b> plan.</p>
+                    <a href="premium_payment" class="btn btn-danger" style="width: 100%; justify-content: center; padding: 1.2rem; font-weight:900;">
+                        GET UNLIMITED ACCESS FOR ₹99 <span class="material-symbols-outlined">bolt</span>
                     </a>
-                    <button onclick="this.parentElement.parentElement.remove()" class="btn btn-secondary" style="width:100%; justify-content:center; margin-top:1rem;">I'll wait until tomorrow</button>
+                    <button onclick="this.parentElement.parentElement.remove()" class="btn btn-secondary" style="width:100%; justify-content:center; margin-top:1rem;">Dismiss</button>
                 </div>
             `;
             document.body.appendChild(overlay);
@@ -310,7 +350,6 @@
             const input = document.getElementById(id);
             input.select();
             document.execCommand("copy");
-            alert("Copied to clipboard!");
         }
     </script>
 </body>
