@@ -52,7 +52,15 @@ function setupBotLogic(botInstance) {
         }
     };
 
-    botInstance.onText(/\/start/, (msg) => {
+    botInstance.onText(/\/start(.*)/, (msg, match) => {
+        const payload = match[1].trim();
+        
+        if (payload === 'verify') {
+            userStates.set(msg.chat.id, { step: 'email' });
+            botInstance.sendMessage(msg.chat.id, "💎 *Payment Verification* \n\nPlease enter your *Website Email* to begin:");
+            return;
+        }
+
         botInstance.sendMessage(msg.chat.id, "🚀 *Welcome to Gamers Arena HQ!* \n\nI am your premium assistant. You can verify your ₹99 Ultimate payment here or on the website.", { 
             parse_mode: 'Markdown',
             ...mainKeyboard
