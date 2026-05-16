@@ -287,6 +287,40 @@ app.post('/api/auth/register', async (req, res) => {
     res.json({ success: true, message: 'Account created!', user: { name, email, role: 'user' } });
 });
 
+// API: Google Auth
+app.post('/api/auth/google', async (req, res) => {
+    const { name, email, googleId } = req.body;
+    if (!email) return res.status(400).json({ success: false });
+
+    try {
+        const lowerEmail = email.toLowerCase();
+
+        // Check if user exists
+        const { data: user, error: fetchError } = await supabase.from('site_users').select('*').eq('email', lowerEmail).maybeSingle();
+
+        if (user) {
+            // Update last active
+            await supabase.from('site_users').update({ last_active_at: new Date().toISOString() }).eq('email', lowerEmail);
+            res.json({ success: true, user: { ...user, password: user.password || 'OAUTH_USER' } });
+        } else {
+            // Create new user
+            const { data: newUser, error: insertError } = await supabase.from('site_users').insert([{ 
+                name: name || 'Google User', 
+                email: lowerEmail, 
+                role: 'user', 
+                last_active_at: new Date().toISOString(), 
+                is_premium: false 
+            }]).select().single();
+            
+            if (insertError) throw insertError;
+            res.json({ success: true, user: { ...newUser, password: 'OAUTH_USER' } });
+        }
+    } catch (e) {
+        console.error("Google Auth Error:", e);
+        res.status(500).json({ success: false, message: 'Authentication failed' });
+    }
+});
+
 app.get('/api/games', async (req, res) => {
     let allData = [];
     let from = 0;
