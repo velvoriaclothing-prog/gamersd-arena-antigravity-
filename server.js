@@ -14,7 +14,7 @@ const PORT = process.env.PORT || 3000;
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE);
 
 // Initialize Telegram Bot (Polling Mode)
-const TG_TOKEN = process.env.TELEGRAM_BOT_TOKEN || '8653750659:AAHEjQdPTAMs1TzR11tF2fy_Hon5b8e8_LA';
+const TG_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const bot = new TelegramBot(TG_TOKEN, { polling: true });
 
 // Error Handling for Bot
@@ -158,7 +158,7 @@ app.get('/api/content', async (req, res) => {
 
 app.post('/api/content', async (req, res) => {
     const { id, pass, content } = req.body;
-    if (id !== 'admin' || pass !== 'aditi0110') return res.status(401).json({ success: false, message: 'Unauthorized' });
+    if (id !== process.env.ADMIN_ID || pass !== process.env.ADMIN_PASS) return res.status(401).json({ success: false, message: 'Unauthorized' });
     
     const { error } = await supabase.from('site_content').upsert({ id: 'main_content', data: content });
     if (error) return res.status(500).json({ success: false, message: error.message });
@@ -184,8 +184,8 @@ app.post('/api/auth/login', async (req, res) => {
     const email = req.body.email?.toLowerCase();
     const password = req.body.password;
 
-    if (email === 'admin' && password === 'aditi0110') {
-        return res.json({ success: true, user: { name: 'Admin', email: 'admin', role: 'admin', is_premium: true, current_plan: 'ultimate' } });
+    if (email === process.env.ADMIN_ID && password === process.env.ADMIN_PASS) {
+        return res.json({ success: true, user: { name: 'Admin', email: process.env.ADMIN_ID, role: 'admin', is_premium: true, current_plan: 'ultimate' } });
     }
 
     // Special handling for Google OAuth refresh
@@ -271,7 +271,7 @@ app.get('/api/admin/payments', async (req, res) => {
 // API: Admin - Process Payment (with Plan Support)
 app.post('/api/admin/payments/process', async (req, res) => {
     const { id, pass, requestId, status, plan } = req.body;
-    if (id !== 'admin' || pass !== 'aditi0110') return res.status(401).json({ success: false });
+    if (id !== process.env.ADMIN_ID || pass !== process.env.ADMIN_PASS) return res.status(401).json({ success: false });
 
     const { data: request } = await supabase.from('payment_requests').update({ status }).eq('id', requestId).select().single();
     
@@ -352,7 +352,7 @@ app.post('/api/games/reveal', async (req, res) => {
 // API: Admin Add Game (with Multiple Credentials Support)
 app.post('/api/admin/games', async (req, res) => {
     const { id, pass, gameData } = req.body;
-    if (id !== 'admin' || pass !== 'aditi0110') return res.status(401).json({ success: false, message: 'Unauthorized' });
+    if (id !== process.env.ADMIN_ID || pass !== process.env.ADMIN_PASS) return res.status(401).json({ success: false, message: 'Unauthorized' });
     
     const newGame = {
         id: 'G' + Date.now(),
@@ -370,7 +370,7 @@ app.post('/api/admin/games', async (req, res) => {
 // API: Admin Delete Game
 app.post('/api/admin/games/delete', async (req, res) => {
     const { id, pass, gameId } = req.body;
-    if (id !== 'admin' || pass !== 'aditi0110') return res.status(401).json({ success: false, message: 'Unauthorized' });
+    if (id !== process.env.ADMIN_ID || pass !== process.env.ADMIN_PASS) return res.status(401).json({ success: false, message: 'Unauthorized' });
     
     const { error } = await supabase.from('games').delete().eq('id', gameId);
     if (error) return res.status(500).json({ success: false, message: error.message });
@@ -394,7 +394,7 @@ app.get('/api/premium', async (req, res) => {
 // API: Admin Add Premium Bundle
 app.post('/api/admin/premium', async (req, res) => {
     const { id, pass, bundleData } = req.body;
-    if (id !== 'admin' || pass !== 'aditi0110') return res.status(401).json({ success: false, message: 'Unauthorized' });
+    if (id !== process.env.ADMIN_ID || pass !== process.env.ADMIN_PASS) return res.status(401).json({ success: false, message: 'Unauthorized' });
     
     const newBundle = {
         id: 'B' + Date.now(),
@@ -412,7 +412,7 @@ app.post('/api/admin/premium', async (req, res) => {
 // API: Admin Delete Premium Bundle
 app.post('/api/admin/premium/delete', async (req, res) => {
     const { id, pass, bundleId } = req.body;
-    if (id !== 'admin' || pass !== 'aditi0110') return res.status(401).json({ success: false, message: 'Unauthorized' });
+    if (id !== process.env.ADMIN_ID || pass !== process.env.ADMIN_PASS) return res.status(401).json({ success: false, message: 'Unauthorized' });
     
     const { error } = await supabase.from('bundles').delete().eq('id', bundleId);
     if (error) return res.status(500).json({ success: false, message: error.message });
