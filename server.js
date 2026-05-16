@@ -65,9 +65,7 @@ function setupBotLogic(botInstance) {
         const data = query.data;
 
         if (data === "pricing") {
-            botInstance.sendMessage(chatId, "🔥 *Exclusive New User Deals* \n\n" +
-                "▫️ *Starter*: ₹49 (5 Reveals/day)\n" +
-                "▫️ *Pro Gamer*: ₹79 (12 Reveals/day)\n" +
+            botInstance.sendMessage(chatId, "🔥 *Elite Unlimited Access* \n\n" +
                 "▫️ *Ultimate*: ₹99 (UNLIMITED Access)\n\n" +
                 "⏳ _Limited time offer ending soon!_", { parse_mode: 'Markdown' });
         }
@@ -107,11 +105,9 @@ function setupBotLogic(botInstance) {
         if (state.step === 'email') {
             const email = msg.text.trim().toLowerCase();
             userStates.set(chatId, { ...state, email, step: 'plan' });
-            botInstance.sendMessage(chatId, "🎯 *Select your Plan:*", {
+            botInstance.sendMessage(chatId, "🎯 *Confirm your Plan:*", {
                 reply_markup: {
                     inline_keyboard: [
-                        [{ text: "Starter (₹49)", callback_data: "plan_starter" }],
-                        [{ text: "Pro (₹79)", callback_data: "plan_pro" }],
                         [{ text: "Ultimate (₹99)", callback_data: "plan_ultimate" }]
                     ]
                 }

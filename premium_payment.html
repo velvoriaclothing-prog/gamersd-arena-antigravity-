@@ -76,37 +76,9 @@
         <h1 class="glowing-text" style="font-size: 3.5rem;">Choose Your Arsenal</h1>
         <p style="color: var(--text-muted); max-width: 600px; margin: 0 auto;">Select a plan that fits your gaming needs. Lifetime access, daily reveals.</p>
 
-        <div class="pricing-grid">
-            <!-- STARTER -->
-            <div class="plan-card">
-                <div class="badge">NEW USER OFFER</div>
-                <div class="plan-name">Starter</div>
-                <div class="price-tag"><span class="old-price">₹299</span>₹49</div>
-                <ul class="feature-list">
-                    <li class="feature-item"><span class="material-symbols-outlined">check_circle</span> 5 Reveals Per Day</li>
-                    <li class="feature-item"><span class="material-symbols-outlined">check_circle</span> All Game Categories</li>
-                    <li class="feature-item"><span class="material-symbols-outlined">check_circle</span> Lifetime Access</li>
-                    <li class="feature-item"><span class="material-symbols-outlined">check_circle</span> Telegram Support</li>
-                </ul>
-                <button onclick="selectPlan('starter', 49)" class="btn btn-secondary" style="width: 100%; justify-content: center;">Choose Starter</button>
-            </div>
-
-            <!-- PRO -->
-            <div class="plan-card" style="border-color: rgba(255,255,255,0.3);">
-                <div class="badge" style="background: var(--accent-red);">MOST POPULAR</div>
-                <div class="plan-name">Pro Gamer</div>
-                <div class="price-tag"><span class="old-price">₹499</span>₹79</div>
-                <ul class="feature-list">
-                    <li class="feature-item"><span class="material-symbols-outlined">check_circle</span> 12 Reveals Per Day</li>
-                    <li class="feature-item"><span class="material-symbols-outlined">check_circle</span> All Game Categories</li>
-                    <li class="feature-item"><span class="material-symbols-outlined">check_circle</span> Lifetime Access</li>
-                    <li class="feature-item"><span class="material-symbols-outlined">check_circle</span> Priority Support</li>
-                </ul>
-                <button onclick="selectPlan('pro', 79)" class="btn btn-danger" style="width: 100%; justify-content: center;">Upgrade to Pro</button>
-            </div>
-
+        <div class="pricing-grid" style="display: flex; justify-content: center;">
             <!-- ULTIMATE -->
-            <div class="plan-card ultimate">
+            <div class="plan-card ultimate" style="max-width: 450px; width: 100%;">
                 <div class="badge" style="background: gold; color: #000;">ELITE ACCESS</div>
                 <div class="plan-name" style="color: gold;">Ultimate</div>
                 <div class="price-tag"><span class="old-price">₹999</span>₹99</div>
@@ -116,7 +88,7 @@
                     <li class="feature-item"><span class="material-symbols-outlined">bolt</span> Lifetime Access</li>
                     <li class="feature-item"><span class="material-symbols-outlined">bolt</span> 24/7 VIP Support</li>
                 </ul>
-                <button onclick="selectPlan('ultimate', 99)" class="btn btn-danger" style="width: 100%; justify-content: center; background: gold; color: #000; box-shadow: 0 0 30px rgba(255,215,0,0.4);">Get Ultimate</button>
+                <button onclick="selectPlan('ultimate', 99)" class="btn btn-danger" style="width: 100%; justify-content: center; background: gold; color: #000; box-shadow: 0 0 30px rgba(255,215,0,0.4);">Get Ultimate Access Now</button>
             </div>
         </div>
 
