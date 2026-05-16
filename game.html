@@ -239,7 +239,9 @@
                     body: JSON.stringify({ 
                         gameId, 
                         email: user.email,
-                        password: user.password 
+                        password: user.password,
+                        adminId: sessionStorage.getItem('ga_admin_id') || user.email,
+                        adminPass: sessionStorage.getItem('ga_admin_pass') || user.password
                     })
                 });
                 const data = await res.json();
