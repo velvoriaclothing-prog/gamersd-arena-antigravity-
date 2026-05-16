@@ -80,14 +80,15 @@
                     <div style="display: flex; gap: 1rem; margin-top: 1rem; flex-wrap: wrap;">
                         <input type="text" id="new-bundle-name" class="admin-input" placeholder="Bundle Name">
                         <input type="text" id="new-bundle-price" class="admin-input" placeholder="Price (e.g. ₹1999)">
+                        <input type="text" id="new-bundle-image" class="admin-input" placeholder="Image URL">
                         <input type="text" id="new-bundle-desc" class="admin-input" placeholder="Description" style="flex: 1 1 100%;">
-                        <button class="btn btn-primary" onclick="addBundle()">+ Create</button>
+                        <button class="btn btn-primary" onclick="addBundle()">+ Create Premium Bundle</button>
                     </div>
                 </div>
                 <table>
-                    <thead><tr><th>ID</th><th>Bundle Name</th><th>Price</th><th>Action</th></tr></thead>
+                    <thead><tr><th>ID</th><th>Image</th><th>Bundle Name</th><th>Price</th><th>Action</th></tr></thead>
                     <tbody id="admin-bundles-list">
-                        <tr><td colspan="4">Loading...</td></tr>
+                        <tr><td colspan="5">Loading...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -134,7 +135,11 @@
 
     <script>
         const API_URL = '';
-        const CREDS = { id: 'admin', pass: 'aditi0110' };
+        const CREDS = { 
+            id: sessionStorage.getItem('ga_admin_id') || 'admin', 
+            pass: sessionStorage.getItem('ga_admin_pass') || '' 
+        };
+        console.log("Admin Session Loaded:", CREDS.id);
 
         function switchTab(tabId) {
             document.querySelectorAll('.dashboard-panel').forEach(p => p.classList.remove('active'));
@@ -172,6 +177,7 @@
                 tbody.innerHTML = data.bundles.map(b => `
                     <tr>
                         <td>${b.id}</td>
+                        <td><img src="${b.image || 'logo.png'}" style="width: 40px; height: 40px; border-radius: 4px; object-fit: cover;" onerror="this.src='logo.png'"></td>
                         <td>${b.name}</td>
                         <td style="color: #00ff88; font-weight: bold;">${b.price}</td>
                         <td><button class="btn-secondary" style="padding: 0.5rem;" onclick="deleteBundle('${b.id}')">Delete</button></td>
@@ -245,12 +251,24 @@
             const bundleData = {
                 name: document.getElementById('new-bundle-name').value,
                 price: document.getElementById('new-bundle-price').value,
+                image: document.getElementById('new-bundle-image').value,
                 desc: document.getElementById('new-bundle-desc').value
             };
+            if (!bundleData.name || !bundleData.price) {
+                alert("Please fill in Name and Price.");
+                return;
+            }
             fetch(API_URL + '/api/admin/premium', {
                 method: 'POST', headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({ ...CREDS, bundleData })
-            }).then(() => { alert("Created!"); loadAdminData(); });
+            }).then(() => { 
+                alert("Bundle Created Successfully!"); 
+                document.getElementById('new-bundle-name').value = '';
+                document.getElementById('new-bundle-price').value = '';
+                document.getElementById('new-bundle-image').value = '';
+                document.getElementById('new-bundle-desc').value = '';
+                loadAdminData(); 
+            });
         }
 
         // DELETE BUNDLE

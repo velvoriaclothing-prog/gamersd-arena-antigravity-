@@ -1,6 +1,8 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 const path = require('path');
 const { createClient } = require('@supabase/supabase-js');
 
@@ -9,6 +11,20 @@ const crypto = require('crypto');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Security Headers
+app.use(helmet({
+    contentSecurityPolicy: false,
+}));
+
+// Rate Limiting (100 requests per 15 mins)
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 100,
+    standardHeaders: true,
+    legacyHeaders: false,
+});
+app.use('/api/', limiter);
 
 // Initialize Supabase
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE);
@@ -145,9 +161,10 @@ function setupBotLogic(botInstance) {
 
 setupBotLogic(bot);
 
+// Middleware
 app.use(cors());
 app.use(express.json());
-app.use(express.static(__dirname));
+app.use(express.static(__dirname, { extensions: ['html'] }));
 
 // API: Content Management
 app.get('/api/content', async (req, res) => {
@@ -312,11 +329,12 @@ app.get('/api/games', async (req, res) => {
 
 // API: Get Specific Game Credentials
 app.post('/api/games/reveal', async (req, res) => {
-    const { gameId, email } = req.body;
+    const { gameId, email, adminId, adminPass } = req.body;
     
-    // 1. Check Admin
-    if (email === 'admin') {
-        const { data } = await supabase.from('games').select('*').eq('id', gameId).single();
+    // 1. Check Admin (Strict Verification)
+    if (adminId === process.env.ADMIN_ID && adminPass === process.env.ADMIN_PASS) {
+        const { data, error } = await supabase.from('games').select('*').eq('id', gameId).single();
+        if (error) return res.status(404).json({ success: false, message: 'Game not found' });
         return res.json({ success: true, game: data });
     }
 
@@ -367,11 +385,29 @@ app.post('/api/admin/games', async (req, res) => {
     res.json({ success: true, message: 'Game added successfully', game: newGame });
 });
 
+// API: Admin Update Game
+app.post('/api/admin/games/update', async (req, res) => {
+    const { id, pass, gameId, updateData } = req.body;
+    if (id !== process.env.ADMIN_ID || pass !== process.env.ADMIN_PASS) return res.status(401).json({ success: false, message: 'Unauthorized' });
+    
+    // Audit Logging
+    console.log(`[AUDIT] GAME_UPDATE: ID ${gameId} updated by admin at ${new Date().toISOString()}`);
+    
+    // Ensure ID isn't changed in updateData
+    delete updateData.id;
+
+    const { error } = await supabase.from('games').update(updateData).eq('id', gameId);
+    if (error) return res.status(500).json({ success: false, message: error.message });
+    res.json({ success: true, message: 'Game updated successfully' });
+});
+
 // API: Admin Delete Game
 app.post('/api/admin/games/delete', async (req, res) => {
     const { id, pass, gameId } = req.body;
     if (id !== process.env.ADMIN_ID || pass !== process.env.ADMIN_PASS) return res.status(401).json({ success: false, message: 'Unauthorized' });
     
+    console.log(`[AUDIT] GAME_DELETE: ID ${gameId} deleted by admin at ${new Date().toISOString()}`);
+
     const { error } = await supabase.from('games').delete().eq('id', gameId);
     if (error) return res.status(500).json({ success: false, message: error.message });
     res.json({ success: true, message: 'Game deleted successfully' });
@@ -401,7 +437,7 @@ app.post('/api/admin/premium', async (req, res) => {
         name: bundleData.name,
         price: bundleData.price,
         description: bundleData.desc,
-        image: 'logo.png'
+        image: bundleData.image || 'logo.png'
     };
     
     const { error } = await supabase.from('bundles').insert([newBundle]);

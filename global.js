@@ -72,68 +72,90 @@ document.write(modalHTML);
 function closeAdminModal() { document.getElementById('admin-modal-overlay').classList.remove('active'); }
 function loginAdmin(e) {
     e.preventDefault();
-    if (document.getElementById('admin-id').value === 'admin' && document.getElementById('admin-pass').value === 'aditi0110') { 
-        window.location.href = 'admin.html';
-    } else {
-        alert('ACCESS DENIED: Invalid Admin Credentials.');
-    }
+    const id = document.getElementById('admin-id').value;
+    const pass = document.getElementById('admin-pass').value;
+    
+    // Instead of hardcoding, we store them in session and redirect to admin.
+    // The admin page itself should verify them before doing anything.
+    sessionStorage.setItem('ga_admin_id', id);
+    sessionStorage.setItem('ga_admin_pass', pass);
+    window.location.href = 'admin.html';
 }
 
+// 3. DRAGON CANVAS ANIMATION (Optimized)
+let canvas, ctx, particles = [];
+function initDragon() {
+    canvas = document.getElementById('dragon-canvas');
+    if (!canvas) return;
+    ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
 
 class DragonParticle {
     constructor(x, y) {
         this.x = x;
         this.y = y;
-        this.size = Math.random() * 8 + 2;
-        this.speedX = Math.random() * 4 - 2;
-        this.speedY = Math.random() * 4 - 2;
+        this.size = Math.random() * 5 + 2;
+        this.speedX = Math.random() * 2 - 1;
+        this.speedY = Math.random() * 2 - 1;
         this.life = 1;
-        this.decay = Math.random() * 0.02 + 0.01;
-        this.hue = Math.random() * 40 > 20 ? 190 : 340; // Cyan (190) and Pink/Red (340)
-        this.angle = Math.random() * Math.PI * 2;
-        this.spin = (Math.random() - 0.5) * 0.2;
+        this.decay = Math.random() * 0.01 + 0.005;
+        this.hue = Math.random() > 0.5 ? 190 : 340; 
     }
     update() {
-        this.x += this.speedX + Math.sin(this.angle) * 2;
-        this.y += this.speedY + Math.cos(this.angle) * 2;
-        this.angle += this.spin;
+        this.x += this.speedX;
+        this.y += this.speedY;
         this.life -= this.decay;
-        this.size -= 0.1;
+        this.size -= 0.05;
     }
     draw() {
-        ctx.save();
-        ctx.globalCompositeOperation = 'lighter';
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.size > 0 ? this.size : 0, 0, Math.PI * 2);
         ctx.fillStyle = `hsla(${this.hue}, 100%, 50%, ${this.life})`;
-        ctx.shadowBlur = 20;
-        ctx.shadowColor = `hsla(${this.hue}, 100%, 50%, ${this.life})`;
         ctx.fill();
-        ctx.restore();
     }
-            if(dist < 50) {
-                ctx.beginPath();
-                ctx.strokeStyle = `rgba(0, 229, 255, ${0.2 - dist/250})`;
-                ctx.lineWidth = 1;
-                ctx.moveTo(particles[i].x, particles[i].y);
-                ctx.lineTo(particles[j].x, particles[j].y);
-                ctx.stroke();
-            }
+}
+
+function handleParticles() {
+    for (let i = 0; i < particles.length; i++) {
+        particles[i].update();
+        particles[i].draw();
+        if (particles[i].life <= 0) {
+            particles.splice(i, 1);
+            i--;
         }
     }
-    
+}
+
+function animateDragon() {
+    if (!ctx) return;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    handleParticles();
     requestAnimationFrame(animateDragon);
 }
-animateDragon();
 
-// 4. DYNAMIC CONTENT LOADING & LIVE EDITOR (Elementor-like feature)
+window.addEventListener('mousemove', (e) => {
+    if (particles.length < 50) {
+        for (let i = 0; i < 2; i++) {
+            particles.push(new DragonParticle(e.x, e.y));
+        }
+    }
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    initDragon();
+    animateDragon();
+});
+
+// 4. DYNAMIC CONTENT LOADING & LIVE EDITOR
 let siteContent = {};
 async function loadDynamicContent() {
     try {
         const r = await fetch('/api/content');
         const data = await r.json();
         if (data.success) {
-            siteContent = data.content;
+            siteContent = data.content || {};
             const pageName = window.location.pathname.split('/').pop().split('.')[0] || 'index';
             const urlParams = new URLSearchParams(window.location.search);
             const isEditMode = urlParams.get('edit') === 'true';
@@ -146,15 +168,13 @@ async function loadDynamicContent() {
                         if (isEditMode) {
                             el.contentEditable = "true";
                             el.style.outline = "2px dashed var(--accent-blue)";
-                            el.style.cursor = "text";
                         }
                     }
                 });
             }
-
             if (isEditMode) showEditBar(pageName);
         }
-    } catch (e) { console.warn("Content system offline", e); }
+    } catch (e) { console.warn("Content system offline"); }
 }
 
 function showEditBar(pageName) {
@@ -170,6 +190,7 @@ function showEditBar(pageName) {
 
 async function saveLiveEdits(pageName) {
     const els = document.querySelectorAll('[data-content]');
+    if (!siteContent[pageName]) siteContent[pageName] = {};
     els.forEach(el => {
         const key = el.getAttribute('data-content');
         siteContent[pageName][key] = el.innerText;
@@ -178,13 +199,63 @@ async function saveLiveEdits(pageName) {
     const res = await fetch('/api/content', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ id: 'admin', pass: 'aditi0110', content: siteContent })
+        body: JSON.stringify({ 
+            id: sessionStorage.getItem('ga_admin_id'), 
+            pass: sessionStorage.getItem('ga_admin_pass'), 
+            content: siteContent 
+        })
     });
     
-    if ((await res.json()).success) {
+    const result = await res.json();
+    if (result.success) {
         alert("Changes saved LIVE successfully!");
-        window.location.search = ""; // Exit edit mode
+        window.location.search = "";
+    } else {
+        alert("Save failed: " + result.message);
     }
 }
 
-document.addEventListener('DOMContentLoaded', loadDynamicContent);
+document.addEventListener('DOMContentLoaded', () => {
+    loadDynamicContent();
+    updateGlobalUserDisplay();
+});
+
+// 5. GLOBAL USER DISPLAY & AUTH
+function updateGlobalUserDisplay() {
+    const user = JSON.parse(localStorage.getItem('ga_user') || '{}');
+    const authBtns = document.getElementById('auth-btns');
+    const userDisplay = document.getElementById('user-display');
+    const emailEl = document.getElementById('user-email');
+    const badgeEl = document.getElementById('premium-badge');
+
+    if (user.email) {
+        if (authBtns) authBtns.style.display = 'none';
+        if (userDisplay) userDisplay.style.display = 'flex';
+        if (emailEl) emailEl.innerText = user.email;
+        
+        if (badgeEl) {
+            const isAdmin = user.role === 'admin' || user.email === 'admin' || user.email === 'admin@gamersarena.store';
+            if (isAdmin) {
+                badgeEl.innerText = "⚡ SYSTEM ADMIN";
+                badgeEl.style.background = "#00e5ff";
+                badgeEl.style.color = "#000";
+                badgeEl.style.fontWeight = "900";
+            } else if (user.is_premium) {
+                badgeEl.innerText = "👑 SUBSCRIBED (" + (user.current_plan?.toUpperCase() || 'PREMIUM') + ")";
+                badgeEl.style.background = "gold";
+                badgeEl.style.color = "#000";
+            } else {
+                badgeEl.innerText = "❌ NOT SUBSCRIBED";
+                badgeEl.style.background = "var(--accent-red)";
+            }
+        }
+    } else {
+        if (authBtns) authBtns.style.display = 'flex';
+        if (userDisplay) userDisplay.style.display = 'none';
+    }
+}
+
+function logout() {
+    localStorage.removeItem('ga_user');
+    window.location.href = '/';
+}

@@ -10,10 +10,18 @@
 </head>
 <body>
     <nav class="navbar">
-        <div class="logo" onclick="window.location.href='index.html'">GAMERS <span style="color: var(--accent-red);">ARENA</span></div>
+        <a href="/" class="logo-container">
+            <img src="logo.png" alt="Logo" class="logo-img" width="50" height="50">
+            <div>
+                <div class="logo-text">GAMERS ARENA</div>
+                <div class="logo-sub">PREMIUM DROPS</div>
+            </div>
+        </a>
         <div class="nav-links">
-            <a href="index.html">Home</a>
-            <a href="premium_payment.html">Premium</a>
+            <a href="/">Home</a>
+            <a href="library">Library</a>
+            <a href="premium">Premium Store</a>
+            <a href="premium_payment">Memberships</a>
         </div>
         <div class="user-profile" id="user-display" style="display: flex; align-items: center; gap: 1rem;">
             <div style="text-align: right;">
@@ -86,10 +94,10 @@
                 </ul>
             </div>
             <div>
-                <h3 style="color: #fff; margin-bottom: 1rem;">Support</h3>
+                <h3 style="color: #fff; margin-bottom: 1rem;">Resources</h3>
                 <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.5rem; padding: 0;">
-                    <li><a href="https://t.me/gamersarena_support" style="color: var(--accent-blue); text-decoration: none;">Telegram Support</a></li>
-                    <li><a href="mailto:support@gamersarena.store" style="color: var(--accent-blue); text-decoration: none;">Email Support</a></li>
+                    <li><a href="premium" style="color: var(--accent-blue); text-decoration: none;">Premium Store</a></li>
+                    <li><a href="premium_payment" style="color: var(--accent-blue); text-decoration: none;">Memberships</a></li>
                 </ul>
             </div>
         </div>
@@ -270,7 +278,9 @@
                 <div class="admin-modal">
                     <h2 class="glowing-text" style="color: var(--accent-red);">LIMIT REACHED!</h2>
                     <p style="margin: 1.5rem 0;">You have used all your reveals for today on the <b>${user.current_plan.toUpperCase()}</b> plan.</p>
-                    <a href="premium_payment.html" class="btn btn-danger" style="width:100%; justify-content:center;">Upgrade Plan for Unlimited Access</a>
+                    <a href="premium_payment" class="btn btn-danger" style="font-size: clamp(1rem, 4vw, 1.2rem); padding: 1.2rem 2rem; width: 100%; max-width: 400px; display: inline-flex; justify-content: center; align-items: center; gap: 0.5rem; white-space: normal; line-height: 1.4;">
+                    Get Instant Access for ₹49 <span class="material-symbols-outlined">bolt</span>
+                    </a>
                     <button onclick="this.parentElement.parentElement.remove()" class="btn btn-secondary" style="width:100%; justify-content:center; margin-top:1rem;">I'll wait until tomorrow</button>
                 </div>
             `;

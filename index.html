@@ -4,17 +4,45 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#030305">
+    <link rel="icon" type="image/png" href="logo.png">
     
-    <title>Gamers Arena | Premium PC Game Accounts & Daily Drops</title>
-    <meta name="description" content="Unlock premium shared PC game accounts. Access 700+ AAA titles with daily drops and mega bundles. Instant Telegram verification.">
-    <meta name="keywords" content="PC games, shared accounts, Steam drops, Gamers Arena, premium game bundles, GTA V, gaming accounts">
-    <link rel="canonical" href="https://gamersarena.store/index.html">
+    <title>Gamers Arena | Premium Shared PC Game Accounts & Daily AAA Drops</title>
+    <meta name="description" content="Unlock premium shared PC game accounts safely. Access 3,966+ AAA titles including GTA V, Hogwarts Legacy, and more with daily drops and mega bundles. Instant Telegram verification.">
+    <meta name="keywords" content="PC games, shared accounts, Steam drops, Gamers Arena, premium game bundles, GTA V, gaming accounts, cheap steam accounts">
+    <link rel="canonical" href="https://gamersarena.store/">
     
     <!-- OpenGraph (Social Sharing) -->
-    <meta property="og:title" content="Gamers Arena | Premium Shared Accounts">
-    <meta property="og:description" content="Access 700+ PC games and daily account drops. New titles every 24 hours.">
+    <meta property="og:title" content="Gamers Arena | 3,966+ Premium Shared Accounts">
+    <meta property="og:description" content="Access 3,966+ PC games and daily account drops. New titles added every 24 hours. Join the elite gaming community.">
     <meta property="og:image" content="https://gamersarena.store/logo.png">
-    <meta property="og:url" content="https://gamersarena.store/index.html">
+    <meta property="og:url" content="https://gamersarena.store/">
+    <meta property="og:type" content="website">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Gamers Arena | Premium Shared Accounts">
+    <meta name="twitter:description" content="Access 3,966+ PC games and daily account drops. New titles every 24 hours.">
+    <meta name="twitter:image" content="https://gamersarena.store/logo.png">
+
+    <!-- Google Analytics (Placeholder) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-XXXXXXXXXX');
+    </script>
+
+    <!-- Facebook Pixel (Placeholder) -->
+    <script>
+      !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+      n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+      n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+      t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+      document,'script','https://connect.facebook.net/en_US/fbevents.js');
+      fbq('init', 'XXXXXXXXXXXXXXX');
+      fbq('track', 'PageView');
+    </script>
 
     <!-- FONTS & STYLES (Restored) -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800;900&display=swap" rel="stylesheet">
@@ -30,7 +58,8 @@
       "image": "https://gamersarena.store/logo.png",
       "@id": "https://gamersarena.store/",
       "url": "https://gamersarena.store/",
-      "telephone": "+91 0000000000",
+      "telephone": "+91 9999999999",
+      "priceRange": "₹",
       "address": {
         "@type": "PostalAddress",
         "streetAddress": "Virtual Arena",
@@ -38,16 +67,24 @@
         "postalCode": "000000",
         "addressCountry": "IN"
       },
-      "description": "Premium shared PC gaming accounts and AAA bundles with instant automated verification."
+      "description": "Premium shared PC gaming accounts and 3,966+ AAA bundles with instant automated verification via Telegram."
     }
     </script>
 </head>
 <body>
     <nav class="navbar">
-        <div class="logo">GAMERS <span style="color: var(--accent-red);">ARENA</span></div>
-        <div class="nav-links" id="nav-links">
-            <a href="index.html">Home</a>
-            <a href="premium_payment.html">Premium</a>
+        <a href="/" class="logo-container">
+            <img src="logo.png" alt="Gamers Arena Logo" class="logo-img" loading="lazy">
+            <div>
+                <div class="logo-text">GAMERS ARENA</div>
+                <div class="logo-sub">PREMIUM DROPS</div>
+            </div>
+        </a>
+        <div class="nav-links">
+            <a href="/">HOME</a>
+            <a href="library" style="color: var(--accent-teal);" aria-current="page">FREE DROPS</a>
+            <a href="premium">PREMIUM STORE</a>
+            <a href="premium_payment">MEMBERSHIPS</a>
         </div>
         <div class="user-profile" id="user-display" style="display: none; align-items: center; gap: 1rem;">
             <div style="text-align: right;">
@@ -57,8 +94,8 @@
             <button onclick="logout()" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.8rem;">Logout</button>
         </div>
         <div class="auth-buttons" id="auth-btns">
-            <a href="login.html" class="btn btn-secondary">Login</a>
-            <a href="signup.html" class="btn btn-danger">Join Elite</a>
+            <a href="login" class="btn btn-secondary">Login</a>
+            <a href="signup" class="btn btn-danger">Join Elite</a>
         </div>
     </nav>
 
@@ -84,10 +121,10 @@
                 <p>Access the highest tier of shared gaming accounts. Claim your free drops instantly or upgrade your arsenal in the Premium Store for permanent access to AAA titles.</p>
                 
                 <div style="display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap; margin-top: 2rem;">
-                    <a href="library.html" class="btn btn-secondary">
+                    <a href="library" class="btn btn-secondary">
                         Free Drops Library <span class="material-symbols-outlined">view_module</span>
                     </a>
-                    <a href="premium_payment.html" class="btn btn-primary">
+                    <a href="premium" class="btn btn-primary">
                         Enter Premium Store <span class="material-symbols-outlined">shopping_cart</span>
                     </a>
                 </div>
@@ -173,14 +210,62 @@
             </div>
         </section>
 
+        <section class="section">
+            <div class="section-header">
+                <span class="section-subtitle">How It Works</span>
+                <h2 class="section-title">Get Started in Seconds</h2>
+            </div>
+            <div class="grid">
+                <div class="card-3d" style="padding: 3rem;">
+                    <span class="material-symbols-outlined" style="font-size: 3rem; color: var(--accent-blue); margin-bottom: 1.5rem;">account_circle</span>
+                    <h3 class="card-title">1. Create Account</h3>
+                    <p class="card-desc">Sign up for a free Gamers Arena account to access our public library and track your activity.</p>
+                </div>
+                <div class="card-3d" style="padding: 3rem;">
+                    <span class="material-symbols-outlined" style="font-size: 3rem; color: var(--accent-red); margin-bottom: 1.5rem;">search</span>
+                    <h3 class="card-title">2. Browse Library</h3>
+                    <p class="card-desc">Search through 3,966+ verified game drops. Find AAA titles, indie gems, and massive multi-game bundles.</p>
+                </div>
+                <div class="card-3d" style="padding: 3rem;">
+                    <span class="material-symbols-outlined" style="font-size: 3rem; color: var(--accent-blue); margin-bottom: 1.5rem;">bolt</span>
+                    <h3 class="card-title">3. Instant Access</h3>
+                    <p class="card-desc">Verify via our automated Telegram bot and get your credentials instantly. No waiting, no hassle.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" style="background: rgba(255,255,255,0.02);">
+            <div class="section-header">
+                <span class="section-subtitle">The Arena Advantage</span>
+                <h2 class="section-title">Why Gamers Choose Us</h2>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem;">
+                <div style="text-align: center; padding: 2rem;">
+                    <span class="material-symbols-outlined" style="font-size: 4rem; color: var(--accent-blue);">shield_check</span>
+                    <h4 style="font-size: 1.5rem; margin: 1rem 0;">100% Safe</h4>
+                    <p style="color: var(--text-muted);">All accounts are verified by our admin team before being added to the library.</p>
+                </div>
+                <div style="text-align: center; padding: 2rem;">
+                    <span class="material-symbols-outlined" style="font-size: 4rem; color: var(--accent-red);">update</span>
+                    <h4 style="font-size: 1.5rem; margin: 1rem 0;">Daily Drops</h4>
+                    <p style="color: var(--text-muted);">We add new accounts every 24 hours. Never miss out on the latest gaming trends.</p>
+                </div>
+                <div style="text-align: center; padding: 2rem;">
+                    <span class="material-symbols-outlined" style="font-size: 4rem; color: var(--accent-blue);">groups</span>
+                    <h4 style="font-size: 1.5rem; margin: 1rem 0;">24/7 Support</h4>
+                    <p style="color: var(--text-muted);">Join our Telegram community for instant help and exclusive drop announcements.</p>
+                </div>
+            </div>
+        </section>
+
         <section id="premium-cta-section" class="section" style="padding: 2rem 5%;">
             <div class="card-3d" style="background: linear-gradient(135deg, rgba(255, 0, 85, 0.1), rgba(0,0,0,0.8)); border: 2px solid var(--accent-red); padding: clamp(2rem, 5vw, 4rem) clamp(1rem, 5vw, 2rem); text-align: center; max-width: 900px; margin: 0 auto; border-radius: 30px;">
                 <div class="hero-tag" style="background: rgba(255, 0, 85, 0.1); color: var(--accent-red); border-color: var(--accent-red); margin-bottom: 1.5rem;">Special Offer</div>
                 <h2 class="glowing-text" style="font-size: clamp(2rem, 5vw, 3rem); color: var(--accent-red); margin-bottom: 1.5rem; line-height: 1.2;">Unlock The Entire Arena</h2>
                 <p style="font-size: clamp(1rem, 3vw, 1.2rem); color: #fff; margin-bottom: 2.5rem; max-width: 600px; margin-inline: auto; line-height: 1.6;">Pay a one-time fee of <b>₹49</b> and get instant, lifetime access to all 3,966+ game accounts. Verify via Telegram in minutes.</p>
                 
-                <a href="premium_payment.html" class="btn btn-danger" style="font-size: clamp(1rem, 4vw, 1.2rem); padding: 1.2rem 2rem; width: 100%; max-width: 400px; display: inline-flex; justify-content: center; align-items: center; gap: 0.5rem; white-space: normal; line-height: 1.4;">
-                    Unlock Everything for ₹49 <span class="material-symbols-outlined">bolt</span>
+                <a href="premium_payment" class="btn btn-danger" style="font-size: clamp(1rem, 4vw, 1.2rem); padding: 1.2rem 2rem; width: 100%; max-width: 400px; display: inline-flex; justify-content: center; align-items: center; gap: 0.5rem; white-space: normal; line-height: 1.4;">
+                    Get Instant Access for ₹49 <span class="material-symbols-outlined">bolt</span>
                 </a>
                 
                 <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 2rem; flex-wrap: wrap;">
@@ -204,75 +289,32 @@
             <div>
                 <h3 style="color: #fff; margin-bottom: 1rem;">Quick Links</h3>
                 <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.5rem;">
-                    <li><a href="library.html" style="color: var(--accent-blue); text-decoration: none;">Account Library</a></li>
-                    <li><a href="premium_payment.html" style="color: var(--accent-blue); text-decoration: none;">Premium Plans</a></li>
+                    <li><a href="library" style="color: var(--accent-blue); text-decoration: none;">Account Library</a></li>
+                    <li><a href="premium_payment" style="color: var(--accent-blue); text-decoration: none;">Premium Plans</a></li>
                     <li><a href="https://t.me/gamersarena_support" style="color: var(--accent-blue); text-decoration: none;">Telegram Support</a></li>
                 </ul>
             </div>
             <div>
                 <h3 style="color: #fff; margin-bottom: 1rem;">Social Media</h3>
                 <div style="display: flex; gap: 1.5rem; justify-content: center;">
-                    <a href="#" style="color: #fff; text-decoration: none;"><span class="material-symbols-outlined">facebook</span></a>
-                    <a href="#" style="color: #fff; text-decoration: none;"><span class="material-symbols-outlined">x</span></a>
-                    <a href="#" style="color: #fff; text-decoration: none;"><span class="material-symbols-outlined">photo_camera</span></a>
+                    <a href="https://gamersarena.store" target="_blank" style="color: #fff; text-decoration: none;"><span class="material-symbols-outlined">facebook</span></a>
+                    <a href="https://gamersarena.store" target="_blank" style="color: #fff; text-decoration: none;"><span class="material-symbols-outlined">x</span></a>
+                    <a href="https://gamersarena.store" target="_blank" style="color: #fff; text-decoration: none;"><span class="material-symbols-outlined">photo_camera</span></a>
+                    <a href="https://gamersarena.store" target="_blank" style="color: #fff; text-decoration: none;"><span class="material-symbols-outlined">play_circle</span></a>
                 </div>
             </div>
             <div>
                 <h3 style="color: #fff; margin-bottom: 1rem;">Company</h3>
                 <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.5rem;">
-                    <li><a href="about.html" style="color: var(--accent-blue); text-decoration: none;">About Us</a></li>
-                    <li><a href="terms.html" style="color: var(--accent-blue); text-decoration: none;">Terms & Conditions</a></li>
-                    <li><a href="privacy.html" style="color: var(--accent-blue); text-decoration: none;">Privacy Policy</a></li>
+                    <li><a href="about" style="color: var(--accent-blue); text-decoration: none;">About Us</a></li>
+                    <li><a href="terms" style="color: var(--accent-blue); text-decoration: none;">Terms & Conditions</a></li>
+                    <li><a href="privacy" style="color: var(--accent-blue); text-decoration: none;">Privacy Policy</a></li>
                 </ul>
             </div>
         </div>
-        <p style="border-top: 1px solid var(--glass-border); padding-top: 2rem;">&copy; 2026 Gamers Arena. Based in Online Arena, IN. | <a href="mailto:support@gamersdarena.com" style="color: var(--accent-blue); text-decoration: none;">Email Support</a></p>
+        <p style="border-top: 1px solid var(--glass-border); padding-top: 2rem;">&copy; 2026 Gamers Arena. | <a href="https://t.me/gamersarena_support" style="color: var(--accent-blue); text-decoration: none;">Support</a></p>
     </footer>
 
     <script src="global.js"></script>
-    <script>
-        const user = JSON.parse(localStorage.getItem('ga_user') || '{}');
-        const authBtns = document.getElementById('auth-btns');
-        const userDisplay = document.getElementById('user-display');
-        const emailEl = document.getElementById('user-email');
-        const badgeEl = document.getElementById('premium-badge');
-
-        if (user.email) {
-            authBtns.style.display = 'none';
-            userDisplay.style.display = 'flex';
-            emailEl.innerText = user.email;
-
-            // Refresh Status from Server
-            fetch('/api/auth/login', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ email: user.email, password: user.password })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    const updatedUser = data.user;
-                    updatedUser.password = user.password; // Keep password for future refreshes
-                    localStorage.setItem('ga_user', JSON.stringify(updatedUser));
-                    
-                    if (updatedUser.is_premium) {
-                        badgeEl.innerText = "👑 SUBSCRIBED (" + (updatedUser.current_plan?.toUpperCase()) + ")";
-                        badgeEl.style.background = "gold";
-                        badgeEl.style.color = "#000";
-                        document.getElementById('premium-cta-section').style.display = 'none';
-                    } else {
-                        badgeEl.innerText = "❌ NOT SUBSCRIBED";
-                        badgeEl.style.background = "var(--accent-red)";
-                        document.getElementById('premium-cta-section').style.display = 'block';
-                    }
-                }
-            });
-        }
-
-        function logout() {
-            localStorage.removeItem('ga_user');
-            window.location.reload();
-        }
-    </script>
 </body>
 </html>
