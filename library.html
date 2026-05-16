@@ -285,7 +285,9 @@
                     body: JSON.stringify({ 
                         gameId: gameId, 
                         adminId: adminId,
-                        adminPass: adminPass
+                        adminPass: adminPass,
+                        email: adminId, // Needed for role-based admin check in server
+                        password: adminPass
                     })
                 });
                 const data = await res.json();
