@@ -170,7 +170,8 @@
             if (!timerBox) return;
             
             // Fast Check: If premium, show reveal button instantly
-            if (user.email && !user.is_premium && user.role !== 'admin') {
+            const isAdmin = user.role === 'admin' || user.email === 'admin@gamersarena.store';
+            if (user.email && !user.is_premium && !isAdmin) {
                 window.location.href = 'premium_payment.html';
                 return;
             }
@@ -186,6 +187,18 @@
                             if(game.image) document.getElementById('game-img').src = game.image;
                         }
                     });
+            }
+
+            if (isAdmin) {
+                timerBox.innerHTML = `
+                    <div style="background: rgba(0, 229, 255, 0.1); border: 2px solid #00e5ff; padding: 2rem; border-radius: 20px; text-align: center;">
+                        <div class="badge" style="background: #00e5ff; color: #000; margin-bottom: 1rem;">⚡ ADMIN ACCESS</div>
+                        <h2 style="color: #fff; margin-bottom: 0.5rem;">Privileged Mode</h2>
+                        <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Daily Reveals Left: <b style="color: #00e5ff;">UNLIMITED</b></p>
+                        <button class="btn btn-danger" onclick="revealCreds()" style="width: 100%; justify-content: center; font-weight:900; background: #00e5ff; color: #000; border: none;">REVEAL NOW (ADMIN) ⚡</button>
+                    </div>
+                `;
+                return;
             }
 
             // If we are still refreshing from server, wait a tiny bit for renderUI to be called again

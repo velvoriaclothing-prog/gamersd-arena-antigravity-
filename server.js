@@ -349,9 +349,12 @@ app.post('/api/games/reveal', async (req, res) => {
     }
 
     // 2. Check User Identity & Plan
-    let { data: user } = await supabase.from('site_users').select('*').eq('email', email?.toLowerCase()).eq('password', password).single();
+    let { data: user } = await supabase.from('site_users').select('*').eq('email', email?.toLowerCase()).eq('password', password).maybeSingle();
     if (!user) return res.status(401).json({ success: false, message: 'AUTHENTICATION_FAILED' });
-    if (!user.is_premium) return res.status(403).json({ success: false, message: 'PREMIUM_REQUIRED' });
+    
+    // ADMIN BYPASS: Admins can see everything
+    const isAdmin = (user.role === 'admin' || user.email === 'admin@gamersarena.store');
+    if (!user.is_premium && !isAdmin) return res.status(403).json({ success: false, message: 'PREMIUM_REQUIRED' });
 
     user = await ensureLimitReset(user);
 
