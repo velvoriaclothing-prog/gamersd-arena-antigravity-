@@ -77,13 +77,17 @@ function setupBotLogic(botInstance) {
 
         // Admin Approval Logic
         if (data.startsWith('adm_app_')) {
+            if (chatId.toString() !== ADMIN_CHAT_ID) return botInstance.answerCallbackQuery(query.id, { text: "🚫 Unauthorized access.", show_alert: true });
             const reqId = data.replace('adm_app_', '');
             await processPayment(reqId, 'approved', chatId);
+            botInstance.answerCallbackQuery(query.id, { text: "✅ Approved Successfully!" });
             return;
         }
         if (data.startsWith('adm_rej_')) {
+            if (chatId.toString() !== ADMIN_CHAT_ID) return botInstance.answerCallbackQuery(query.id, { text: "🚫 Unauthorized access.", show_alert: true });
             const reqId = data.replace('adm_rej_', '');
             await processPayment(reqId, 'rejected', chatId);
+            botInstance.answerCallbackQuery(query.id, { text: "❌ Rejected." });
             return;
         }
 
