@@ -146,7 +146,8 @@ function setupBotLogic(botInstance) {
             
             if (user) {
                 const status = user.is_premium ? "✅ ACTIVE" : "⏳ PENDING/NOT PAID";
-                botInstance.sendMessage(chatId, `👤 *Account*: ${email}\n🏆 *Plan*: ${user.current_plan.toUpperCase()}\n💎 *Status*: ${status}\n🔥 *Reveals Used Today*: ${user.daily_reveal_count}`, { parse_mode: 'Markdown' });
+                const reveals = user.current_plan === 'ultimate' ? "UNLIMITED" : (user.daily_reveal_count || 0);
+                botInstance.sendMessage(chatId, `👤 *Account*: ${email}\n🏆 *Plan*: ${user.current_plan.toUpperCase()}\n💎 *Status*: ${status}\n🔥 *Reveals Used Today*: ${reveals}`, { parse_mode: 'Markdown' });
             } else {
                 botInstance.sendMessage(chatId, "❌ No account found with that email.");
             }
@@ -291,8 +292,13 @@ app.post('/api/admin/payments/process', async (req, res) => {
     if (status === 'approved') {
         await supabase.from('site_users').update({ 
             is_premium: true, 
-            current_plan: plan || request.plan_name || 'starter' 
+            current_plan: plan || request.plan_name || 'ultimate' 
         }).eq('email', request.user_email);
+
+        // Notify user via Telegram if ID is available
+        if (request.telegram_id) {
+            bot.sendMessage(request.telegram_id, "💎 *Payment Verified!*\n\nYour account has been upgraded to the *ULTIMATE PLAN*. Please go to the website and *login again* to activate your unlimited access. Thanks for the purchase! 🚀", { parse_mode: 'Markdown' });
+        }
     }
     res.json({ success: true, message: `Payment ${status} for plan ${plan}` });
 });
