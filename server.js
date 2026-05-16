@@ -101,9 +101,8 @@ function setupBotLogic(botInstance) {
             const plan = data.replace("plan_", "");
             const state = userStates.get(chatId);
             if (state) {
-                state.plan = plan;
-                state.step = 'utr';
-                botInstance.sendMessage(chatId, `✅ Plan: *${plan.toUpperCase()}*\n\nNow, enter your *UTR/Transaction ID* (8-128 chars):`, { parse_mode: 'Markdown' });
+                userStates.set(chatId, { ...state, plan, step: 'utr' });
+                botInstance.sendMessage(chatId, `✅ Plan: *${plan.toUpperCase()}*\n\nNow, enter your *UTR/Transaction ID*:`, { parse_mode: 'Markdown' });
             }
         }
     });
@@ -115,7 +114,8 @@ function setupBotLogic(botInstance) {
 
         if (!state) return;
 
-        if (state.step === 'email') {
+        // 1. EMAIL STEP
+        if (state.step === 'email' && msg.text) {
             const email = msg.text.trim().toLowerCase();
             userStates.set(chatId, { ...state, email, step: 'plan' });
             botInstance.sendMessage(chatId, "🎯 *Confirm Plan:*", {
@@ -124,25 +124,50 @@ function setupBotLogic(botInstance) {
                 }
             });
         } 
-        else if (state.step === 'utr') {
+        // 2. UTR STEP
+        else if (state.step === 'utr' && msg.text) {
             const utr = msg.text.trim();
-            if (utr.length < 8 || utr.length > 128) return botInstance.sendMessage(chatId, "⚠️ *Invalid ID*: Use 8-128 characters.");
+            if (utr.length < 8) return botInstance.sendMessage(chatId, "⚠️ *Invalid ID*: Use at least 8 characters.");
 
             const { data: existing } = await supabase.from('payment_requests').select('*').eq('utr_id', utr).maybeSingle();
-            if (existing) return botInstance.sendMessage(chatId, "🚨 *Error*: This Transaction ID is already used!", mainKeyboard);
+            if (existing) return botInstance.sendMessage(chatId, "🚨 *Error*: This Transaction ID is already used!");
+
+            userStates.set(chatId, { ...state, utr, step: 'screenshot' });
+            botInstance.sendMessage(chatId, "📸 *FINAL STEP*: Now, upload your *Payment Screenshot* here:");
+        }
+        // 3. SCREENSHOT STEP
+        else if (state.step === 'screenshot') {
+            const fileId = msg.photo ? msg.photo[msg.photo.length - 1].file_id : (msg.document ? msg.document.file_id : null);
+            if (!fileId) return botInstance.sendMessage(chatId, "⚠️ Please upload an *Image* or *Document* of your payment proof.");
 
             const { data: request, error } = await supabase.from('payment_requests').insert([{ 
                 user_email: state.email, 
-                utr_id: utr, 
+                utr_id: state.utr, 
                 plan_name: state.plan, 
-                telegram_id: chatId.toString() 
+                screenshot_url: fileId, // Store file_id as url for now
+                telegram_id: chatId.toString(),
+                status: 'pending'
             }]).select().single();
 
             if (error) {
-                botInstance.sendMessage(chatId, "❌ Account not found. Register on the website first.", mainKeyboard);
+                botInstance.sendMessage(chatId, "❌ System error. Try again or ensure you are registered on the website.");
             } else {
-                botInstance.sendMessage(chatId, "✅ *Submitted!* Admin will verify within 30 min. Check your status soon.", mainKeyboard);
+                botInstance.sendMessage(chatId, "✅ *Submitted Successfully!* \n\nAdmin is verifying your proof. You will get a message here as soon as it's approved. (Usually 10-30 min)");
                 notifyAdmin(request);
+            }
+            userStates.delete(chatId);
+        }
+        // STATUS CHECK STEP
+        else if (state.step === 'check_status' && msg.text) {
+            const email = msg.text.trim().toLowerCase();
+            const { data: reqs } = await supabase.from('payment_requests').select('*').eq('user_email', email).order('created_at', { ascending: false }).limit(1);
+            
+            if (reqs && reqs.length > 0) {
+                const r = reqs[0];
+                const statusEmoji = r.status === 'approved' ? '✅' : (r.status === 'rejected' ? '❌' : '⏳');
+                botInstance.sendMessage(chatId, `🔍 *Verification Status for ${email}:*\n\nStatus: ${statusEmoji} *${r.status.toUpperCase()}*\nUTR: \`${r.utr_id}\`\nPlan: ${r.plan_name.toUpperCase()}\n\n${r.status === 'pending' ? 'Please wait up to 30 min.' : ''}`, { parse_mode: 'Markdown' });
+            } else {
+                botInstance.sendMessage(chatId, "❓ *No record found* for this email. Make sure you submitted proof correctly.");
             }
             userStates.delete(chatId);
         }
@@ -163,11 +188,15 @@ async function notifyAdmin(request) {
         }
     };
 
-    if (request.screenshot_url && request.screenshot_url.startsWith('data:image')) {
-        // Convert base64 to Buffer for Telegram
-        const base64Data = request.screenshot_url.split(',')[1];
-        const buffer = Buffer.from(base64Data, 'base64');
-        bot.sendPhoto(ADMIN_CHAT_ID, buffer, { caption: message, ...opts });
+    if (request.screenshot_url) {
+        // If it starts with data:image, it's from website (Buffer)
+        if (request.screenshot_url.startsWith('data:image')) {
+            const base64Data = request.screenshot_url.split(',')[1];
+            bot.sendPhoto(ADMIN_CHAT_ID, Buffer.from(base64Data, 'base64'), { caption: message, ...opts });
+        } else {
+            // It's a file_id from Telegram
+            bot.sendPhoto(ADMIN_CHAT_ID, request.screenshot_url, { caption: message, ...opts });
+        }
     } else {
         bot.sendMessage(ADMIN_CHAT_ID, message, opts);
     }
