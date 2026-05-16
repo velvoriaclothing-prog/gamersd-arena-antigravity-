@@ -93,6 +93,11 @@
             <span>Select a card to view details</span>
         </div>
 
+        <div id="admin-bulk-actions" style="display:none; justify-content: space-between; align-items: center; background: rgba(255,0,85,0.1); border: 1px solid #ff0055; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
+            <span style="color: #ff0055; font-weight: bold;"><span id="selected-count">0</span> listings selected</span>
+            <button onclick="deleteSelected(event)" class="btn btn-danger" style="padding: 0.5rem 1.5rem; font-size: 0.9rem; background: #ff0055; color: #fff; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;">Delete Selected</button>
+        </div>
+
         <div class="card-grid" id="games-grid">
             <!-- Loading Skeletons -->
             <div class="game-card" style="height: 300px; opacity: 0.5;"></div>
@@ -173,6 +178,10 @@
             grid.innerHTML = '';
             currentlyDisplayed = 0;
             
+            if (typeof selectedIds !== 'undefined') selectedIds.clear();
+            const bulkBar = document.getElementById('admin-bulk-actions');
+            if (bulkBar) bulkBar.style.display = 'none';
+            
             if (filteredGames.length === 0) {
                 grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 4rem; color: var(--text-muted);">No accounts found matching your search.</div>';
                 updateLoadMoreBtn();
@@ -210,6 +219,7 @@
                 return `
                 <a href="game.html?id=${g.id}" class="game-card" style="position:relative;">
                     ${isAdmin ? `<div class="edit-badge" onclick="event.preventDefault(); openEditModal('${g.id}')"><span class="material-symbols-outlined" style="font-size:12px;">edit</span> EDIT</div>` : ''}
+                    ${isAdmin ? `<input type="checkbox" class="admin-select-cb" value="${g.id}" onclick="event.stopPropagation(); toggleSelection('${g.id}', this)" style="position:absolute; top:12px; left:80px; z-index:20; width:18px; height:18px; cursor:pointer; accent-color: #ff0055;" />` : ''}
                     <div class="card-top" style="background: ${bg};">
                         <div class="platform-badge"><span class="material-symbols-outlined" style="font-size:14px;">check_circle</span> Verified</div>
                         ${isMega ? '<div style="position:absolute; top:10px; right:10px; background:gold; color:#000; padding:2px 8px; border-radius:50px; font-size:10px; font-weight:900; box-shadow:0 0 15px gold;">MEGA ACCOUNT</div>' : ''}
@@ -262,6 +272,56 @@
             );
             renderInitialGames();
         });
+
+        // --- BULK DELETE SYSTEM ---
+        let selectedIds = new Set();
+        function toggleSelection(id, cb) {
+            if (cb.checked) {
+                selectedIds.add(id);
+            } else {
+                selectedIds.delete(id);
+            }
+            const count = selectedIds.size;
+            const bulkBar = document.getElementById('admin-bulk-actions');
+            if (bulkBar) {
+                bulkBar.style.display = count > 0 ? 'flex' : 'none';
+                document.getElementById('selected-count').innerText = count;
+            }
+        }
+
+        async function deleteSelected(event) {
+            if (selectedIds.size === 0) return;
+            if (!confirm(`Are you SURE you want to delete ${selectedIds.size} listings permanently?`)) return;
+            
+            const btn = event.target;
+            btn.disabled = true;
+            btn.innerText = "Deleting...";
+            
+            try {
+                const user = JSON.parse(localStorage.getItem('ga_user') || '{}');
+                const adminId = sessionStorage.getItem('ga_admin_id') || user.email;
+                const adminPass = sessionStorage.getItem('ga_admin_pass') || user.password;
+
+                const res = await fetch('/api/admin/games/delete', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        id: adminId,
+                        pass: adminPass,
+                        gameIds: Array.from(selectedIds)
+                    })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    alert("Listings deleted.");
+                    window.location.reload();
+                } else {
+                    alert("Error: " + data.message);
+                }
+            } catch (e) { alert("Server error"); }
+            btn.disabled = false;
+            btn.innerText = "Delete Selected";
+        }
 
         // --- ADMIN EDIT SYSTEM ---
         let currentEditingId = null;

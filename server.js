@@ -432,7 +432,7 @@ app.post('/api/admin/games/update', async (req, res) => {
 
 // API: Admin Delete Game
 app.post('/api/admin/games/delete', async (req, res) => {
-    const { id, pass, gameId } = req.body;
+    const { id, pass, gameId, gameIds } = req.body;
     
     // Check Master Admin OR Role-based Admin
     let isAuthorized = (id === process.env.ADMIN_ID && pass === process.env.ADMIN_PASS);
@@ -442,11 +442,14 @@ app.post('/api/admin/games/delete', async (req, res) => {
     }
     if (!isAuthorized) return res.status(401).json({ success: false, message: 'Unauthorized' });
     
-    console.log(`[AUDIT] GAME_DELETE: ID ${gameId} deleted by admin at ${new Date().toISOString()}`);
+    let idsToDelete = gameIds || (gameId ? [gameId] : []);
+    if (idsToDelete.length === 0) return res.status(400).json({ success: false, message: 'No games specified' });
+    
+    console.log(`[AUDIT] GAME_DELETE: IDs ${idsToDelete.join(', ')} deleted by admin at ${new Date().toISOString()}`);
 
-    const { error } = await supabase.from('games').delete().eq('id', gameId);
+    const { error } = await supabase.from('games').delete().in('id', idsToDelete);
     if (error) return res.status(500).json({ success: false, message: error.message });
-    res.json({ success: true, message: 'Game deleted successfully' });
+    res.json({ success: true, message: 'Games deleted successfully' });
 });
 
 // API: Get Premium Bundles
