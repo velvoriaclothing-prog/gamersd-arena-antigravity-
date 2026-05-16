@@ -249,9 +249,7 @@ function updateGlobalUserDisplay() {
             const isAdmin = user.role === 'admin' || user.email === 'admin' || user.email === 'admin@gamersarena.store';
             if (isAdmin) {
                 badgeEl.innerText = "⚡ SYSTEM ADMIN";
-                badgeEl.style.background = "#00e5ff";
-                badgeEl.style.color = "#000";
-                badgeEl.style.fontWeight = "900";
+                badgeEl.style.cssText = "background:#00e5ff; color:#000; font-weight:900; padding:2px 8px; border-radius:4px; font-size:10px; display:inline-block;";
             } else if (user.is_premium) {
                 badgeEl.innerText = "👑 SUBSCRIBED (" + (user.current_plan?.toUpperCase() || 'PREMIUM') + ")";
                 badgeEl.style.background = "gold";

@@ -37,7 +37,7 @@ body {
     border-bottom: 2px solid var(--accent-teal-dark);
     gap: 2rem;
 }
-.nav-links { display: flex; gap: 1.5rem; justify-content: center; }
+.nav-links { display: flex; gap: 1.5rem; justify-content: center; width: 100%; flex: 1; }
 .navbar-right { display: flex; align-items: center; gap: 1.5rem; justify-content: flex-end; }
 
 .logo-container {

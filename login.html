@@ -162,7 +162,9 @@
             });
             const data = await res.json();
             if (data.success) {
-                localStorage.setItem('ga_user', JSON.stringify(data.user));
+                // IMPORTANT: Save password for credential reveal verification
+                const userData = { ...data.user, password: pass };
+                localStorage.setItem('ga_user', JSON.stringify(userData));
                 window.location.href = data.user.role === 'admin' ? 'admin' : '/';
             } else {
                 errEl.textContent = data.message;

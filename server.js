@@ -385,7 +385,7 @@ app.post('/api/admin/games', async (req, res) => {
     // Check Master Admin OR Role-based Admin
     let isAuthorized = (id === process.env.ADMIN_ID && pass === process.env.ADMIN_PASS);
     if (!isAuthorized) {
-        const { data: user } = await supabase.from('site_users').select('*').eq('email', id?.toLowerCase()).eq('password', pass).single();
+        const { data: user } = await supabase.from('site_users').select('*').eq('email', id?.toLowerCase()).eq('password', pass).maybeSingle();
         if (user && user.role === 'admin') isAuthorized = true;
     }
     if (!isAuthorized) return res.status(401).json({ success: false, message: 'Unauthorized' });
@@ -410,7 +410,7 @@ app.post('/api/admin/games/update', async (req, res) => {
     // Check Master Admin OR Role-based Admin
     let isAuthorized = (id === process.env.ADMIN_ID && pass === process.env.ADMIN_PASS);
     if (!isAuthorized) {
-        const { data: user } = await supabase.from('site_users').select('*').eq('email', id?.toLowerCase()).eq('password', pass).single();
+        const { data: user } = await supabase.from('site_users').select('*').eq('email', id?.toLowerCase()).eq('password', pass).maybeSingle();
         if (user && user.role === 'admin') isAuthorized = true;
     }
     
@@ -434,7 +434,7 @@ app.post('/api/admin/games/delete', async (req, res) => {
     // Check Master Admin OR Role-based Admin
     let isAuthorized = (id === process.env.ADMIN_ID && pass === process.env.ADMIN_PASS);
     if (!isAuthorized) {
-        const { data: user } = await supabase.from('site_users').select('*').eq('email', id?.toLowerCase()).eq('password', pass).single();
+        const { data: user } = await supabase.from('site_users').select('*').eq('email', id?.toLowerCase()).eq('password', pass).maybeSingle();
         if (user && user.role === 'admin') isAuthorized = true;
     }
     if (!isAuthorized) return res.status(401).json({ success: false, message: 'Unauthorized' });
