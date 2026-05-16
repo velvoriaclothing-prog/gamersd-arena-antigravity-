@@ -17,10 +17,10 @@ app.use(helmet({
     contentSecurityPolicy: false,
 }));
 
-// Rate Limiting (100 requests per 15 mins)
+// Rate Limiting
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: 100,
+    max: 200,
     standardHeaders: true,
     legacyHeaders: false,
 });
@@ -29,15 +29,14 @@ app.use('/api/', limiter);
 // Initialize Supabase
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE);
 
-// Initialize Telegram Bot (Polling Mode)
+// Initialize Telegram Bot
 const TG_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
+const ADMIN_CHAT_ID = process.env.ADMIN_CHAT_ID; // Should be in .env
 const bot = new TelegramBot(TG_TOKEN, { polling: true });
 
-// Error Handling for Bot
 bot.on('polling_error', (error) => console.log('Telegram Polling Error:', error));
-bot.on('error', (error) => console.log('Telegram Bot General Error:', error));
 
-console.log("🚀 Telegram Bot initialized in Polling Mode.");
+console.log("🚀 Premium Verification System Active.");
 
 // State Management for step-by-step verification
 const userStates = new Map();
@@ -54,34 +53,48 @@ function setupBotLogic(botInstance) {
     };
 
     botInstance.onText(/\/start/, (msg) => {
-        botInstance.sendMessage(msg.chat.id, "🚀 *Welcome to Gamers Arena Premium!* \n\nI am your automated verification assistant. How can I help you today?", { 
+        botInstance.sendMessage(msg.chat.id, "🚀 *Welcome to Gamers Arena HQ!* \n\nI am your premium assistant. You can verify your ₹99 Ultimate payment here or on the website.", { 
             parse_mode: 'Markdown',
             ...mainKeyboard
         });
+    });
+
+    botInstance.onText(/\/myid/, (msg) => {
+        botInstance.sendMessage(msg.chat.id, `👤 Your Chat ID: \`${msg.chat.id}\` \n\nCopy this number and give it to the system to enable Admin Notifications.`, { parse_mode: 'Markdown' });
     });
 
     botInstance.on('callback_query', async (query) => {
         const chatId = query.message.chat.id;
         const data = query.data;
 
+        // Admin Approval Logic
+        if (data.startsWith('adm_app_')) {
+            const reqId = data.replace('adm_app_', '');
+            await processPayment(reqId, 'approved', chatId);
+            return;
+        }
+        if (data.startsWith('adm_rej_')) {
+            const reqId = data.replace('adm_rej_', '');
+            await processPayment(reqId, 'rejected', chatId);
+            return;
+        }
+
         if (data === "pricing") {
-            botInstance.sendMessage(chatId, "🔥 *Elite Unlimited Access* \n\n" +
-                "▫️ *Ultimate*: ₹99 (UNLIMITED Access)\n\n" +
-                "⏳ _Limited time offer ending soon!_", { parse_mode: 'Markdown' });
+            botInstance.sendMessage(chatId, "🔥 *Elite Unlimited Access* \n\n▫️ *Ultimate*: ₹99 (UNLIMITED Access)\n\n⏳ _Limited time offer ending soon!_", { parse_mode: 'Markdown' });
         }
 
         if (data === "instructions") {
-            botInstance.sendMessage(chatId, "📋 *Payment Instructions*\n\n1. Scan the QR on our website.\n2. Pay the exact amount for your plan.\n3. Note down the UTR or Transaction ID.\n4. Click 'Verify Payment' here to submit.", { parse_mode: 'Markdown' });
+            botInstance.sendMessage(chatId, "📋 *How to Join:*\n\n1. Scan QR on website.\n2. Pay ₹99 for Ultimate Plan.\n3. Take a screenshot.\n4. Click 'Verify Payment' here or upload on website.", { parse_mode: 'Markdown' });
         }
 
         if (data === "verify") {
             userStates.set(chatId, { step: 'email' });
-            botInstance.sendMessage(chatId, "📧 Please enter your *Registered Website Email*:");
+            botInstance.sendMessage(chatId, "📧 Enter your *Website Email* to begin:");
         }
 
         if (data === "status") {
             userStates.set(chatId, { step: 'check_status' });
-            botInstance.sendMessage(chatId, "🔍 Enter your *Email* to check membership status:");
+            botInstance.sendMessage(chatId, "🔍 Enter your *Email* to check status:");
         }
 
         if (data.startsWith("plan_")) {
@@ -90,7 +103,7 @@ function setupBotLogic(botInstance) {
             if (state) {
                 state.plan = plan;
                 state.step = 'utr';
-                botInstance.sendMessage(chatId, `✅ Plan selected: *${plan.toUpperCase()}*\n\nNow, please enter your *UTR or Transaction ID* (8-128 characters):`, { parse_mode: 'Markdown' });
+                botInstance.sendMessage(chatId, `✅ Plan: *${plan.toUpperCase()}*\n\nNow, enter your *UTR/Transaction ID* (8-128 chars):`, { parse_mode: 'Markdown' });
             }
         }
     });
@@ -105,65 +118,135 @@ function setupBotLogic(botInstance) {
         if (state.step === 'email') {
             const email = msg.text.trim().toLowerCase();
             userStates.set(chatId, { ...state, email, step: 'plan' });
-            botInstance.sendMessage(chatId, "🎯 *Confirm your Plan:*", {
+            botInstance.sendMessage(chatId, "🎯 *Confirm Plan:*", {
                 reply_markup: {
-                    inline_keyboard: [
-                        [{ text: "Ultimate (₹99)", callback_data: "plan_ultimate" }]
-                    ]
+                    inline_keyboard: [[{ text: "Ultimate (₹99)", callback_data: "plan_ultimate" }]]
                 }
             });
         } 
         else if (state.step === 'utr') {
             const utr = msg.text.trim();
-            if (utr.length < 8 || utr.length > 128) {
-                return botInstance.sendMessage(chatId, "⚠️ *Invalid ID*: Please enter a valid UTR or Transaction ID (8-128 characters).");
-            }
+            if (utr.length < 8 || utr.length > 128) return botInstance.sendMessage(chatId, "⚠️ *Invalid ID*: Use 8-128 characters.");
 
-            // Duplicate Check
             const { data: existing } = await supabase.from('payment_requests').select('*').eq('utr_id', utr).maybeSingle();
-            if (existing) {
-                return botInstance.sendMessage(chatId, "🚨 *FRAUD ALERT*: This UTR/Transaction ID is already in use!", mainKeyboard);
-            }
+            if (existing) return botInstance.sendMessage(chatId, "🚨 *Error*: This Transaction ID is already used!", mainKeyboard);
 
-            // Insert to DB
-            const { error } = await supabase.from('payment_requests').insert([{ 
+            const { data: request, error } = await supabase.from('payment_requests').insert([{ 
                 user_email: state.email, 
                 utr_id: utr, 
                 plan_name: state.plan, 
                 telegram_id: chatId.toString() 
-            }]);
+            }]).select().single();
 
             if (error) {
-                botInstance.sendMessage(chatId, "❌ *Error*: Email not found or system failure. Make sure you registered on the website first.", mainKeyboard);
+                botInstance.sendMessage(chatId, "❌ Account not found. Register on the website first.", mainKeyboard);
             } else {
-                botInstance.sendMessage(chatId, "✅ *Submission Successful!*\n\nOur admin will verify your payment (UTR: " + utr + ") within 10-30 minutes. You will receive a confirmation message here once verified. \n\n*Next Step*: Once you get the 'Verified' message, just go to the website and login again to see your status update! 🚀", mainKeyboard);
-            }
-            userStates.delete(chatId);
-        }
-        else if (state.step === 'check_status') {
-            const email = msg.text.trim();
-            const { data: user } = await supabase.from('site_users').select('*').eq('email', email).maybeSingle();
-            
-            if (user) {
-                const status = user.is_premium ? "✅ ACTIVE" : "⏳ PENDING/NOT PAID";
-                const reveals = user.current_plan === 'ultimate' ? "UNLIMITED" : (user.daily_reveal_count || 0);
-                botInstance.sendMessage(chatId, `👤 *Account*: ${email}\n🏆 *Plan*: ${user.current_plan.toUpperCase()}\n💎 *Status*: ${status}\n🔥 *Reveals Used Today*: ${reveals}`, { parse_mode: 'Markdown' });
-            } else {
-                botInstance.sendMessage(chatId, "❌ No account found with that email.");
+                botInstance.sendMessage(chatId, "✅ *Submitted!* Admin will verify within 30 min. Check your status soon.", mainKeyboard);
+                notifyAdmin(request);
             }
             userStates.delete(chatId);
         }
     });
 }
 
+async function notifyAdmin(request) {
+    if (!ADMIN_CHAT_ID) return;
+    
+    const message = `💰 *NEW PAYMENT SUBMISSION*\n\n👤 *User*: ${request.user_email}\n🆔 *UTR*: \`${request.utr_id}\`\n🏆 *Plan*: ${request.plan_name.toUpperCase()}\n\nCheck proof and approve below:`;
+    
+    const opts = {
+        parse_mode: 'Markdown',
+        reply_markup: {
+            inline_keyboard: [
+                [{ text: "✅ APPROVE", callback_data: `adm_app_${request.id}` }, { text: "❌ REJECT", callback_data: `adm_rej_${request.id}` }]
+            ]
+        }
+    };
+
+    if (request.screenshot_url) {
+        bot.sendPhoto(ADMIN_CHAT_ID, request.screenshot_url, { caption: message, ...opts });
+    } else {
+        bot.sendMessage(ADMIN_CHAT_ID, message, opts);
+    }
+}
+
+async function processPayment(requestId, status, adminChatId) {
+    const { data: request } = await supabase.from('payment_requests').update({ status }).eq('id', requestId).select().single();
+    
+    if (status === 'approved' && request) {
+        await supabase.from('site_users').update({ is_premium: true, current_plan: request.plan_name || 'ultimate' }).eq('email', request.user_email);
+        
+        if (request.telegram_id) {
+            bot.sendMessage(request.telegram_id, `💎 *PLAN ACTIVATED!* \n\nYour ${request.plan_name.toUpperCase()} plan is now live. \n\n🚀 *Next Step*: Go to the website and *login again* to refresh your session. Enjoy!`, { parse_mode: 'Markdown' });
+        }
+        bot.sendMessage(adminChatId, `✅ Request #${requestId} Approved. User notified.`);
+    } else if (status === 'rejected') {
+        bot.sendMessage(adminChatId, `❌ Request #${requestId} Rejected.`);
+    }
+}
+
 setupBotLogic(bot);
+
+// Auto-Cleanup Task (Every 1 hour)
+setInterval(async () => {
+    console.log("🧹 Running Screenshot Cleanup Task...");
+    const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+    
+    // We don't delete the record, just the visual proof to save space
+    const { data } = await supabase.from('payment_requests')
+        .update({ screenshot_url: null })
+        .lt('created_at', yesterday)
+        .not('screenshot_url', 'is', null);
+    
+    console.log(`Cleaned up ${data?.length || 0} old screenshots.`);
+}, 3600000);
 
 // Middleware
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
 app.use(express.static(__dirname, { extensions: ['html'] }));
 
-// API: Content Management
+// API: Live Stats
+app.get('/api/admin/stats', async (req, res) => {
+    const { id, pass } = req.query;
+    if (id !== process.env.ADMIN_ID || pass !== process.env.ADMIN_PASS) return res.status(401).json({ success: false });
+
+    const fiveMinsAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+    const { count, error } = await supabase.from('site_users').select('*', { count: 'exact', head: true }).gt('last_active_at', fiveMinsAgo);
+    
+    res.json({ success: true, live_users: count || 0 });
+});
+
+// API: Heartbeat
+app.post('/api/auth/ping', async (req, res) => {
+    const { email } = req.body;
+    if (!email) return res.json({ success: false });
+    
+    await supabase.from('site_users').update({ last_active_at: new Date().toISOString() }).eq('email', email.toLowerCase());
+    res.json({ success: true });
+});
+
+// API: Website Payment Submission
+app.post('/api/payments/submit', async (req, res) => {
+    const { email, utr, plan, screenshot } = req.body;
+    
+    // Handle Screenshot Storage (Simulated as URL for this logic, ideally upload to Supabase Storage)
+    let screenshotUrl = screenshot; // In real app, upload base64 to Storage and get URL
+
+    const { data: request, error } = await supabase.from('payment_requests').insert([{ 
+        user_email: email.toLowerCase(), 
+        utr_id: utr, 
+        plan_name: plan || 'ultimate', 
+        screenshot_url: screenshotUrl,
+        status: 'pending'
+    }]).select().single();
+
+    if (error) return res.status(400).json({ success: false, message: 'Submission failed. Ensure you are registered.' });
+
+    notifyAdmin(request);
+    res.json({ success: true, message: 'Submitted for verification.' });
+});
+
 app.get('/api/content', async (req, res) => {
     const { data, error } = await supabase.from('site_content').select('data').eq('id', 'main_content').single();
     if (error) return res.json({ success: true, content: {} });
@@ -173,328 +256,64 @@ app.get('/api/content', async (req, res) => {
 app.post('/api/content', async (req, res) => {
     const { id, pass, content } = req.body;
     if (id !== process.env.ADMIN_ID || pass !== process.env.ADMIN_PASS) return res.status(401).json({ success: false, message: 'Unauthorized' });
-    
     const { error } = await supabase.from('site_content').upsert({ id: 'main_content', data: content });
     if (error) return res.status(500).json({ success: false, message: error.message });
     res.json({ success: true, message: 'Content updated successfully' });
 });
 
-// Helper: Ensure Daily Limit Resets
-async function ensureLimitReset(user) {
-    const today = new Date().toISOString().split('T')[0];
-    const lastReset = user.last_reset_date || '';
-    
-    if (lastReset !== today) {
-        const { data: updated } = await supabase.from('site_users')
-            .update({ daily_reveal_count: 0, last_reset_date: today })
-            .eq('email', user.email)
-            .select()
-            .single();
-        return updated;
-    }
-    return user;
-}
 app.post('/api/auth/login', async (req, res) => {
     const email = req.body.email?.toLowerCase();
     const password = req.body.password;
-
     if (email === process.env.ADMIN_ID && password === process.env.ADMIN_PASS) {
         return res.json({ success: true, user: { name: 'Admin', email: process.env.ADMIN_ID, role: 'admin', is_premium: true, current_plan: 'ultimate' } });
     }
-
-    // Special handling for Google OAuth refresh
-    let user;
-    if (password && password.startsWith('google_oauth_')) {
-        const { data } = await supabase.from('site_users').select('*').eq('email', email).eq('password', password).maybeSingle();
-        user = data;
-    } else {
-        const { data } = await supabase.from('site_users').select('*').eq('email', email).eq('password', password).maybeSingle();
-        user = data;
-    }
-
+    const { data: user } = await supabase.from('site_users').select('*').eq('email', email).eq('password', password).maybeSingle();
     if (user) {
-        const updatedUser = await ensureLimitReset(user);
-        res.json({ success: true, user: { 
-            name: updatedUser.name, 
-            email: updatedUser.email, 
-            role: updatedUser.role, 
-            is_premium: updatedUser.is_premium,
-            current_plan: updatedUser.current_plan,
-            reveals_today: updatedUser.daily_reveal_count,
-            password: updatedUser.password // Include for refresh support
-        }});
+        await supabase.from('site_users').update({ last_active_at: new Date().toISOString() }).eq('email', email);
+        res.json({ success: true, user: { name: user.name, email: user.email, role: user.role, is_premium: user.is_premium, current_plan: user.current_plan, reveals_today: user.daily_reveal_count, password: user.password }});
     } else {
         res.status(401).json({ success: false, message: 'Invalid credentials' });
     }
 });
 
-// API: Auth - Register
 app.post('/api/auth/register', async (req, res) => {
     const { name, password } = req.body;
     const email = req.body.email?.toLowerCase();
-    const { error } = await supabase.from('site_users').insert([{ name, email, password, role: 'user' }]);
+    const { error } = await supabase.from('site_users').insert([{ name, email, password, role: 'user', last_active_at: new Date().toISOString() }]);
     if (error) return res.status(400).json({ success: false, message: 'Email already registered' });
     res.json({ success: true, message: 'Account created!', user: { name, email, role: 'user' } });
 });
 
-// API: Google Manual Login (Fixed to preserve Premium status)
-app.post('/api/auth/google', async (req, res) => {
-    const { name, googleId } = req.body;
-    const email = req.body.email?.toLowerCase();
-    
-    // 1. Check if user already exists
-    const { data: existingUser } = await supabase.from('site_users').select('*').eq('email', email).maybeSingle();
-
-    let user;
-    if (existingUser) {
-        // Update only name/id, preserve everything else
-        const { data: updated } = await supabase.from('site_users').update({ 
-            name: name,
-            password: 'google_oauth_' + googleId 
-        }).eq('email', email).select().single();
-        user = updated;
-    } else {
-        // Create new user
-        const { data: created } = await supabase.from('site_users').insert([{
-            email: email,
-            name: name,
-            password: 'google_oauth_' + googleId,
-            role: 'user',
-            is_premium: false,
-            current_plan: 'starter'
-        }]).select().single();
-        user = created;
-    }
-
-    res.json({ success: true, user: { 
-        name: user.name, 
-        email: user.email, 
-        role: user.role, 
-        is_premium: user.is_premium, 
-        current_plan: user.current_plan,
-        password: user.password
-    }});
-});
-
-// API: Admin - Get All Payment Requests
-app.get('/api/admin/payments', async (req, res) => {
-    const { data, error } = await supabase.from('payment_requests').select('*, site_users(name)').order('created_at', { ascending: false });
-    res.json({ success: true, payments: data });
-});
-
-// API: Admin - Process Payment (with Plan Support)
-app.post('/api/admin/payments/process', async (req, res) => {
-    const { id, pass, requestId, status, plan } = req.body;
-    if (id !== process.env.ADMIN_ID || pass !== process.env.ADMIN_PASS) return res.status(401).json({ success: false });
-
-    const { data: request } = await supabase.from('payment_requests').update({ status }).eq('id', requestId).select().single();
-    
-    if (status === 'approved') {
-        await supabase.from('site_users').update({ 
-            is_premium: true, 
-            current_plan: plan || request.plan_name || 'ultimate' 
-        }).eq('email', request.user_email);
-
-        // Notify user via Telegram if ID is available
-        if (request.telegram_id) {
-            bot.sendMessage(request.telegram_id, "👤 *Account*: " + request.user_email + "\n🏆 *Plan*: ULTIMATE\n💎 *Status*: ✅ ACTIVE\n🔥 *Reveals Used Today*: 0\n\n✅ *Payment Verified!* \nYour account has been upgraded to the Ultimate Unlimited Plan. Please go to the website and *login again* to activate your access. Thanks for the purchase! 🚀", { parse_mode: 'Markdown' });
-        }
-    }
-    res.json({ success: true, message: `Payment ${status} for plan ${plan}` });
-});
-
-// API: Get All Free Games (Newest First)
 app.get('/api/games', async (req, res) => {
     let allData = [];
     let from = 0;
     const step = 1000;
-    
     while (true) {
-        const { data, error } = await supabase.from('games')
-            .select('id, game, image, game_total, priority')
-            .order('priority', { ascending: false })
-            .order('id', { ascending: false })
-            .range(from, from + step - 1);
-            
+        const { data, error } = await supabase.from('games').select('id, game, image, game_total, priority').order('priority', { ascending: false }).order('id', { ascending: false }).range(from, from + step - 1);
         if (error) return res.status(500).json({ success: false });
-        
-        if (data && data.length > 0) {
-            allData = allData.concat(data);
-            from += step;
-            if (data.length < step) break;
-        } else {
-            break;
-        }
+        if (data && data.length > 0) { allData = allData.concat(data); from += step; if (data.length < step) break; } else break;
     }
-    
     res.json({ success: true, games: allData });
 });
 
-const revealLimiter = new Map();
-
-// API: Get Specific Game Credentials
 app.post('/api/games/reveal', async (req, res) => {
-    const ip = req.ip;
-    const now = Date.now();
-    const last = revealLimiter.get(ip) || 0;
-    if (now - last < 2000) { // 2 second cool down per IP
-        return res.status(429).json({ success: false, message: 'SLOW_DOWN' });
-    }
-    revealLimiter.set(ip, now);
-
     const { gameId, email, password, adminId, adminPass } = req.body;
-    
-    // 1. Check Admin (Strict Verification)
     if (adminId === process.env.ADMIN_ID && adminPass === process.env.ADMIN_PASS) {
-        const { data, error } = await supabase.from('games').select('*').eq('id', gameId).single();
-        if (error) return res.status(404).json({ success: false, message: 'Game not found' });
+        const { data } = await supabase.from('games').select('*').eq('id', gameId).single();
         return res.json({ success: true, game: data });
     }
-
-    // 2. Check User Identity & Plan
-    let { data: user } = await supabase.from('site_users').select('*').eq('email', email?.toLowerCase()).eq('password', password).maybeSingle();
+    const { data: user } = await supabase.from('site_users').select('*').eq('email', email?.toLowerCase()).eq('password', password).maybeSingle();
     if (!user) return res.status(401).json({ success: false, message: 'AUTHENTICATION_FAILED' });
-    
-    // ADMIN BYPASS: Admins can see everything
-    const isAdmin = (user.role === 'admin' || user.email === 'admin@gamersarena.store');
-    if (!user.is_premium && !isAdmin) return res.status(403).json({ success: false, message: 'PREMIUM_REQUIRED' });
-
-    user = await ensureLimitReset(user);
-
+    if (!user.is_premium && user.role !== 'admin') return res.status(403).json({ success: false, message: 'PREMIUM_REQUIRED' });
     const limits = { 'starter': 5, 'pro': 12, 'ultimate': Infinity };
-    const maxReveals = limits[user.current_plan] || 0;
-
-    if (user.daily_reveal_count >= maxReveals) {
-        return res.status(403).json({ success: false, message: 'LIMIT_REACHED' });
-    }
-
+    if (user.daily_reveal_count >= (limits[user.current_plan] || 0)) return res.status(403).json({ success: false, message: 'LIMIT_REACHED' });
     const { data: game } = await supabase.from('games').select('*').eq('id', gameId).single();
     if (game) {
-        await supabase.from('site_users').update({ daily_reveal_count: user.daily_reveal_count + 1 }).eq('email', email);
+        await supabase.from('site_users').update({ daily_reveal_count: user.daily_reveal_count + 1, last_active_at: new Date().toISOString() }).eq('email', email);
         await supabase.from('reveal_logs').insert([{ user_email: email, game_id: gameId }]);
-        
-        // Backward compatibility: If credentials don't exist in JSON but singular fields do
-        if (!game.credentials && game.username) {
-            game.credentials = [{ user: game.username, pass: game.password }];
-        }
-        
+        if (!game.credentials && game.username) game.credentials = [{ user: game.username, pass: game.password }];
         res.json({ success: true, game });
-    } else {
-        res.status(404).json({ success: false, message: 'Game not found' });
-    }
-});
-
-// API: Admin Add Game (with Multiple Credentials Support)
-app.post('/api/admin/games', async (req, res) => {
-    const { id, pass, gameData } = req.body;
-    
-    // Check Master Admin OR Role-based Admin
-    let isAuthorized = (id === process.env.ADMIN_ID && pass === process.env.ADMIN_PASS);
-    if (!isAuthorized) {
-        const { data: user } = await supabase.from('site_users').select('*').eq('email', id?.toLowerCase()).eq('password', pass).maybeSingle();
-        if (user && user.role === 'admin') isAuthorized = true;
-    }
-    if (!isAuthorized) return res.status(401).json({ success: false, message: 'Unauthorized' });
-    
-    const newGame = {
-        id: 'G' + Date.now(),
-        game: gameData.game,
-        game_total: parseInt(gameData.game_total || 1),
-        image: 'logo.png',
-        credentials: gameData.credentials || [{ user: gameData.username, pass: gameData.password }]
-    };
-    
-    const { error } = await supabase.from('games').insert([newGame]);
-    if (error) return res.status(500).json({ success: false, message: error.message });
-    res.json({ success: true, message: 'Game added successfully', game: newGame });
-});
-
-// API: Admin Update Game
-app.post('/api/admin/games/update', async (req, res) => {
-    const { id, pass, gameId, updateData } = req.body;
-    
-    // Check Master Admin OR Role-based Admin
-    let isAuthorized = (id === process.env.ADMIN_ID && pass === process.env.ADMIN_PASS);
-    if (!isAuthorized) {
-        const { data: user } = await supabase.from('site_users').select('*').eq('email', id?.toLowerCase()).eq('password', pass).maybeSingle();
-        if (user && user.role === 'admin') isAuthorized = true;
-    }
-    
-    if (!isAuthorized) return res.status(401).json({ success: false, message: 'Unauthorized' });
-    
-    // Audit Logging
-    console.log(`[AUDIT] GAME_UPDATE: ID ${gameId} updated by admin at ${new Date().toISOString()}`);
-    
-    // Ensure ID isn't changed in updateData
-    delete updateData.id;
-
-    const { error } = await supabase.from('games').update(updateData).eq('id', gameId);
-    if (error) return res.status(500).json({ success: false, message: error.message });
-    res.json({ success: true, message: 'Game updated successfully' });
-});
-
-// API: Admin Delete Game
-app.post('/api/admin/games/delete', async (req, res) => {
-    const { id, pass, gameId, gameIds } = req.body;
-    
-    // Check Master Admin OR Role-based Admin
-    let isAuthorized = (id === process.env.ADMIN_ID && pass === process.env.ADMIN_PASS);
-    if (!isAuthorized) {
-        const { data: user } = await supabase.from('site_users').select('*').eq('email', id?.toLowerCase()).eq('password', pass).maybeSingle();
-        if (user && user.role === 'admin') isAuthorized = true;
-    }
-    if (!isAuthorized) return res.status(401).json({ success: false, message: 'Unauthorized' });
-    
-    let idsToDelete = gameIds || (gameId ? [gameId] : []);
-    if (idsToDelete.length === 0) return res.status(400).json({ success: false, message: 'No games specified' });
-    
-    console.log(`[AUDIT] GAME_DELETE: IDs ${idsToDelete.join(', ')} deleted by admin at ${new Date().toISOString()}`);
-
-    const { error } = await supabase.from('games').delete().in('id', idsToDelete);
-    if (error) return res.status(500).json({ success: false, message: error.message });
-    res.json({ success: true, message: 'Games deleted successfully' });
-});
-
-// API: Get Premium Bundles
-app.get('/api/premium', async (req, res) => {
-    const { data, error } = await supabase.from('bundles').select('*').order('created_at', { ascending: false });
-    if (error) return res.status(500).json({ success: false });
-    
-    // Map 'description' to 'desc' for frontend compatibility
-    const mappedBundles = data.map(b => ({
-        ...b,
-        desc: b.description
-    }));
-    
-    res.json({ success: true, bundles: mappedBundles });
-});
-
-// API: Admin Add Premium Bundle
-app.post('/api/admin/premium', async (req, res) => {
-    const { id, pass, bundleData } = req.body;
-    if (id !== process.env.ADMIN_ID || pass !== process.env.ADMIN_PASS) return res.status(401).json({ success: false, message: 'Unauthorized' });
-    
-    const newBundle = {
-        id: 'B' + Date.now(),
-        name: bundleData.name,
-        price: bundleData.price,
-        description: bundleData.desc,
-        image: bundleData.image || 'logo.png'
-    };
-    
-    const { error } = await supabase.from('bundles').insert([newBundle]);
-    if (error) return res.status(500).json({ success: false, message: error.message });
-    res.json({ success: true, message: 'Bundle added successfully', bundle: newBundle });
-});
-
-// API: Admin Delete Premium Bundle
-app.post('/api/admin/premium/delete', async (req, res) => {
-    const { id, pass, bundleId } = req.body;
-    if (id !== process.env.ADMIN_ID || pass !== process.env.ADMIN_PASS) return res.status(401).json({ success: false, message: 'Unauthorized' });
-    
-    const { error } = await supabase.from('bundles').delete().eq('id', bundleId);
-    if (error) return res.status(500).json({ success: false, message: error.message });
-    res.json({ success: true, message: 'Bundle deleted successfully' });
+    } else res.status(404).json({ success: false, message: 'Game not found' });
 });
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

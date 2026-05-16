@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Payment | GAMERS ARENA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="cinematic.css">
+    <style>
+        .verify-container { max-width: 600px; margin: 4rem auto; padding: 2rem; }
+        .upload-box { 
+            border: 2px dashed var(--glass-border); 
+            border-radius: 15px; 
+            padding: 3rem; 
+            text-align: center; 
+            cursor: pointer; 
+            transition: 0.3s;
+            background: rgba(255,255,255,0.02);
+        }
+        .upload-box:hover { border-color: var(--accent-blue); background: rgba(0,229,255,0.05); }
+        .preview-img { width: 100%; max-height: 300px; object-fit: contain; border-radius: 10px; margin-top: 1rem; display: none; }
+        .status-pill { display: inline-block; padding: 0.5rem 1.5rem; border-radius: 50px; font-weight: 900; font-size: 0.8rem; text-transform: uppercase; margin-top: 1rem; }
+        .status-pending { background: rgba(0,229,255,0.1); color: var(--accent-blue); border: 1px solid var(--accent-blue); }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="index.html" id="ga-logo" class="logo-container">
+            <div class="logo-icon"></div>
+            <div class="logo-text">GAMERS ARENA</div>
+        </a>
+    </nav>
+
+    <div class="verify-container">
+        <div class="glass-card" style="padding: 3rem; position: relative; overflow: hidden;">
+            <div style="position: absolute; top: 0; left: 0; width: 100%; height: 5px; background: linear-gradient(90deg, var(--accent-blue), var(--accent-red));"></div>
+            
+            <h1 class="glowing-text" style="font-size: 2rem; margin-bottom: 1rem;">Verify Your Payment</h1>
+            <p style="color: var(--text-muted); margin-bottom: 2.5rem;">Upload your payment screenshot and enter your UTR to activate your Ultimate Plan instantly.</p>
+
+            <form id="verify-form" onsubmit="submitVerification(event)">
+                <div class="input-group">
+                    <label>Website Email</label>
+                    <input type="email" id="verify-email" class="admin-input" placeholder="Your registered email" required>
+                </div>
+
+                <div class="input-group" style="margin-top: 1.5rem;">
+                    <label>UTR / Transaction ID</label>
+                    <input type="text" id="verify-utr" class="admin-input" placeholder="Enter 8-128 digit ID" required>
+                </div>
+
+                <div class="input-group" style="margin-top: 1.5rem;">
+                    <label>Proof of Payment (Screenshot)</label>
+                    <div class="upload-box" onclick="document.getElementById('file-input').click()">
+                        <div id="upload-placeholder">
+                            <span class="material-symbols-outlined" style="font-size: 3rem; color: var(--accent-blue);">cloud_upload</span>
+                            <p style="margin-top: 1rem; font-weight: bold;">Click to Upload Screenshot</p>
+                            <p style="font-size: 0.8rem; color: var(--text-muted);">JPG, PNG or WEBP (Max 5MB)</p>
+                        </div>
+                        <img id="screenshot-preview" class="preview-img">
+                    </div>
+                    <input type="file" id="file-input" hidden accept="image/*" onchange="previewFile()">
+                </div>
+
+                <button type="submit" id="submit-btn" class="btn btn-primary" style="width: 100%; margin-top: 2rem; padding: 1.2rem; font-size: 1.1rem;">
+                    🚀 Submit for HQ Verification
+                </button>
+            </form>
+
+            <div id="success-msg" style="display: none; text-align: center; margin-top: 2rem;">
+                <div class="status-pill status-pending">Status: Verification Pending</div>
+                <p style="margin-top: 1.5rem; line-height: 1.6;">
+                    ✅ Your proof has been sent to HQ. <br>
+                    <strong>Final Step:</strong> Click the button below to sync with our Telegram bot. You will get a message as soon as you are approved!
+                </p>
+                <a href="https://t.me/verificationforgamersarenabot" class="btn btn-secondary" style="margin-top: 1.5rem; display: inline-flex; align-items: center; gap: 10px;">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" style="width: 20px;">
+                    Finish on Telegram
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script src="global.js"></script>
+    <script>
+        // Auto-fill email if logged in
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = JSON.parse(localStorage.getItem('ga_user') || '{}');
+            if (user.email) document.getElementById('verify-email').value = user.email;
+        });
+
+        function previewFile() {
+            const preview = document.getElementById('screenshot-preview');
+            const placeholder = document.getElementById('upload-placeholder');
+            const file = document.getElementById('file-input').files[0];
+            const reader = new FileReader();
+
+            reader.onloadend = function () {
+                preview.src = reader.result;
+                preview.style.display = 'block';
+                placeholder.style.display = 'none';
+            }
+
+            if (file) {
+                reader.readAsDataURL(file);
+            }
+        }
+
+        async function submitVerification(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submit-btn');
+            const email = document.getElementById('verify-email').value;
+            const utr = document.getElementById('verify-utr').value;
+            const file = document.getElementById('file-input').files[0];
+
+            if (!file) return alert("Please upload a payment screenshot.");
+            
+            btn.innerText = "Processing...";
+            btn.disabled = true;
+
+            // Convert file to Base64 (Compressed via Canvas ideally, but here simple)
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = async () => {
+                const base64 = reader.result;
+
+                try {
+                    const res = await fetch('/api/payments/submit', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({ email, utr, plan: 'ultimate', screenshot: base64 })
+                    });
+                    const data = await res.json();
+                    
+                    if (data.success) {
+                        document.getElementById('verify-form').style.display = 'none';
+                        document.getElementById('success-msg').style.display = 'block';
+                    } else {
+                        alert(data.message);
+                        btn.innerText = "Retry Submission";
+                        btn.disabled = false;
+                    }
+                } catch (err) {
+                    alert("Connection error. Try again.");
+                    btn.innerText = "Retry Submission";
+                    btn.disabled = false;
+                }
+            };
+        }
+    </script>
+</body>
+</html>

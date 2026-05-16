@@ -75,8 +75,6 @@ function loginAdmin(e) {
     const id = document.getElementById('admin-id').value;
     const pass = document.getElementById('admin-pass').value;
     
-    // Instead of hardcoding, we store them in session and redirect to admin.
-    // The admin page itself should verify them before doing anything.
     sessionStorage.setItem('ga_admin_id', id);
     sessionStorage.setItem('ga_admin_pass', pass);
     window.location.href = 'admin.html';
@@ -141,11 +139,6 @@ window.addEventListener('mousemove', (e) => {
             particles.push(new DragonParticle(e.x, e.y));
         }
     }
-});
-
-document.addEventListener('DOMContentLoaded', () => {
-    initDragon();
-    animateDragon();
 });
 
 // 4. DYNAMIC CONTENT LOADING & LIVE EDITOR
@@ -226,10 +219,30 @@ function discourageInspection() {
     }
 }
 
+// 7. HEARTBEAT & LIVE TRACKING
+function startHeartbeat() {
+    const user = JSON.parse(localStorage.getItem('ga_user') || '{}');
+    if (!user.email) return;
+
+    const ping = () => {
+        fetch('/api/auth/ping', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ email: user.email })
+        }).catch(e => console.warn("Ping failed"));
+    };
+
+    ping();
+    setInterval(ping, 120000); // Every 2 minutes
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+    initDragon();
+    animateDragon();
     loadDynamicContent();
     updateGlobalUserDisplay();
     discourageInspection();
+    startHeartbeat();
 });
 
 // 5. GLOBAL USER DISPLAY & AUTH

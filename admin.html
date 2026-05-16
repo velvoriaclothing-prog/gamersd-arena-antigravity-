@@ -49,6 +49,12 @@
             <div id="panel-drops" class="dashboard-panel active">
                 <h1 style="font-size: 2.5rem; font-weight: 900;">Manage Free Drops</h1>
                 <p style="color: var(--text-muted);">View and manage the games and accounts database.</p>
+                <div style="background: rgba(0, 229, 255, 0.05); padding: 1rem; border-radius: 8px; margin: 1rem 0; border: 1px solid var(--accent-blue); display: flex; align-items: center; gap: 10px;">
+                    <span style="width: 10px; height: 10px; background: #00ff88; border-radius: 50%; box-shadow: 0 0 10px #00ff88;"></span>
+                    <span style="font-weight: bold; color: var(--accent-blue); font-size: 0.9rem;">LIVE USERS: </span>
+                    <span id="live-user-count" style="font-size: 1.4rem; font-weight: 900; color: #fff;">0</span>
+                    <span style="font-size: 0.7rem; color: var(--text-muted); margin-left: auto;">Last 5 mins</span>
+                </div>
                     <div style="background: rgba(0,0,0,0.3); padding: 1.5rem; border-radius: 12px; margin-top: 2rem;">
                         <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
                             <input type="text" id="new-game-title" class="admin-input" placeholder="Main Game Name" style="flex: 2;">
@@ -160,6 +166,13 @@
 
         // LOAD DATA
         function loadAdminData() {
+            // Live Stats
+            fetch(`/api/admin/stats?id=${CREDS.id}&pass=${CREDS.pass}`)
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) document.getElementById('live-user-count').innerText = data.live_users;
+                });
+
             // Load Free Games
             fetch(API_URL + '/api/games').then(r=>r.json()).then(data => {
                 const tbody = document.getElementById('admin-games-list');
