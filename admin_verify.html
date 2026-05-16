@@ -23,9 +23,11 @@
     </div>
 
     <script>
-        const pass = prompt("Enter Admin Password to access dashboard:");
-        if (pass !== 'aditi0110') {
-            alert("Unauthorized");
+        const adminId = sessionStorage.getItem('ga_admin_id');
+        const adminPass = sessionStorage.getItem('ga_admin_pass');
+
+        if (!adminId || !adminPass) {
+            alert("Unauthorized: Please login via the admin portal first.");
             window.location.href = 'index.html';
         }
 
@@ -34,6 +36,11 @@
             const data = await res.json();
             const list = document.getElementById('requests-list');
             list.innerHTML = '';
+
+            if (!data.payments || data.payments.length === 0) {
+                list.innerHTML = '<p>No pending requests found.</p>';
+                return;
+            }
 
             // Map to check for duplicates in the current list
             const utrCounts = {};
@@ -49,16 +56,14 @@
                     <div>
                         <div style="font-weight: 900; font-size: 1.2rem;">${req.user_email}</div>
                         <div style="color: var(--text-muted);">UTR: ${req.utr_id} ${isDuplicate ? '<span class="status-badge status-rejected" style="margin-left:10px;">DUPLICATE ALERT</span>' : ''}</div>
-                        <div style="color: var(--accent-blue); font-size: 0.8rem; margin-top: 0.5rem;">PLAN: ${req.plan_name?.toUpperCase() || 'STARTER'}</div>
+                        <div style="color: var(--accent-blue); font-size: 0.8rem; margin-top: 0.5rem;">PLAN: ${req.plan_name?.toUpperCase() || 'ULTIMATE'}</div>
                         <div style="font-size: 0.8rem; margin-top: 0.2rem; opacity: 0.5;">${new Date(req.created_at).toLocaleString()}</div>
                     </div>
                     <div>
                         <span class="status-badge status-${req.status}">${req.status}</span>
                         ${req.status === 'pending' ? `
                             <select id="plan-${req.id}" class="admin-input" style="width: auto; margin: 0 1rem; padding: 0.3rem;">
-                                <option value="starter" ${req.plan_name === 'starter' ? 'selected' : ''}>Starter (5)</option>
-                                <option value="pro" ${req.plan_name === 'pro' ? 'selected' : ''}>Pro (12)</option>
-                                <option value="ultimate" ${req.plan_name === 'ultimate' ? 'selected' : ''}>Ultimate (∞)</option>
+                                <option value="ultimate" selected>Ultimate (∞)</option>
                             </select>
                             <button onclick="processRequest(${req.id}, 'approved')" class="btn btn-primary" style="padding: 0.5rem 1rem;">Approve ${isDuplicate ? 'Anyway' : ''}</button>
                             <button onclick="processRequest(${req.id}, 'rejected')" class="btn btn-danger" style="padding: 0.5rem 1rem; margin-left: 0.5rem;">Reject</button>
@@ -70,7 +75,7 @@
         }
 
         async function processRequest(requestId, status) {
-            let plan = 'starter';
+            let plan = 'ultimate';
             if (status === 'approved') {
                 plan = document.getElementById(`plan-${requestId}`).value;
             }
@@ -78,11 +83,14 @@
             const res = await fetch('/api/admin/payments/process', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ id: 'admin', pass: 'aditi0110', requestId, status, plan })
+                body: JSON.stringify({ id: adminId, pass: adminPass, requestId, status, plan })
             });
-            if ((await res.json()).success) {
+            const result = await res.json();
+            if (result.success) {
                 alert(`Request ${status}!`);
                 loadRequests();
+            } else {
+                alert("Error: " + result.message);
             }
         }
 
