@@ -56,6 +56,19 @@
             <a href="premium">PREMIUM STORE</a>
             <a href="premium_payment" style="color: var(--accent-red);">MEMBERSHIPS</a>
         </div>
+        <div class="navbar-right">
+            <div class="user-profile" id="user-display" style="display: none; align-items: center; gap: 1rem;">
+                <div style="text-align: right;">
+                    <div id="user-email" style="font-size: 0.8rem; font-weight: 700;">user@example.com</div>
+                    <div id="premium-badge" class="badge">Checking...</div>
+                </div>
+                <button onclick="logout()" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.8rem;">Logout</button>
+            </div>
+            <div class="auth-buttons" id="auth-btns">
+                <a href="login" class="btn btn-secondary">Login</a>
+                <a href="signup" class="btn btn-danger">Join Elite</a>
+            </div>
+        </div>
     </nav>
 
     <section class="pricing-section">

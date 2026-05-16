@@ -56,16 +56,18 @@
             <a href="premium">PREMIUM STORE</a>
             <a href="premium_payment">MEMBERSHIPS</a>
         </div>
-        <div class="user-profile" id="user-display" style="display: none; align-items: center; gap: 1rem;">
-            <div style="text-align: right;">
-                <div id="user-email" style="font-size: 0.8rem; font-weight: 700;">user@example.com</div>
-                <div id="premium-badge" class="badge">Checking...</div>
+        <div class="navbar-right">
+            <div class="user-profile" id="user-display" style="display: none; align-items: center; gap: 1rem;">
+                <div style="text-align: right;">
+                    <div id="user-email" style="font-size: 0.8rem; font-weight: 700;">user@example.com</div>
+                    <div id="premium-badge" class="badge">Checking...</div>
+                </div>
+                <button onclick="logout()" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.8rem;">Logout</button>
             </div>
-            <button onclick="logout()" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.8rem;">Logout</button>
-        </div>
-        <div class="auth-buttons" id="auth-btns">
-            <a href="login" class="btn btn-secondary">Login</a>
-            <a href="signup" class="btn btn-danger">Join Elite</a>
+            <div class="auth-buttons" id="auth-btns">
+                <a href="login" class="btn btn-secondary">Login</a>
+                <a href="signup" class="btn btn-danger">Join Elite</a>
+            </div>
         </div>
     </nav>
 
@@ -273,13 +275,17 @@
             
             // Fetch full credentials (Admin Reveal)
             try {
+                const gaUser = JSON.parse(localStorage.getItem('ga_user') || '{}');
+                const adminId = sessionStorage.getItem('ga_admin_id') || gaUser.email;
+                const adminPass = sessionStorage.getItem('ga_admin_pass') || gaUser.password;
+
                 const res = await fetch('/api/games/reveal', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({ 
                         gameId: gameId, 
-                        adminId: sessionStorage.getItem('ga_admin_id') || 'admin',
-                        adminPass: sessionStorage.getItem('ga_admin_pass') || ''
+                        adminId: adminId,
+                        adminPass: adminPass
                     })
                 });
                 const data = await res.json();
@@ -312,12 +318,16 @@
             };
 
             try {
+                const user = JSON.parse(localStorage.getItem('ga_user') || '{}');
+                const adminId = sessionStorage.getItem('ga_admin_id') || user.email;
+                const adminPass = sessionStorage.getItem('ga_admin_pass') || user.password;
+
                 const res = await fetch('/api/admin/games/update', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
-                        id: sessionStorage.getItem('ga_admin_id'),
-                        pass: sessionStorage.getItem('ga_admin_pass'),
+                        id: adminId,
+                        pass: adminPass,
                         gameId: currentEditingId,
                         updateData: updateData
                     })
@@ -341,12 +351,16 @@
             btn.disabled = true;
             
             try {
+                const user = JSON.parse(localStorage.getItem('ga_user') || '{}');
+                const adminId = sessionStorage.getItem('ga_admin_id') || user.email;
+                const adminPass = sessionStorage.getItem('ga_admin_pass') || user.password;
+
                 const res = await fetch('/api/admin/games/delete', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
-                        id: sessionStorage.getItem('ga_admin_id'),
-                        pass: sessionStorage.getItem('ga_admin_pass'),
+                        id: adminId,
+                        pass: adminPass,
                         gameId: currentEditingId
                     })
                 });

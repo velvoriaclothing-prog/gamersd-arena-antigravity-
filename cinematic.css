@@ -52,14 +52,18 @@ body {
 /* NAVBAR */
 .navbar {
     position: fixed; top: 0; width: 100%;
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 1.5rem 5%;
-    background: rgba(3, 3, 5, 0.7);
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    padding: 0.8rem 5%;
+    background: rgba(3, 3, 5, 0.85);
     backdrop-filter: blur(30px);
     border-bottom: 1px solid var(--glass-border);
     z-index: 1000;
-    transition: all 0.4s ease;
+    gap: 2rem;
 }
+.nav-links { display: flex; gap: 1.5rem; justify-content: center; }
+.navbar-right { display: flex; align-items: center; gap: 1.5rem; justify-content: flex-end; }
 .logo-container { display: flex; align-items: center; gap: 1rem; cursor: pointer; text-decoration: none; z-index: 10; }
 .logo-img { height: 50px; width: 50px; object-fit: contain; border-radius: 12px; transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
 .logo-container:hover .logo-img { transform: scale(1.1) rotate(5deg); box-shadow: 0 0 20px var(--accent-blue-dim); }

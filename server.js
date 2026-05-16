@@ -381,7 +381,14 @@ app.post('/api/games/reveal', async (req, res) => {
 // API: Admin Add Game (with Multiple Credentials Support)
 app.post('/api/admin/games', async (req, res) => {
     const { id, pass, gameData } = req.body;
-    if (id !== process.env.ADMIN_ID || pass !== process.env.ADMIN_PASS) return res.status(401).json({ success: false, message: 'Unauthorized' });
+    
+    // Check Master Admin OR Role-based Admin
+    let isAuthorized = (id === process.env.ADMIN_ID && pass === process.env.ADMIN_PASS);
+    if (!isAuthorized) {
+        const { data: user } = await supabase.from('site_users').select('*').eq('email', id?.toLowerCase()).eq('password', pass).single();
+        if (user && user.role === 'admin') isAuthorized = true;
+    }
+    if (!isAuthorized) return res.status(401).json({ success: false, message: 'Unauthorized' });
     
     const newGame = {
         id: 'G' + Date.now(),
@@ -399,7 +406,15 @@ app.post('/api/admin/games', async (req, res) => {
 // API: Admin Update Game
 app.post('/api/admin/games/update', async (req, res) => {
     const { id, pass, gameId, updateData } = req.body;
-    if (id !== process.env.ADMIN_ID || pass !== process.env.ADMIN_PASS) return res.status(401).json({ success: false, message: 'Unauthorized' });
+    
+    // Check Master Admin OR Role-based Admin
+    let isAuthorized = (id === process.env.ADMIN_ID && pass === process.env.ADMIN_PASS);
+    if (!isAuthorized) {
+        const { data: user } = await supabase.from('site_users').select('*').eq('email', id?.toLowerCase()).eq('password', pass).single();
+        if (user && user.role === 'admin') isAuthorized = true;
+    }
+    
+    if (!isAuthorized) return res.status(401).json({ success: false, message: 'Unauthorized' });
     
     // Audit Logging
     console.log(`[AUDIT] GAME_UPDATE: ID ${gameId} updated by admin at ${new Date().toISOString()}`);
@@ -415,7 +430,14 @@ app.post('/api/admin/games/update', async (req, res) => {
 // API: Admin Delete Game
 app.post('/api/admin/games/delete', async (req, res) => {
     const { id, pass, gameId } = req.body;
-    if (id !== process.env.ADMIN_ID || pass !== process.env.ADMIN_PASS) return res.status(401).json({ success: false, message: 'Unauthorized' });
+    
+    // Check Master Admin OR Role-based Admin
+    let isAuthorized = (id === process.env.ADMIN_ID && pass === process.env.ADMIN_PASS);
+    if (!isAuthorized) {
+        const { data: user } = await supabase.from('site_users').select('*').eq('email', id?.toLowerCase()).eq('password', pass).single();
+        if (user && user.role === 'admin') isAuthorized = true;
+    }
+    if (!isAuthorized) return res.status(401).json({ success: false, message: 'Unauthorized' });
     
     console.log(`[AUDIT] GAME_DELETE: ID ${gameId} deleted by admin at ${new Date().toISOString()}`);
 
