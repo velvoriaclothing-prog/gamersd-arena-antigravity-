@@ -372,11 +372,11 @@
             
             const updateData = {
                 game: document.getElementById('edit-game').value,
-                username: document.getElementById('edit-user').value,
-                password: document.getElementById('edit-pass').value,
-                desc: document.getElementById('edit-desc').value,
                 image: document.getElementById('edit-image').value,
-                tags: document.getElementById('edit-tags').value.split(',').map(t => t.trim()).filter(t => t)
+                credentials: [{
+                    user: document.getElementById('edit-user').value,
+                    pass: document.getElementById('edit-pass').value
+                }]
             };
 
             try {
