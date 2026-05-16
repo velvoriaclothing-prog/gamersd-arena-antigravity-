@@ -92,6 +92,30 @@
             .then(data => {
                 if(data.success && data.games) {
                     allGames = data.games;
+                    
+                    // Sorting Logic
+                    const getSortPriority = (g) => {
+                        const gameStr = (g.game || g.name || '').toLowerCase();
+                        
+                        // 1. High explicit count (e.g. "700 games")
+                        const numMatch = gameStr.match(/(\d+)\s*(?:games|more games|\+)/i) || 
+                                         gameStr.match(/\+\s*(\d+)\s*games/i);
+                        if (numMatch) return parseInt(numMatch[1]) + 2000;
+
+                        // 2. Comma list or game_total
+                        const commaCount = gameStr.includes(',') ? gameStr.split(',').length : 0;
+                        const total = Math.max(commaCount, g.game_total || 0);
+                        
+                        if (total > 1) return total + 100;
+                        
+                        // 3. Keywords like "+ DLC"
+                        if (gameStr.includes('+ dlc')) return 2;
+
+                        return 1;
+                    };
+
+                    allGames.sort((a, b) => getSortPriority(b) - getSortPriority(a));
+                    
                     filteredGames = allGames;
                     renderInitialGames();
                 }
@@ -111,6 +135,15 @@
             renderMoreGames();
         }
 
+        function getGameCount(g) {
+            const gameStr = (g.game || g.name || '').toLowerCase();
+            const numMatch = gameStr.match(/(\d+)\s*(?:games|more games|\+)/i) || 
+                             gameStr.match(/\+\s*(\d+)\s*games/i);
+            if (numMatch) return parseInt(numMatch[1]);
+            const commaCount = gameStr.includes(',') ? gameStr.split(',').length : 0;
+            return Math.max(commaCount, g.game_total || 1);
+        }
+
         function renderMoreGames() {
             if (currentlyDisplayed >= filteredGames.length) return;
             
@@ -120,15 +153,17 @@
             const html = toRender.map((g, i) => {
                 const gradients = ['linear-gradient(135deg, #3b82f6, #06b6d4)', 'linear-gradient(135deg, #8b5cf6, #3b82f6)', 'linear-gradient(135deg, #10b981, #3b82f6)'];
                 const bg = gradients[(currentlyDisplayed + i) % gradients.length];
-                const isMega = (g.game_total || 0) >= 25;
-                const hasMultiple = (g.game_total || 0) > 1;
+                
+                const count = getGameCount(g);
+                const isMega = count >= 25;
+                const hasMultiple = count > 1;
                 
                 return `
                 <a href="game.html?id=${g.id}" class="game-card">
                     <div class="card-top" style="background: ${bg};">
                         <div class="platform-badge"><span class="material-symbols-outlined" style="font-size:14px;">check_circle</span> Verified</div>
                         ${isMega ? '<div style="position:absolute; top:10px; right:10px; background:gold; color:#000; padding:2px 8px; border-radius:50px; font-size:10px; font-weight:900; box-shadow:0 0 15px gold;">MEGA ACCOUNT</div>' : ''}
-                        ${hasMultiple ? `<div style="position:absolute; bottom:10px; left:10px; background:rgba(0,0,0,0.8); border:1px solid #00ff88; color:#00ff88; padding:2px 8px; border-radius:4px; font-size:10px; font-weight:bold;">${g.game_total} GAMES</div>` : ''}
+                        ${hasMultiple ? `<div style="position:absolute; bottom:10px; left:10px; background:rgba(0,0,0,0.8); border:1px solid #00ff88; color:#00ff88; padding:2px 8px; border-radius:4px; font-size:10px; font-weight:bold;">${count} GAMES</div>` : ''}
                         ${g.image ? `<img src="${g.image}" onerror="this.style.display='none'" alt="Cover">` : ''}
                     </div>
                     <div class="card-bottom">
