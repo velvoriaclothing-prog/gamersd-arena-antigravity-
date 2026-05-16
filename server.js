@@ -309,7 +309,8 @@ app.get('/api/games', async (req, res) => {
     
     while (true) {
         const { data, error } = await supabase.from('games')
-            .select('id, game, image, game_total')
+            .select('id, game, image, game_total, priority')
+            .order('priority', { ascending: false })
             .order('id', { ascending: false })
             .range(from, from + step - 1);
             
