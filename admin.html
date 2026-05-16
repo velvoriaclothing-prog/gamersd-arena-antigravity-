@@ -135,9 +135,10 @@
 
     <script>
         const API_URL = '';
+        const user = JSON.parse(localStorage.getItem('ga_user') || '{}');
         const CREDS = { 
-            id: sessionStorage.getItem('ga_admin_id') || 'admin', 
-            pass: sessionStorage.getItem('ga_admin_pass') || '' 
+            id: sessionStorage.getItem('ga_admin_id') || user.email || 'admin', 
+            pass: sessionStorage.getItem('ga_admin_pass') || user.password || '' 
         };
         console.log("Admin Session Loaded:", CREDS.id);
 
