@@ -187,26 +187,36 @@ body {
 
 /* --- MOBILE OPTIMIZATION --- */
 @media (max-width: 768px) {
-    .navbar { padding: 1rem 5%; }
-    .nav-links { display: none; } 
-    .logo-text { font-size: 1.2rem; }
+    .navbar { 
+        padding: 1rem; 
+        flex-wrap: wrap; 
+        gap: 1rem; 
+        justify-content: center; 
+        border-bottom: 1px solid var(--accent-blue-dim);
+    }
+    .logo-container { width: 100%; justify-content: center; margin-bottom: 0.5rem; }
+    .nav-links { display: flex; gap: 1.5rem; width: 100%; justify-content: center; order: 3; margin-top: 0.5rem; font-size: 0.85rem; } 
+    .auth-buttons, .user-profile { width: 100%; justify-content: center; }
     
-    .hero { padding: 4rem 5%; min-height: 80vh; }
-    .hero h1 { font-size: 2.8rem; line-height: 1.2; }
-    .hero p { font-size: 1rem; margin-bottom: 2.5rem; }
+    .hero { padding: 8rem 5% 4rem; min-height: 80vh; }
+    .hero h1 { font-size: 2.5rem; line-height: 1.2; margin-bottom: 1rem; }
+    .hero p { font-size: 1rem; margin-bottom: 2rem; padding: 0 10px; }
     
-    .hero-btns { flex-direction: column; width: 100%; gap: 1rem; display: flex; }
-    .btn { width: 100%; justify-content: center; padding: 1rem; font-size: 0.9rem; }
+    .hero .btn-group, div[style*="display: flex; gap: 1.5rem"] { flex-direction: column; width: 100%; gap: 1rem !important; align-items: center; }
+    .btn { width: 100%; justify-content: center; padding: 1rem; font-size: 0.95rem; text-align: center; }
     
-    .section { padding: 5rem 5%; }
-    .section-title { font-size: 2rem; }
+    .section { padding: 4rem 5%; }
+    .section-title { font-size: 2rem; line-height: 1.2; }
+    .section-header { margin-bottom: 3rem; }
     
     .grid { grid-template-columns: 1fr; gap: 1.5rem; }
-    .card-3d { transform: none !important; }
+    .card-3d { transform: none !important; padding: 1.5rem !important; }
+    .card-3d .material-symbols-outlined { font-size: 2.5rem !important; }
+    .card-3d h3 { font-size: 1.2rem !important; }
     
-    .timer-container { padding: 2rem; margin: 1rem; }
-    .countdown { font-size: 4rem; }
+    .timer-container { padding: 2rem 1.5rem; margin: 1rem 0; }
+    .countdown { font-size: 3.5rem; }
     
-    .cart-wrapper { flex-direction: column; padding: 2rem; gap: 2rem; margin: 4rem 1rem; }
-    .cart-img { width: 100%; height: auto; }
+    .cart-wrapper { flex-direction: column; padding: 2rem 1.5rem; gap: 2rem; margin: 2rem 0; }
+    .cart-img { width: 100%; height: auto; border-radius: 12px; }
 }
