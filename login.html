@@ -162,10 +162,15 @@
             });
             const data = await res.json();
             if (data.success) {
-                // IMPORTANT: Save password for credential reveal verification
+                // Save user data with password for admin credential reveal and edit operations
                 const userData = { ...data.user, password: pass };
                 localStorage.setItem('ga_user', JSON.stringify(userData));
-                window.location.href = data.user.role === 'admin' ? 'admin' : '/';
+                // Store admin credentials in sessionStorage for API calls
+                if (data.user.role === 'admin') {
+                    sessionStorage.setItem('ga_admin_id', data.user.email);
+                    sessionStorage.setItem('ga_admin_pass', pass);
+                }
+                window.location.href = data.user.role === 'admin' ? 'admin.html' : '/';
             } else {
                 errEl.textContent = data.message;
                 errEl.classList.remove('hidden');

@@ -29,15 +29,20 @@ body {
 
 /* Navbar */
 .navbar {
+    position: fixed; top: 0; left: 0; width: 100%;
     display: grid;
     grid-template-columns: auto 1fr auto;
     align-items: center;
     padding: 0.8rem 5%;
-    background-color: var(--bg-panel);
-    border-bottom: 2px solid var(--accent-teal-dark);
+    background: rgba(23, 31, 46, 0.85); /* matching var(--bg-panel) with opacity */
+    backdrop-filter: blur(30px);
+    border-bottom: 1px solid var(--border-color);
+    z-index: 1000;
     gap: 2rem;
 }
-.nav-links { display: flex; gap: 1.5rem; justify-content: center; width: 100%; flex: 1; }
+.nav-links { display: flex; gap: 2.5rem; justify-content: center; width: 100%; flex: 1; }
+.nav-links a { color: var(--text-muted); text-decoration: none; font-weight: 600; font-size: 0.9rem; letter-spacing: 1px; transition: 0.4s; position: relative; }
+.nav-links a:hover { color: var(--text-main); text-shadow: 0 0 10px rgba(255,255,255,0.5); }
 .navbar-right { display: flex; align-items: center; gap: 1.5rem; justify-content: flex-end; }
 
 .logo-container {
@@ -80,7 +85,7 @@ body {
 .container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 2rem;
+    padding: 100px 2rem 2rem 2rem;
 }
 
 /* Hero Section */
