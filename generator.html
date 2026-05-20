@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#030305">
+    <link rel="icon" type="image/png" href="logo.png">
+    
+    <title>Steam Manifest & Lua Patcher Generator | Gamers Arena</title>
+    <meta name="description" content="Generate ready-made appmanifest.acf files and SteamTools Lua scripts instantly for any PC game. Bypass huge downloads and unlock licenses offline.">
+    
+    <!-- Preconnect for Performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- FONTS & STYLES -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+    <link rel="stylesheet" href="cinematic.css">
+
+    <style>
+        .generator-container {
+            max-width: 1200px;
+            margin: 8rem auto 4rem;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .generator-hero {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .generator-hero h1 {
+            font-size: clamp(2.5rem, 5vw, 4.5rem);
+            font-weight: 900;
+            text-transform: uppercase;
+            background: linear-gradient(135deg, #fff 30%, var(--accent-blue) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .generator-hero p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .main-card {
+            background: linear-gradient(145deg, rgba(20,25,35,0.7), rgba(10,12,16,0.9));
+            border: 1px solid var(--glass-border);
+            border-radius: 30px;
+            padding: 3rem;
+            box-shadow: 0 40px 80px rgba(0,0,0,0.6);
+            backdrop-filter: blur(30px);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: start;
+        }
+
+        .search-section {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1.2rem 1.5rem 1.2rem 3.5rem;
+            background: rgba(0,0,0,0.5);
+            border: 2px solid var(--glass-border);
+            border-radius: 16px;
+            color: #fff;
+            font-size: 1.1rem;
+            outline: none;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .search-input:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 25px var(--accent-blue-dim);
+            background: rgba(0,0,0,0.8);
+        }
+
+        .search-box .material-symbols-outlined {
+            position: absolute;
+            left: 1.2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 1.5rem;
+        }
+
+        .input-label {
+            font-size: 0.9rem;
+            font-weight: 800;
+            color: var(--accent-blue);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 0.8rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .mode-toggle {
+            cursor: pointer;
+            color: var(--accent-red);
+            font-size: 0.8rem;
+            text-decoration: underline;
+        }
+
+        .presets-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .preset-btn {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--glass-border);
+            padding: 1rem;
+            border-radius: 12px;
+            color: var(--text-main);
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .preset-btn:hover {
+            background: rgba(0, 229, 255, 0.08);
+            border-color: var(--accent-blue);
+            transform: translateY(-2px);
+        }
+
+        .preset-icon {
+            color: var(--accent-blue);
+            font-size: 1.2rem;
+        }
+
+        /* Preview Details */
+        .preview-section {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2.5rem;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            transition: all 0.5s ease;
+        }
+
+        .preview-section.loaded {
+            justify-content: flex-start;
+            text-align: left;
+            align-items: stretch;
+            background: linear-gradient(180deg, rgba(0,0,0,0.6) 0%, rgba(10,12,16,0.9) 100%);
+        }
+
+        .game-banner {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.8);
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .game-title {
+            font-size: 1.8rem;
+            font-weight: 900;
+            margin-bottom: 0.5rem;
+            color: #fff;
+        }
+
+        .game-appid {
+            font-family: monospace;
+            font-size: 1rem;
+            color: var(--accent-blue);
+            font-weight: bold;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .game-desc {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            max-height: 120px;
+            overflow-y: auto;
+        }
+
+        .game-meta-pills {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: auto;
+        }
+
+        .meta-pill {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Results Area */
+        .results-section {
+            margin-top: 4rem;
+            display: none;
+            animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .tabs-header {
+            display: flex;
+            gap: 1rem;
+            border-bottom: 1px solid var(--glass-border);
+            margin-bottom: 2rem;
+            padding-bottom: 0.5rem;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            font-weight: 800;
+            padding: 0.8rem 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .tab-btn:hover {
+            color: #fff;
+        }
+
+        .tab-btn.active {
+            color: var(--accent-blue);
+        }
+
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -0.6rem;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--accent-blue);
+            box-shadow: 0 0 15px var(--accent-blue);
+        }
+
+        .code-box-wrapper {
+            position: relative;
+            background: #020204;
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.8);
+        }
+
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            background: rgba(255,255,255,0.02);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .code-title {
+            font-family: monospace;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .actions-group {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .action-icon-btn {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .action-icon-btn:hover {
+            background: var(--accent-blue);
+            color: #000;
+            border-color: var(--accent-blue);
+            transform: translateY(-2px);
+        }
+
+        .code-editor {
+            width: 100%;
+            height: 380px;
+            padding: 2rem;
+            background: transparent;
+            border: none;
+            color: #00e5ff;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            resize: none;
+            outline: none;
+            white-space: pre;
+            overflow-x: auto;
+        }
+
+        .download-panel {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 3rem;
+            flex-wrap: wrap;
+        }
+
+        /* Steps Timeline */
+        .tutorial-section {
+            margin-top: 8rem;
+            border-top: 1px solid var(--glass-border);
+            padding-top: 6rem;
+        }
+
+        .timeline {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            margin-top: 4rem;
+        }
+
+        .step-card {
+            background: rgba(10, 12, 16, 0.4);
+            border: 1px solid var(--glass-border);
+            padding: 2.5rem 2rem;
+            border-radius: 20px;
+            position: relative;
+            transition: all 0.4s ease;
+        }
+
+        .step-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-blue);
+            box-shadow: 0 10px 30px var(--accent-blue-dim);
+        }
+
+        .step-num {
+            position: absolute;
+            top: -1.5rem;
+            left: 2rem;
+            background: var(--accent-blue);
+            color: #000;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: 900;
+            box-shadow: 0 0 20px var(--accent-blue);
+        }
+
+        .step-title {
+            font-size: 1.2rem;
+            font-weight: 800;
+            margin: 1.5rem 0 0.8rem;
+            color: #fff;
+        }
+
+        .step-desc {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .step-code {
+            display: block;
+            background: rgba(0,0,0,0.6);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 0.8rem;
+            color: var(--accent-blue);
+            margin-top: 0.8rem;
+            word-break: break-all;
+        }
+
+        /* Toggle manual fields */
+        .manual-fields {
+            display: none;
+            flex-direction: column;
+            gap: 1.5rem;
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        @media (max-width: 900px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            .timeline {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+            }
+            .generator-container {
+                padding: 0 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- MOUSE GLOW EFFECT -->
+    <div class="mouse-glow" id="mouse-glow"></div>
+
+    <header>
+        <nav class="navbar">
+            <a href="/" class="logo-container">
+                <img src="logo.png" alt="Gamers Arena Official Logo" class="logo-img" width="50" height="50">
+                <div>
+                    <div class="logo-text">GAMERS ARENA</div>
+                    <div class="logo-sub">PREMIUM DROPS</div>
+                </div>
+            </a>
+            <div class="nav-links">
+                <a href="/">HOME</a>
+                <a href="library">FREE DROPS</a>
+                <a href="generator" aria-current="page">STEAM GENERATOR</a>
+                <a href="premium.html">PREMIUM STORE</a>
+                <a href="premium_payment">MEMBERSHIPS</a>
+            </div>
+            <div class="navbar-right">
+                <div class="user-profile" id="user-display" style="display: none; align-items: center; gap: 1rem;">
+                    <div style="text-align: right;">
+                        <div id="user-email" style="font-size: 0.8rem; font-weight: 700;">user@example.com</div>
+                        <div id="premium-badge" class="badge">Checking...</div>
+                    </div>
+                    <button onclick="logout()" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.8rem;">Logout</button>
+                </div>
+                <div class="auth-buttons" id="auth-btns">
+                    <a href="login" class="btn btn-secondary">Login</a>
+                    <a href="login" class="btn btn-danger">Join Elite</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="generator-container">
+        
+        <!-- Hero Header -->
+        <section class="generator-hero">
+            <div class="hero-tag" style="animation: float 4s ease-in-out infinite;">Core Utility Tool</div>
+            <h1 class="glowing-text">Steam Patcher Generator</h1>
+            <p>Generate perfectly-formatted <b>appmanifest_*.acf</b> and <b>*.lua</b> files instantly for any Steam game. Deploy backups, bypass downloads, and play with shared accounts offline instantly!</p>
+        </section>
+
+        <!-- Main Card Interface -->
+        <div class="main-card">
+            <div class="form-grid">
+                
+                <!-- Form Inputs -->
+                <div class="search-section">
+                    <div>
+                        <div class="input-label">
+                            <span>Steam App ID / Game Name</span>
+                            <span class="mode-toggle" id="mode-toggle-btn" onclick="toggleInputMode()">Toggle Manual Mode</span>
+                        </div>
+                        
+                        <!-- Automatic AppID Fetching -->
+                        <div class="search-box" id="auto-search-container">
+                            <span class="material-symbols-outlined">sports_esports</span>
+                            <input type="number" id="appid-input" class="search-input" placeholder="e.g. 1245620 (Elden Ring)..." oninput="handleAppIdInput()">
+                        </div>
+
+                        <!-- Manual Fallback Fields -->
+                        <div class="manual-fields" id="manual-fields-container">
+                            <input type="number" id="manual-appid" class="search-input" style="padding-left: 1.5rem; margin-bottom: 1rem;" placeholder="Enter App ID (e.g. 1245620)...">
+                            <input type="text" id="manual-name" class="search-input" style="padding-left: 1.5rem;" placeholder="Enter Game Title (e.g. Elden Ring)...">
+                        </div>
+                    </div>
+
+                    <!-- Preset Suggestions -->
+                    <div>
+                        <div class="input-label">Popular Presets</div>
+                        <div class="presets-grid">
+                            <button class="preset-btn" onclick="loadPreset(1245620)">
+                                <span class="material-symbols-outlined preset-icon">bolt</span>
+                                <div>
+                                    <div style="font-weight: 800;">Elden Ring</div>
+                                    <div style="font-size: 0.7rem; color: var(--text-muted);">App ID: 1245620</div>
+                                </div>
+                            </button>
+                            <button class="preset-btn" onclick="loadPreset(1091500)">
+                                <span class="material-symbols-outlined preset-icon">bolt</span>
+                                <div>
+                                    <div style="font-weight: 800;">Cyberpunk 2077</div>
+                                    <div style="font-size: 0.7rem; color: var(--text-muted);">App ID: 1091500</div>
+                                </div>
+                            </button>
+                            <button class="preset-btn" onclick="loadPreset(1593500)">
+                                <span class="material-symbols-outlined preset-icon">bolt</span>
+                                <div>
+                                    <div style="font-weight: 800;">God of War</div>
+                                    <div style="font-size: 0.7rem; color: var(--text-muted);">App ID: 1593500</div>
+                                </div>
+                            </button>
+                            <button class="preset-btn" onclick="loadPreset(1174180)">
+                                <span class="material-symbols-outlined preset-icon">bolt</span>
+                                <div>
+                                    <div style="font-weight: 800;">RDR 2</div>
+                                    <div style="font-size: 0.7rem; color: var(--text-muted);">App ID: 1174180</div>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary" style="width: 100%; justify-content: center;" onclick="generateFiles()">
+                        Generate Activators <span class="material-symbols-outlined">auto_fix</span>
+                    </button>
+                </div>
+
+                <!-- Preview Area -->
+                <div class="preview-section" id="preview-box">
+                    <div id="preview-placeholder">
+                        <span class="material-symbols-outlined" style="font-size: 4.5rem; color: var(--text-muted); margin-bottom: 1.5rem;">settings_suggest</span>
+                        <h3 style="font-size: 1.3rem; margin-bottom: 0.5rem; color: #fff;">Activator Ready</h3>
+                        <p style="color: var(--text-muted); font-size: 0.9rem; max-width: 300px; line-height: 1.5;">Enter a Steam App ID or click a popular preset to fetch full details and generate deployment tools.</p>
+                    </div>
+
+                    <div id="preview-content" style="display: none; width: 100%;">
+                        <img id="game-banner-img" src="" class="game-banner" alt="Game Banner">
+                        <h2 class="game-title" id="game-title-text">Game Title</h2>
+                        <div class="game-appid">
+                            <span class="material-symbols-outlined" style="font-size: 1rem;">key</span>
+                            <span>APP ID:</span> <span id="game-appid-text">000000</span>
+                        </div>
+                        <p class="game-desc" id="game-desc-text">Description goes here.</p>
+                        
+                        <div class="game-meta-pills">
+                            <div class="meta-pill">
+                                <span class="material-symbols-outlined" style="font-size: 1rem; color: var(--accent-blue);">folder_open</span>
+                                <span id="game-folder-text">GameFolder</span>
+                            </div>
+                            <div class="meta-pill">
+                                <span class="material-symbols-outlined" style="font-size: 1rem; color: var(--accent-red);">extension</span>
+                                <span id="game-dlc-text">0 DLCs Available</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Output Code Blocks Section -->
+        <section class="results-section" id="results-box">
+            <div class="tabs-header">
+                <button class="tab-btn active" id="tab-btn-acf" onclick="switchTab('acf')">AppManifest (.acf)</button>
+                <button class="tab-btn" id="tab-btn-lua" onclick="switchTab('lua')">Patcher Lua (.lua)</button>
+            </div>
+
+            <!-- Code Editor Frame -->
+            <div class="code-box-wrapper">
+                <div class="code-header">
+                    <span class="code-title" id="code-box-title">appmanifest_000000.acf</span>
+                    <div class="actions-group">
+                        <button class="action-icon-btn" onclick="copyCode()" title="Copy to Clipboard">
+                            <span class="material-symbols-outlined" style="font-size: 1.2rem;">content_copy</span>
+                        </button>
+                        <button class="action-icon-btn" onclick="downloadSelectedFile()" title="Download File">
+                            <span class="material-symbols-outlined" style="font-size: 1.2rem;">download</span>
+                        </button>
+                    </div>
+                </div>
+                <textarea class="code-editor" id="code-content-box" readonly></textarea>
+            </div>
+
+            <!-- Double Ready-Made Downloader -->
+            <div class="download-panel">
+                <button class="btn btn-secondary" onclick="downloadFile('acf')">
+                    Download appmanifest.acf <span class="material-symbols-outlined">download</span>
+                </button>
+                <button class="btn btn-primary" onclick="downloadFile('lua')">
+                    Download Patcher Lua <span class="material-symbols-outlined">download</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- Detailed Activation Guide -->
+        <section class="tutorial-section">
+            <div class="section-header" style="margin-bottom: 4rem;">
+                <span class="section-subtitle">Painless Setup</span>
+                <h2 class="section-title">Deployment Guide</h2>
+            </div>
+            
+            <div class="timeline">
+                
+                <div class="step-card">
+                    <div class="step-num">1</div>
+                    <h3 class="step-title">Place game files</h3>
+                    <p class="step-desc">Move your downloaded game data folder to your local Steam common folder:</p>
+                    <span class="step-code">...\Steam\steamapps\common\<span id="guide-dir-name" style="color: #fff;">[Game Folder]</span>\</span>
+                </div>
+
+                <div class="step-card">
+                    <div class="step-num">2</div>
+                    <h3 class="step-title">Deploy Manifest</h3>
+                    <p class="step-desc">Download and drop the generated <b>appmanifest.acf</b> file into your main Steam apps directory:</p>
+                    <span class="step-code">...\Steam\steamapps\</span>
+                </div>
+
+                <div class="step-card">
+                    <div class="step-num">3</div>
+                    <h3 class="step-title">Add Lua Patch</h3>
+                    <p class="step-desc">Download and drop the generated <b>.lua</b> file into your SteamTools script directory:</p>
+                    <span class="step-code">...\SteamTools\lua\</span>
+                </div>
+
+                <div class="step-card" style="border-color: var(--accent-blue);">
+                    <div class="step-num">4</div>
+                    <h3 class="step-title">Boot & Play!</h3>
+                    <p class="step-desc">Ensure Steam is closed, start your SteamTools local patcher, start Steam, and click the green <b>PLAY</b> button!</p>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <footer style="padding: 6rem 5% 4rem; border-top: 1px solid var(--glass-border); background: var(--bg-dark); color: var(--text-muted); text-align: center; position: relative; z-index: 2;">
+        <div style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 4rem; margin-bottom: 4rem;">
+            <div style="text-align: left;">
+                <h3 style="color: #fff; margin-bottom: 1.5rem; font-weight: 900; letter-spacing: 1px;">GAMERS ARENA</h3>
+                <p style="font-size: 0.95rem; line-height: 1.8;">The world's premier destination for high-quality shared PC gaming access. We specialize in providing secure, affordable, and instant AAA title deployment for the global community.</p>
+            </div>
+            <div style="text-align: left;">
+                <h3 style="color: #fff; margin-bottom: 1.5rem;">EXPLORE</h3>
+                <ul style="list-style: none; display: flex; flex-direction: column; gap: 1rem; padding: 0;">
+                    <li><a href="library" style="color: var(--text-muted); text-decoration: none; transition: 0.3s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#8b9bb4'">Account Library</a></li>
+                    <li><a href="premium_payment" style="color: var(--text-muted); text-decoration: none; transition: 0.3s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#8b9bb4'">Premium Plans</a></li>
+                    <li><a href="generator" style="color: var(--text-muted); text-decoration: none; transition: 0.3s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#8b9bb4'">Steam Generator</a></li>
+                </ul>
+            </div>
+            <div style="text-align: left;">
+                <h3 style="color: #fff; margin-bottom: 1.5rem;">LEGAL</h3>
+                <ul style="list-style: none; display: flex; flex-direction: column; gap: 1rem; padding: 0;">
+                    <li><a href="terms" style="color: var(--text-muted); text-decoration: none; transition: 0.3s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#8b9bb4'">Terms & Conditions</a></li>
+                    <li><a href="privacy" style="color: var(--text-muted); text-decoration: none; transition: 0.3s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#8b9bb4'">Privacy Policy</a></li>
+                    <li><a href="https://t.me/gamersarena_support" style="color: var(--text-muted); text-decoration: none; transition: 0.3s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#8b9bb4'">Support Hub</a></li>
+                </ul>
+            </div>
+        </div>
+        <div style="border-top: 1px solid var(--glass-border); padding-top: 3rem; font-size: 0.85rem; letter-spacing: 1px;">
+            &copy; 2026 Gamers Arena HQ. All assets verified.
+        </div>
+    </footer>
+
+    <script src="global.js"></script>
+    <script>
+        // State variables for generating content
+        let activeGameData = null;
+        let isManualMode = false;
+        let activeTab = 'acf'; // 'acf' or 'lua'
+
+        let generatedAcfCode = '';
+        let generatedLuaCode = '';
+
+        // Dynamic Interactive Mouse Glow
+        const glow = document.getElementById('mouse-glow');
+        window.addEventListener('mousemove', (e) => {
+            glow.style.left = e.clientX + 'px';
+            glow.style.top = e.clientY + 'px';
+        });
+
+        // Toggle Manual Input Mode
+        function toggleInputMode() {
+            isManualMode = !isManualMode;
+            const autoContainer = document.getElementById('auto-search-container');
+            const manualContainer = document.getElementById('manual-fields-container');
+            const toggleBtn = document.getElementById('mode-toggle-btn');
+
+            if (isManualMode) {
+                autoContainer.style.display = 'none';
+                manualContainer.style.display = 'flex';
+                toggleBtn.textContent = "Toggle Auto Mode";
+                toggleBtn.style.color = "var(--accent-blue)";
+            } else {
+                autoContainer.style.display = 'block';
+                manualContainer.style.display = 'none';
+                toggleBtn.textContent = "Toggle Manual Mode";
+                toggleBtn.style.color = "var(--accent-red)";
+            }
+        }
+
+        // Popular Presets triggers
+        function loadPreset(appid) {
+            if (isManualMode) toggleInputMode();
+            document.getElementById('appid-input').value = appid;
+            fetchGameDetails(appid);
+        }
+
+        // Handle typing AppID (throttled/debounced)
+        let typingTimeout;
+        function handleAppIdInput() {
+            clearTimeout(typingTimeout);
+            const appid = document.getElementById('appid-input').value;
+            if (!appid) return;
+            
+            typingTimeout = setTimeout(() => {
+                fetchGameDetails(appid);
+            }, 600);
+        }
+
+        // Fetch official details from proxy backend
+        async function fetchGameDetails(appid) {
+            const previewBox = document.getElementById('preview-box');
+            const placeholder = document.getElementById('preview-placeholder');
+            const content = document.getElementById('preview-content');
+
+            placeholder.innerHTML = `
+                <span class="material-symbols-outlined" style="font-size: 4.5rem; color: var(--accent-blue); margin-bottom: 1.5rem; display: inline-block; animation: drift 3s infinite ease-in-out;">sync</span>
+                <h3 style="font-size: 1.3rem; margin-bottom: 0.5rem; color: #fff;">Accessing Steam Grid...</h3>
+                <p style="color: var(--text-muted); font-size: 0.9rem;">Fetching official metadata, images, directories, and DLC lists...</p>
+            `;
+
+            try {
+                const res = await fetch(`/api/steam/appdetails/${appid}`);
+                const data = await res.json();
+
+                if (data.success) {
+                    activeGameData = data.game;
+                    updatePreviewUI();
+                } else {
+                    showPreviewError(data.message || 'Game not found on Steam. Try Manual Mode!');
+                }
+            } catch (err) {
+                console.error(err);
+                showPreviewError('Failed to connect to backend server. Try Manual Mode!');
+            }
+        }
+
+        // Render game data in preview block
+        function updatePreviewUI() {
+            const previewBox = document.getElementById('preview-box');
+            const placeholder = document.getElementById('preview-placeholder');
+            const content = document.getElementById('preview-content');
+
+            placeholder.style.display = 'none';
+            content.style.display = 'block';
+            previewBox.classList.add('loaded');
+
+            document.getElementById('game-banner-img').src = activeGameData.header_image;
+            document.getElementById('game-title-text').textContent = activeGameData.name;
+            document.getElementById('game-appid-text').textContent = activeGameData.appid;
+            document.getElementById('game-desc-text').innerHTML = activeGameData.short_description;
+            document.getElementById('game-folder-text').textContent = activeGameData.installdir;
+            document.getElementById('game-dlc-text').textContent = `${activeGameData.dlcs.length} DLCs Available`;
+            document.getElementById('guide-dir-name').textContent = activeGameData.installdir;
+        }
+
+        function showPreviewError(msg) {
+            const previewBox = document.getElementById('preview-box');
+            const placeholder = document.getElementById('preview-placeholder');
+            const content = document.getElementById('preview-content');
+
+            previewBox.classList.remove('loaded');
+            content.style.display = 'none';
+            placeholder.style.display = 'flex';
+            
+            placeholder.innerHTML = `
+                <span class="material-symbols-outlined" style="font-size: 4.5rem; color: var(--accent-red); margin-bottom: 1.5rem;">error</span>
+                <h3 style="font-size: 1.3rem; margin-bottom: 0.5rem; color: #fff;">Retrieval Failed</h3>
+                <p style="color: var(--text-muted); font-size: 0.9rem; max-width: 300px;">${msg}</p>
+            `;
+            activeGameData = null;
+        }
+
+        // Core Generator Logic
+        function generateFiles() {
+            let appid, name, installdir, dlcs = [];
+
+            if (isManualMode) {
+                appid = document.getElementById('manual-appid').value;
+                name = document.getElementById('manual-name').value;
+                
+                if (!appid || !name) {
+                    alert('Please enter both App ID and Game Name in Manual Mode!');
+                    return;
+                }
+
+                installdir = name.replace(/[\\/:*?"<>|]/g, '').trim();
+                activeGameData = {
+                    appid: parseInt(appid),
+                    name: name,
+                    installdir: installdir,
+                    dlcs: []
+                };
+
+                // Show manual metadata in preview box
+                const previewBox = document.getElementById('preview-box');
+                const placeholder = document.getElementById('preview-placeholder');
+                const content = document.getElementById('preview-content');
+                placeholder.style.display = 'none';
+                content.style.display = 'block';
+                previewBox.classList.add('loaded');
+                document.getElementById('game-banner-img').src = 'logo.png';
+                document.getElementById('game-title-text').textContent = name;
+                document.getElementById('game-appid-text').textContent = appid;
+                document.getElementById('game-desc-text').textContent = 'Custom manually-generated configuration.';
+                document.getElementById('game-folder-text').textContent = installdir;
+                document.getElementById('game-dlc-text').textContent = '0 DLCs (Manual)';
+                document.getElementById('guide-dir-name').textContent = installdir;
+            } else {
+                if (!activeGameData) {
+                    alert('Please enter a valid AppID or load a preset first!');
+                    return;
+                }
+                appid = activeGameData.appid;
+                name = activeGameData.name;
+                installdir = activeGameData.installdir;
+                dlcs = activeGameData.dlcs;
+            }
+
+            // 1. Build appmanifest.acf Content
+            generatedAcfCode = `"AppState"
+{
+	"appid"		"${appid}"
+	"Universe"		"1"
+	"name"		"${name}"
+	"StateFlags"		"4"
+	"installdir"		"${installdir}"
+	"LastUpdated"		"0"
+	"UpdateResult"		"0"
+	"SizeOnDisk"		"0"
+	"buildid"		"0"
+	"BytesToDownload"		"0"
+	"BytesDownloaded"		"0"
+	"AutoUpdateBehavior"		"0"
+	"AllowOtherDownloadsWhileRunning"		"0"
+	"ScheduledChangeSeconds"		"0"
+	"UserConfig"
+	{
+		"Language"		"english"
+	}
+	"InstalledDepots"
+	{
+	}
+}`;
+
+            // 2. Build Patcher Lua Content
+            let dlcBlock = '';
+            if (dlcs.length > 0) {
+                dlcBlock = ',\n    dlc = {\n' + dlcs.map(d => `        [${d.id}] = "${d.name}"`).join(',\n') + '\n    }';
+            }
+            
+            generatedLuaCode = `add_game(${appid}, {
+    name = "${name}"${dlcBlock}
+})`;
+
+            // Trigger Results display
+            const resultsBox = document.getElementById('results-box');
+            resultsBox.style.display = 'block';
+            
+            // Set current tab value
+            switchTab(activeTab);
+            
+            // Scroll smoothly to results
+            resultsBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // Switch Code View Tabs
+        function switchTab(tab) {
+            activeTab = tab;
+            const btnAcf = document.getElementById('tab-btn-acf');
+            const btnLua = document.getElementById('tab-btn-lua');
+            const title = document.getElementById('code-box-title');
+            const editor = document.getElementById('code-content-box');
+
+            if (tab === 'acf') {
+                btnAcf.classList.add('active');
+                btnLua.classList.remove('active');
+                title.textContent = `appmanifest_${activeGameData.appid}.acf`;
+                editor.value = generatedAcfCode;
+                editor.style.color = '#00e5ff';
+            } else {
+                btnAcf.classList.remove('active');
+                btnLua.classList.add('active');
+                title.textContent = `${activeGameData.appid}.lua`;
+                editor.value = generatedLuaCode;
+                editor.style.color = '#ff0055';
+            }
+        }
+
+        // Copy active file to clipboard
+        function copyCode() {
+            const editor = document.getElementById('code-content-box');
+            editor.select();
+            document.execCommand('copy');
+            alert('Copied to clipboard successfully! ⚡');
+        }
+
+        // Download currently viewing file
+        function downloadSelectedFile() {
+            downloadFile(activeTab);
+        }
+
+        // Triggers instant download using in-memory blob
+        function downloadFile(type) {
+            let content = '';
+            let filename = '';
+
+            if (!activeGameData) {
+                alert('Generate files first!');
+                return;
+            }
+
+            if (type === 'acf') {
+                content = generatedAcfCode;
+                filename = `appmanifest_${activeGameData.appid}.acf`;
+            } else {
+                content = generatedLuaCode;
+                filename = `${activeGameData.appid}.lua`;
+            }
+
+            if (!content) {
+                alert('Please generate the configurations first.');
+                return;
+            }
+
+            const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
+</body>
+</html>

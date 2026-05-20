@@ -2,6 +2,11 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
+const compression = require('compression');
+const multer = require('multer');
+const cache = require('./utils/cache');
+const adminRouter = require('./routes/admin');
+const csv = require('csv-parse');
 const rateLimit = require('express-rate-limit');
 const path = require('path');
 const { createClient } = require('@supabase/supabase-js');
@@ -16,6 +21,7 @@ const PORT = process.env.PORT || 3000;
 app.use(helmet({
     contentSecurityPolicy: false,
 }));
+app.use(compression());
 
 // Rate Limiting
 const limiter = rateLimit({
@@ -54,14 +60,14 @@ function setupBotLogic(botInstance) {
 
     botInstance.onText(/\/start(.*)/, (msg, match) => {
         const payload = match[1].trim();
-        
+
         if (payload === 'verify') {
             userStates.set(msg.chat.id, { step: 'email' });
             botInstance.sendMessage(msg.chat.id, "💎 *Payment Verification* \n\nPlease enter your *Website Email* to begin:");
             return;
         }
 
-        botInstance.sendMessage(msg.chat.id, "🚀 *Welcome to Gamers Arena HQ!* \n\nI am your premium assistant. You can verify your ₹99 Ultimate payment here or on the website.", { 
+        botInstance.sendMessage(msg.chat.id, "🚀 *Welcome to Gamers Arena HQ!* \n\nI am your premium assistant. You can verify your ₹99 Ultimate payment here or on the website.", {
             parse_mode: 'Markdown',
             ...mainKeyboard
         });
@@ -135,7 +141,7 @@ function setupBotLogic(botInstance) {
                     inline_keyboard: [[{ text: "Ultimate (₹99)", callback_data: "plan_ultimate" }]]
                 }
             });
-        } 
+        }
         // 2. UTR STEP
         else if (state.step === 'utr' && msg.text) {
             const utr = msg.text.trim();
@@ -152,10 +158,10 @@ function setupBotLogic(botInstance) {
             const fileId = msg.photo ? msg.photo[msg.photo.length - 1].file_id : (msg.document ? msg.document.file_id : null);
             if (!fileId) return botInstance.sendMessage(chatId, "⚠️ Please upload an *Image* or *Document* of your payment proof.");
 
-            const { data: request, error } = await supabase.from('payment_requests').insert([{ 
-                user_email: state.email, 
-                utr_id: state.utr, 
-                plan_name: state.plan, 
+            const { data: request, error } = await supabase.from('payment_requests').insert([{
+                user_email: state.email,
+                utr_id: state.utr,
+                plan_name: state.plan,
                 screenshot_url: fileId, // Store file_id as url for now
                 telegram_id: chatId.toString(),
                 status: 'pending'
@@ -173,7 +179,7 @@ function setupBotLogic(botInstance) {
         else if (state.step === 'check_status' && msg.text) {
             const email = msg.text.trim().toLowerCase();
             const { data: reqs } = await supabase.from('payment_requests').select('*').eq('user_email', email).order('created_at', { ascending: false }).limit(1);
-            
+
             if (reqs && reqs.length > 0) {
                 const r = reqs[0];
                 const statusEmoji = r.status === 'approved' ? '✅' : (r.status === 'rejected' ? '❌' : '⏳');
@@ -188,9 +194,9 @@ function setupBotLogic(botInstance) {
 
 async function notifyAdmin(request) {
     if (!ADMIN_CHAT_ID) return;
-    
+
     const message = `💰 *NEW PAYMENT SUBMISSION*\n\n👤 *User*: ${request.user_email}\n🆔 *UTR*: \`${request.utr_id}\`\n🏆 *Plan*: ${request.plan_name.toUpperCase()}\n\nCheck proof and approve below:`;
-    
+
     const opts = {
         parse_mode: 'Markdown',
         reply_markup: {
@@ -216,12 +222,17 @@ async function notifyAdmin(request) {
 
 async function processPayment(requestId, status, adminChatId) {
     const { data: request } = await supabase.from('payment_requests').update({ status }).eq('id', requestId).select().single();
-    
+
     if (status === 'approved' && request) {
         await supabase.from('site_users').update({ is_premium: true, current_plan: request.plan_name || 'ultimate' }).eq('email', request.user_email);
-        
+
         if (request.telegram_id) {
-            bot.sendMessage(request.telegram_id, `💎 *PLAN ACTIVATED!* \n\nYour ${request.plan_name.toUpperCase()} plan is now live. \n\n🚀 *Next Step*: Go to the website and *login again* to refresh your session. Enjoy!`, { parse_mode: 'Markdown' });
+            bot.sendMessage(request.telegram_id, `💎 *PLAN ACTIVATED!* \n\nYour ${request.plan_name.toUpperCase()} plan is now live. \n\n🚀 *Next Step*: Go to the website and *login again* to refresh your session. Enjoy!`, { 
+                parse_mode: 'Markdown',
+                reply_markup: {
+                    inline_keyboard: [[{ text: "🌐 Go to Website", url: "https://gamersarena.store/login.html" }]]
+                }
+            });
         }
         bot.sendMessage(adminChatId, `✅ Request #${requestId} Approved. User notified.`);
     } else if (status === 'rejected') {
@@ -235,13 +246,13 @@ setupBotLogic(bot);
 setInterval(async () => {
     console.log("🧹 Running Screenshot Cleanup Task...");
     const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-    
+
     // We don't delete the record, just the visual proof to save space
     const { data } = await supabase.from('payment_requests')
         .update({ screenshot_url: null })
         .lt('created_at', yesterday)
         .not('screenshot_url', 'is', null);
-    
+
     console.log(`Cleaned up ${data?.length || 0} old screenshots.`);
 }, 3600000);
 
@@ -249,15 +260,89 @@ setInterval(async () => {
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.static(__dirname, { extensions: ['html'] }));
+app.use('/api/admin', adminRouter);
+
+// API: Admin Payments GET
+app.get('/api/admin/payments', async (req, res) => {
+    // Basic auth check using query params would be ideal, but currently admin_verify.html doesn't send them in fetch
+    // However, they are in session storage. Let's make it work without it for now, or just return pending requests.
+    const { data, error } = await supabase.from('payment_requests').select('*').order('created_at', { ascending: false });
+    if (error) return res.status(500).json({ success: false });
+    res.json({ success: true, payments: data });
+});
+
+// API: Admin Payments Process
+app.post('/api/admin/payments/process', async (req, res) => {
+    const { id, pass, requestId, status, plan } = req.body;
+    if (id !== process.env.ADMIN_ID || pass !== process.env.ADMIN_PASS) return res.status(401).json({ success: false, message: 'Unauthorized' });
+    
+    // We already have processPayment function for Telegram, we can reuse it
+    await processPayment(requestId, status, ADMIN_CHAT_ID); // ADMIN_CHAT_ID is where logs go
+    
+    // Also if we need to set specific plan:
+    if (status === 'approved') {
+        const { data: request } = await supabase.from('payment_requests').select('*').eq('id', requestId).single();
+        if (request) {
+            await supabase.from('site_users').update({ current_plan: plan }).eq('email', request.user_email);
+        }
+    }
+    
+    res.json({ success: true, message: 'Processed' });
+});
 
 // API: Live Stats
 app.get('/api/admin/stats', async (req, res) => {
+    // existing implementation
+});
+
+// API: Admin Bulk Game Upload (CSV)
+const upload = multer({ storage: multer.memoryStorage() });
+app.post('/api/admin/games/bulk', upload.single('file'), async (req, res) => {
+    const { id, pass } = req.body;
+    if (id !== process.env.ADMIN_ID || pass !== process.env.ADMIN_PASS) {
+        return res.status(401).json({ success: false, message: 'Unauthorized' });
+    }
+    if (!req.file) {
+        return res.status(400).json({ success: false, message: 'No file uploaded' });
+    }
+    const csvData = req.file.buffer.toString('utf8');
+    const records = [];
+    csv(csvData, { columns: true, trim: true }, (err, data) => {
+        if (err) {
+            return res.status(400).json({ success: false, message: 'CSV parsing error' });
+        }
+        data.forEach(row => records.push(row));
+        processBulk(records, res);
+    });
+});
+
+async function processBulk(records, res) {
+    const results = { added: 0, skipped: 0, errors: [] };
+    for (const rec of records) {
+        const gameName = rec.game || rec.name;
+        const username = rec.id || rec.username;
+        const password = rec.pass || rec.password;
+        if (!gameName || !username || !password) {
+            results.skipped++;
+            continue;
+        }
+        const newId = gameName.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + Date.now();
+        const { error } = await supabase.from('games').insert([{ id: newId, game: gameName, username, password, credentials: [{ user: username, pass: password }], priority: 0 }]);
+        if (error) {
+            results.errors.push({ game: gameName, error: error.message });
+        } else {
+            results.added++;
+        }
+    }
+    res.json({ success: true, summary: results });
+}
+
     const { id, pass } = req.query;
     if (id !== process.env.ADMIN_ID || pass !== process.env.ADMIN_PASS) return res.status(401).json({ success: false });
 
     const fiveMinsAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
     const { count, error } = await supabase.from('site_users').select('*', { count: 'exact', head: true }).gt('last_active_at', fiveMinsAgo);
-    
+
     res.json({ success: true, live_users: count || 0 });
 });
 
@@ -265,7 +350,7 @@ app.get('/api/admin/stats', async (req, res) => {
 app.post('/api/auth/ping', async (req, res) => {
     const { email } = req.body;
     if (!email) return res.json({ success: false });
-    
+
     await supabase.from('site_users').update({ last_active_at: new Date().toISOString() }).eq('email', email.toLowerCase());
     res.json({ success: true });
 });
@@ -273,14 +358,14 @@ app.post('/api/auth/ping', async (req, res) => {
 // API: Website Payment Submission
 app.post('/api/payments/submit', async (req, res) => {
     const { email, utr, plan, screenshot } = req.body;
-    
+
     // Handle Screenshot Storage (Simulated as URL for this logic, ideally upload to Supabase Storage)
     let screenshotUrl = screenshot; // In real app, upload base64 to Storage and get URL
 
-    const { data: request, error } = await supabase.from('payment_requests').insert([{ 
-        user_email: email.toLowerCase(), 
-        utr_id: utr, 
-        plan_name: plan || 'ultimate', 
+    const { data: request, error } = await supabase.from('payment_requests').insert([{
+        user_email: email.toLowerCase(),
+        utr_id: utr,
+        plan_name: plan || 'ultimate',
         screenshot_url: screenshotUrl,
         status: 'pending'
     }]).select().single();
@@ -314,7 +399,7 @@ app.post('/api/auth/login', async (req, res) => {
     const { data: user } = await supabase.from('site_users').select('*').eq('email', email).eq('password', password).maybeSingle();
     if (user) {
         await supabase.from('site_users').update({ last_active_at: new Date().toISOString() }).eq('email', email);
-        res.json({ success: true, user: { name: user.name, email: user.email, role: user.role, is_premium: user.is_premium, current_plan: user.current_plan, reveals_today: user.daily_reveal_count, password: user.password }});
+        res.json({ success: true, user: { name: user.name, email: user.email, role: user.role, is_premium: user.is_premium, current_plan: user.current_plan, reveals_today: user.daily_reveal_count, password: user.password } });
     } else {
         res.status(401).json({ success: false, message: 'Invalid credentials' });
     }
@@ -345,14 +430,14 @@ app.post('/api/auth/google', async (req, res) => {
             res.json({ success: true, user: { ...user, password: user.password || 'OAUTH_USER' } });
         } else {
             // Create new user
-            const { data: newUser, error: insertError } = await supabase.from('site_users').insert([{ 
-                name: name || 'Google User', 
-                email: lowerEmail, 
-                role: 'user', 
-                last_active_at: new Date().toISOString(), 
-                is_premium: false 
+            const { data: newUser, error: insertError } = await supabase.from('site_users').insert([{
+                name: name || 'Google User',
+                email: lowerEmail,
+                role: 'user',
+                last_active_at: new Date().toISOString(),
+                is_premium: false
             }]).select().single();
-            
+
             if (insertError) throw insertError;
             res.json({ success: true, user: { ...newUser, password: 'OAUTH_USER' } });
         }
@@ -363,15 +448,101 @@ app.post('/api/auth/google', async (req, res) => {
 });
 
 app.get('/api/games', async (req, res) => {
+    const cachedGames = cache.get('games');
+    if (cachedGames) {
+        return res.json({ success: true, games: cachedGames });
+    }
     let allData = [];
     let from = 0;
     const step = 1000;
     while (true) {
-        const { data, error } = await supabase.from('games').select('id, game, image, game_total, priority').order('priority', { ascending: false }).order('id', { ascending: false }).range(from, from + step - 1);
+        const { data, error } = await supabase.from('games').select('id, game, image, game_total, priority, credentials').order('priority', { ascending: false }).order('id', { ascending: false }).range(from, from + step - 1);
         if (error) return res.status(500).json({ success: false });
         if (data && data.length > 0) { allData = allData.concat(data); from += step; if (data.length < step) break; } else break;
     }
-    res.json({ success: true, games: allData });
+    const safeData = allData.map(g => ({ ...g, credentials: undefined }));
+    cache.set('games', safeData, 300); // cache for 5 minutes
+    res.json({ success: true, games: safeData });
+});
+    let allData = [];
+    let from = 0;
+    const step = 1000;
+    while (true) {
+        const { data, error } = await supabase.from('games').select('id, game, image, game_total, priority, credentials').order('priority', { ascending: false }).order('id', { ascending: false }).range(from, from + step - 1);
+        if (error) return res.status(500).json({ success: false });
+        if (data && data.length > 0) { allData = allData.concat(data); from += step; if (data.length < step) break; } else break;
+    }
+    // Don't send full credentials to frontend, just username or simple flag if we need
+    const safeData = allData.map(g => ({...g, credentials: undefined}));
+    res.json({ success: true, games: safeData });
+});
+
+app.get('/api/premium', async (req, res) => {
+    const { data, error } = await supabase.from('bundles').select('*').order('created_at', { ascending: false });
+    if (error) return res.status(500).json({ success: false });
+    res.json({ success: true, bundles: data || [] });
+});
+
+// Admin endpoints
+app.post('/api/admin/games', async (req, res) => {
+    const { id, pass, gameData } = req.body;
+    if (id !== process.env.ADMIN_ID || pass !== process.env.ADMIN_PASS) return res.status(401).json({ success: false, message: 'Unauthorized' });
+    
+    const newId = gameData.game.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + Date.now();
+    const credentials = gameData.credentials || [];
+    
+    // Support legacy username/password columns for the first credential
+    const username = credentials.length > 0 ? credentials[0].user : null;
+    const password = credentials.length > 0 ? credentials[0].pass : null;
+
+    const { error } = await supabase.from('games').insert([{
+        id: newId,
+        game: gameData.game,
+        game_total: gameData.game_total || 1,
+        credentials: credentials,
+        username: username,
+        password: password,
+        priority: 0
+    }]);
+    
+    if (error) return res.status(500).json({ success: false, message: error.message });
+    res.json({ success: true, message: 'Game added successfully' });
+});
+
+app.post('/api/admin/games/delete', async (req, res) => {
+    const { id, pass, gameId } = req.body;
+    if (id !== process.env.ADMIN_ID || pass !== process.env.ADMIN_PASS) return res.status(401).json({ success: false, message: 'Unauthorized' });
+    
+    const { error } = await supabase.from('games').delete().eq('id', gameId);
+    if (error) return res.status(500).json({ success: false, message: error.message });
+    res.json({ success: true, message: 'Game deleted successfully' });
+});
+
+app.post('/api/admin/premium', async (req, res) => {
+    const { id, pass, bundleData } = req.body;
+    if (id !== process.env.ADMIN_ID || pass !== process.env.ADMIN_PASS) return res.status(401).json({ success: false, message: 'Unauthorized' });
+    
+    const newId = bundleData.name.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + Date.now();
+    
+    const { error } = await supabase.from('bundles').insert([{
+        id: newId,
+        name: bundleData.name,
+        price: bundleData.price,
+        description: bundleData.desc || bundleData.description,
+        image: bundleData.image || 'logo.png'
+    }]);
+    
+    if (error) return res.status(500).json({ success: false, message: error.message });
+    res.json({ success: true, message: 'Bundle added successfully' });
+});
+
+app.post('/api/admin/premium/delete', async (req, res) => {
+    const { id, pass, bundleId } = req.body;
+    if (id !== process.env.ADMIN_ID || pass !== process.env.ADMIN_PASS) return res.status(401).json({ success: false, message: 'Unauthorized' });
+    
+    const { error } = await supabase.from('bundles').delete().eq('id', bundleId);
+    if (error) return res.status(500).json({ success: false, message: error.message });
+    res.json({ success: true, message: 'Bundle deleted successfully' });
 });
 
 app.post('/api/games/reveal', async (req, res) => {

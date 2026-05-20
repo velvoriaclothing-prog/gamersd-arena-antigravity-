@@ -31,8 +31,8 @@
 
     <div class="admin-layout">
         <div class="sidebar">
-            <button class="sidebar-btn active" onclick="switchTab('drops')">
-                <span class="material-symbols-outlined">library_add</span> Free Drops
+            <button class="sidebar-btn" onclick="switchTab('bulk')">
+                <span class="material-symbols-outlined">upload_file</span> Bulk Upload
             </button>
             <button class="sidebar-btn" onclick="switchTab('bundles')">
                 <span class="material-symbols-outlined">workspace_premium</span> Premium Bundles
@@ -46,6 +46,14 @@
         </div>
 
         <div class="admin-content">
+            <div id="panel-bulk" class="dashboard-panel">
+                <h1 style="font-size: 2.5rem; font-weight: 900;">Bulk Game Upload</h1>
+                <p style="color: var(--text-muted);">Upload a CSV file with columns <code>game</code>, <code>id</code>, <code>pass</code> (or <code>username</code>/<code>password</code>).</p>
+                <input type="file" id="bulk-file" accept=".csv" class="admin-input" style="margin-top:1rem;" />
+                <button class="btn btn-primary" style="margin-top:1rem;" onclick="uploadBulk()">Upload & Add Games</button>
+                <pre id="bulk-result" style="margin-top:1rem; background:rgba(0,0,0,0.2); padding:1rem; border-radius:8px; display:none;"></pre>
+            </div>
+
             <div id="panel-drops" class="dashboard-panel active">
                 <h1 style="font-size: 2.5rem; font-weight: 900;">Manage Free Drops</h1>
                 <p style="color: var(--text-muted);">View and manage the games and accounts database.</p>
@@ -164,8 +172,36 @@
             event.currentTarget.classList.add('active');
         }
 
-        // LOAD DATA
-        function loadAdminData() {
+        function uploadBulk() {
+            const fileInput = document.getElementById('bulk-file');
+            if (!fileInput.files.length) {
+                alert('Please select a CSV file first.');
+                return;
+            }
+            const file = fileInput.files[0];
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('id', CREDS.id);
+            formData.append('pass', CREDS.pass);
+            fetch('/api/admin/games/bulk', {
+                method: 'POST',
+                body: formData
+            })
+            .then(r => r.json())
+            .then(res => {
+                const out = document.getElementById('bulk-result');
+                out.style.display = 'block';
+                if (res.success) {
+                    out.textContent = `Upload finished. Added: ${res.summary.added}, Skipped: ${res.summary.skipped}\n` + (res.summary.errors.length ? 'Errors:\n' + JSON.stringify(res.summary.errors, null, 2) : '');
+                    loadAdminData();
+                } else {
+                    out.textContent = 'Error: ' + (res.message || 'Unknown error');
+                }
+            })
+            .catch(e => {
+                alert('Upload failed: ' + e.message);
+            });
+        }
             // Live Stats
             fetch(`/api/admin/stats?id=${CREDS.id}&pass=${CREDS.pass}`)
                 .then(r => r.json())
@@ -269,7 +305,7 @@
             }).then(() => loadAdminData());
         }
 
-        // ADD BUNDLE
+
         function addBundle() {
             const bundleData = {
                 name: document.getElementById('new-bundle-name').value,

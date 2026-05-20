@@ -8,12 +8,20 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.105.3",
+    "compression": "^1.8.1",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
+    "csv-parse": "^6.2.1",
     "dotenv": "^17.4.2",
     "express": "^4.18.2",
-    "express-rate-limit": "^7.1.5",
-    "helmet": "^7.1.0",
+    "express-rate-limit": "^7.5.1",
+    "helmet": "^7.2.0",
+    "multer": "^2.1.1",
+    "node-cache": "^5.1.2",
     "node-telegram-bot-api": "^0.67.0"
+  },
+  "devDependencies": {
+    "clean-css-cli": "^5.6.3",
+    "terser": "^5.47.1"
   }
 }
