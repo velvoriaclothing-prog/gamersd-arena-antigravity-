@@ -64,4 +64,119 @@ router.post('/payments/process', adminAuth, async (req, res) => {
   res.json({ success: true, message: 'Processed' });
 });
 
+// Update game asset
+router.post('/games/update', adminAuth, async (req, res) => {
+  const { gameId, updateData } = req.body;
+  if (!gameId || !updateData) {
+    return res.status(400).json({ success: false, message: 'Missing gameId or updateData' });
+  }
+
+  try {
+    const credentials = updateData.credentials || [];
+    const username = credentials.length > 0 ? credentials[0].user : null;
+    const password = credentials.length > 0 ? credentials[0].pass : null;
+
+    const { error } = await supabase.from('games').update({
+      game: updateData.game,
+      image: updateData.image,
+      credentials: credentials,
+      username: username,
+      password: password,
+      priority: updateData.priority || 0
+    }).eq('id', gameId);
+
+    if (error) throw error;
+    res.json({ success: true, message: 'Game updated successfully' });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// Add game drop
+router.post('/games', adminAuth, async (req, res) => {
+  const { gameData } = req.body;
+  if (!gameData || !gameData.game) return res.status(400).json({ success: false, message: 'Missing gameData' });
+
+  try {
+    const newId = gameData.game.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + Date.now();
+    const credentials = gameData.credentials || [];
+    const username = credentials.length > 0 ? credentials[0].user : null;
+    const password = credentials.length > 0 ? credentials[0].pass : null;
+
+    const { error } = await supabase.from('games').insert([{
+      id: newId,
+      game: gameData.game,
+      game_total: gameData.game_total || 1,
+      credentials: credentials,
+      username: username,
+      password: password,
+      priority: 0
+    }]);
+
+    if (error) throw error;
+    res.json({ success: true, message: 'Game added successfully' });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// Delete game drop
+router.post('/games/delete', adminAuth, async (req, res) => {
+  const { gameId, gameIds } = req.body;
+
+  try {
+    if (gameIds && Array.isArray(gameIds)) {
+      // Bulk delete support
+      const { error } = await supabase.from('games').delete().in('id', gameIds);
+      if (error) throw error;
+      res.json({ success: true, message: 'Games deleted successfully' });
+    } else if (gameId) {
+      // Single delete
+      const { error } = await supabase.from('games').delete().eq('id', gameId);
+      if (error) throw error;
+      res.json({ success: true, message: 'Game deleted successfully' });
+    } else {
+      res.status(400).json({ success: false, message: 'Missing gameId or gameIds' });
+    }
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// Add premium bundle
+router.post('/premium', adminAuth, async (req, res) => {
+  const { bundleData } = req.body;
+  if (!bundleData || !bundleData.name) return res.status(400).json({ success: false, message: 'Missing bundleData' });
+
+  try {
+    const newId = bundleData.name.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + Date.now();
+    const { error } = await supabase.from('bundles').insert([{
+      id: newId,
+      name: bundleData.name,
+      price: bundleData.price,
+      description: bundleData.desc || bundleData.description,
+      image: bundleData.image || 'logo.png'
+    }]);
+
+    if (error) throw error;
+    res.json({ success: true, message: 'Bundle added successfully' });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// Delete premium bundle
+router.post('/premium/delete', adminAuth, async (req, res) => {
+  const { bundleId } = req.body;
+  if (!bundleId) return res.status(400).json({ success: false, message: 'Missing bundleId' });
+
+  try {
+    const { error } = await supabase.from('bundles').delete().eq('id', bundleId);
+    if (error) throw error;
+    res.json({ success: true, message: 'Bundle deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
 module.exports = router;

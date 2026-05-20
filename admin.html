@@ -202,6 +202,8 @@
                 alert('Upload failed: ' + e.message);
             });
         }
+
+        function loadAdminData() {
             // Live Stats
             fetch(`/api/admin/stats?id=${CREDS.id}&pass=${CREDS.pass}`)
                 .then(r => r.json())

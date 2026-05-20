@@ -292,7 +292,23 @@ app.post('/api/admin/payments/process', async (req, res) => {
 
 // API: Live Stats
 app.get('/api/admin/stats', async (req, res) => {
-    // existing implementation
+    const { id, pass } = req.query;
+    if (id !== process.env.ADMIN_ID || pass !== process.env.ADMIN_PASS) {
+        return res.status(401).json({ success: false, message: 'Unauthorized' });
+    }
+
+    try {
+        const fiveMinsAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+        const { count, error } = await supabase
+            .from('site_users')
+            .select('*', { count: 'exact', head: true })
+            .gt('last_active_at', fiveMinsAgo);
+
+        if (error) throw error;
+        res.json({ success: true, live_users: count || 0 });
+    } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+    }
 });
 
 // API: Admin Bulk Game Upload (CSV)
@@ -510,13 +526,56 @@ app.post('/api/admin/games', async (req, res) => {
     res.json({ success: true, message: 'Game added successfully' });
 });
 
+// Update game asset
+app.post('/api/admin/games/update', async (req, res) => {
+    const { id, pass, gameId, updateData } = req.body;
+    if (id !== process.env.ADMIN_ID || pass !== process.env.ADMIN_PASS) return res.status(401).json({ success: false, message: 'Unauthorized' });
+    if (!gameId || !updateData) return res.status(400).json({ success: false, message: 'Missing gameId or updateData' });
+
+    try {
+        const credentials = updateData.credentials || [];
+        const username = credentials.length > 0 ? credentials[0].user : null;
+        const password = credentials.length > 0 ? credentials[0].pass : null;
+
+        const updatePayload = {
+            game: updateData.game,
+            image: updateData.image,
+            credentials: credentials,
+            username: username,
+            password: password,
+            priority: updateData.priority || 0
+        };
+
+        const { error } = await supabase.from('games').update(updatePayload).eq('id', gameId);
+        if (error) throw error;
+        cache.del('games'); // Clear cache so changes show immediately
+        res.json({ success: true, message: 'Game updated successfully' });
+    } catch (err) {
+        console.error('Game update error:', err);
+        res.status(500).json({ success: false, message: err.message });
+    }
+});
+
 app.post('/api/admin/games/delete', async (req, res) => {
-    const { id, pass, gameId } = req.body;
+    const { id, pass, gameId, gameIds } = req.body;
     if (id !== process.env.ADMIN_ID || pass !== process.env.ADMIN_PASS) return res.status(401).json({ success: false, message: 'Unauthorized' });
     
-    const { error } = await supabase.from('games').delete().eq('id', gameId);
-    if (error) return res.status(500).json({ success: false, message: error.message });
-    res.json({ success: true, message: 'Game deleted successfully' });
+    try {
+        if (gameIds && Array.isArray(gameIds)) {
+            const { error } = await supabase.from('games').delete().in('id', gameIds);
+            if (error) throw error;
+        } else if (gameId) {
+            const { error } = await supabase.from('games').delete().eq('id', gameId);
+            if (error) throw error;
+        } else {
+            return res.status(400).json({ success: false, message: 'Missing gameId or gameIds' });
+        }
+        cache.del('games'); // Clear cache so deletions show immediately
+        res.json({ success: true, message: 'Game(s) deleted successfully' });
+    } catch (err) {
+        console.error('Game delete error:', err);
+        res.status(500).json({ success: false, message: err.message });
+    }
 });
 
 app.post('/api/admin/premium', async (req, res) => {
