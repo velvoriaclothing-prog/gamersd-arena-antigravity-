@@ -34,9 +34,11 @@
             <button class="sidebar-btn" onclick="switchTab('bulk')">
                 <span class="material-symbols-outlined">upload_file</span> Bulk Upload
             </button>
-            <button class="sidebar-btn" onclick="switchTab('bundles')">
-                <span class="material-symbols-outlined">workspace_premium</span> Premium Bundles
+            <button class="sidebar-btn" onclick="switchTab('single')">
+                <span class="material-symbols-outlined">add_circle</span> Add Single Game
             </button>
+            <button class="sidebar-btn" onclick="switchTab('bundles')">
+                <span class="material-symbols-outlined">workspace_premium</span> Premium Bundles</button>
             <button class="sidebar-btn" onclick="window.location.href='admin_verify.html'">
                 <span class="material-symbols-outlined" style="color: var(--accent-red);">payments</span> Verify Payments 💰
             </button>
@@ -46,12 +48,22 @@
         </div>
 
         <div class="admin-content">
-            <div id="panel-bulk" class="dashboard-panel">
-                <h1 style="font-size: 2.5rem; font-weight: 900;">Bulk Game Upload</h1>
-                <p style="color: var(--text-muted);">Upload a CSV file with columns <code>game</code>, <code>id</code>, <code>pass</code> (or <code>username</code>/<code>password</code>).</p>
-                <input type="file" id="bulk-file" accept=".csv" class="admin-input" style="margin-top:1rem;" />
-                <button class="btn btn-primary" style="margin-top:1rem;" onclick="uploadBulk()">Upload & Add Games</button>
-                <pre id="bulk-result" style="margin-top:1rem; background:rgba(0,0,0,0.2); padding:1rem; border-radius:8px; display:none;"></pre>
+            <div id="panel-single" class="dashboard-panel">
+                <h1 style="font-size: 2.5rem; font-weight: 900;">Add Single Game</h1>
+                <p style="color: var(--text-muted);">Enter game title and its account credentials (one or more).</p>
+                <div style="margin-top: 2rem; background: rgba(0,0,0,0.3); padding: 1.5rem; border-radius: 12px;">
+                    <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                        <input type="text" id="single-game-title" class="admin-input" placeholder="Game Name" style="flex: 2;">
+                    </div>
+                    <div id="single-credentials-container">
+                        <div class="cred-row" style="display: flex; gap: 1rem; margin-bottom: 0.5rem;">
+                            <input type="text" class="admin-input cred-user" placeholder="Username" style="flex: 1;">
+                            <input type="text" class="admin-input cred-pass" placeholder="Password" style="flex: 1;">
+                            <button class="btn btn-secondary" onclick="addCredRow()" style="padding: 0.5rem 1rem;">+</button>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="addSingleGame()" style="width: 100%; margin-top: 1rem; padding: 1rem;">+ Add Game</button>
+                </div>
             </div>
 
             <div id="panel-drops" class="dashboard-panel active">
@@ -262,17 +274,17 @@
             container.appendChild(row);
         }
 
-        // ADD GAME
-        function addGame() {
-            const credRows = document.querySelectorAll('.cred-row');
+        // ADD SINGLE GAME
+        function addSingleGame() {
+            const credRows = document.querySelectorAll('#single-credentials-container .cred-row');
             const credentials = Array.from(credRows).map(row => ({
                 user: row.querySelector('.cred-user').value,
                 pass: row.querySelector('.cred-pass').value
             })).filter(c => c.user && c.pass);
 
             const gameData = {
-                game: document.getElementById('new-game-title').value,
-                game_total: document.getElementById('new-game-total').value,
+                game: document.getElementById('single-game-title').value,
+                game_total: 1,
                 credentials: credentials
             };
 
@@ -284,18 +296,17 @@
             fetch(API_URL + '/api/admin/games', {
                 method: 'POST', headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({ ...CREDS, gameData })
-            }).then(() => { 
-                alert("Game Drop Added with " + credentials.length + " accounts!"); 
-                document.getElementById('new-game-title').value = '';
-                document.getElementById('new-game-total').value = '';
-                document.getElementById('credentials-container').innerHTML = `
+            }).then(() => {
+                alert("Game Added with " + credentials.length + " accounts!");
+                document.getElementById('single-game-title').value = '';
+                document.getElementById('single-credentials-container').innerHTML = `
                     <div class="cred-row" style="display: flex; gap: 1rem; margin-bottom: 0.5rem;">
                         <input type="text" class="admin-input cred-user" placeholder="Username" style="flex: 1;">
                         <input type="text" class="admin-input cred-pass" placeholder="Password" style="flex: 1;">
                         <button class="btn btn-secondary" onclick="addCredRow()" style="padding: 0.5rem 1rem;">+</button>
                     </div>
                 `;
-                loadAdminData(); 
+                loadAdminData();
             });
         }
 
