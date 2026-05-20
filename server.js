@@ -337,14 +337,25 @@ async function processBulk(records, res) {
     res.json({ success: true, summary: results });
 }
 
+app.get('/api/admin/live-users', async (req, res) => {
     const { id, pass } = req.query;
-    if (id !== process.env.ADMIN_ID || pass !== process.env.ADMIN_PASS) return res.status(401).json({ success: false });
+    if (id !== process.env.ADMIN_ID || pass !== process.env.ADMIN_PASS) {
+        return res.status(401).json({ success: false, message: 'Unauthorized' });
+    }
 
     const fiveMinsAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
-    const { count, error } = await supabase.from('site_users').select('*', { count: 'exact', head: true }).gt('last_active_at', fiveMinsAgo);
+    const { count, error } = await supabase
+        .from('site_users')
+        .select('*', { count: 'exact', head: true })
+        .gt('last_active_at', fiveMinsAgo);
+
+    if (error) {
+        return res.status(500).json({ success: false, error: error.message });
+    }
 
     res.json({ success: true, live_users: count || 0 });
 });
+
 
 // API: Heartbeat
 app.post('/api/auth/ping', async (req, res) => {
@@ -464,18 +475,8 @@ app.get('/api/games', async (req, res) => {
     cache.set('games', safeData, 300); // cache for 5 minutes
     res.json({ success: true, games: safeData });
 });
-    let allData = [];
-    let from = 0;
-    const step = 1000;
-    while (true) {
-        const { data, error } = await supabase.from('games').select('id, game, image, game_total, priority, credentials').order('priority', { ascending: false }).order('id', { ascending: false }).range(from, from + step - 1);
-        if (error) return res.status(500).json({ success: false });
-        if (data && data.length > 0) { allData = allData.concat(data); from += step; if (data.length < step) break; } else break;
-    }
-    // Don't send full credentials to frontend, just username or simple flag if we need
-    const safeData = allData.map(g => ({...g, credentials: undefined}));
-    res.json({ success: true, games: safeData });
-});
+// Duplicate games fetch block removed – original code kept at lines 461‑477.
+
 
 app.get('/api/premium', async (req, res) => {
     const { data, error } = await supabase.from('bundles').select('*').order('created_at', { ascending: false });
